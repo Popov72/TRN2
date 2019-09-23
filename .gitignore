@@ -1,0 +1,4 @@
+**/*.gltf
+node_modules
+package-lock.json
+threeJS/src/threejs/src
