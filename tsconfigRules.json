@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es5", 
+    "module": "es2015",
+    "lib": [
+        "es5",
+        "dom",
+        "es2015.promise",
+        "es2015.collection",
+        "es2015.iterable",
+        "es2019.array"
+    ],
+    "allowJs": false,
+    "sourceMap": true,
+    "importHelpers": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noImplicitReturns": true,
+
+    "moduleResolution": "node",
+    "esModuleInterop": true
+    },
+    "outDir": ".temp/manualBuild"
+}

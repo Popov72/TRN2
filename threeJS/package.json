@@ -1,0 +1,9 @@
+{
+  "name": "-",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node ../node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+    "build": "node ../node_modules/webpack/bin/webpack.js"
+  }
+}

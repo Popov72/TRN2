@@ -1,0 +1,20 @@
+.panel {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	background-color: #00FF00A0;
+	opacity: 1;
+	z-index: 100;
+	display: none;
+	font-size: 10px;
+	border: 1px solid white;
+}
+
+.panelhdr {
+	color: black;
+	/*text-shadow: 1px 1px 2px black, -1px -1px 2px black;*/
+}
+
+.panelval {
+	font-style: italic;
+}

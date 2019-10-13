@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="utf8" ?>
+<tombraider>
+
+	<!-- TR1 -->
+	<game id="TR1">
+		<global>
+			<water>
+				<colorin><r>153</r><g>153</g><b>204</b></colorin>
+				<colorout><r>153</r><g>153</g><b>204</b></colorout>
+			</water>
+			<camera>
+				<fov>70</fov>
+				<neardist>50</neardist>
+				<fardist>300000</fardist>
+			</camera>
+			<fog>
+				<neardist>14000</neardist>
+				<fardist>21000</fardist>
+				<color><r>0</r><g>0</g><b>0</b></color>
+			</fog>
+			<lara>
+				<id>0</id>
+			</lara>
+            <behaviour name="BasicControl" objectid="0" objecttype="camera">
+                <scale><move>6000</move><rotation>100</rotation><mouserotation>10</mouserotation></scale>
+            </behaviour>
+            <moveable id="0">
+                <behaviour name="Lara">
+                    <startanim>103</startanim>
+                    <dirdist>1430</dirdist>
+                    <updist>1000</updist>
+                    <animobject>
+                        <pistol>1</pistol>
+                    </animobject>
+                </behaviour>
+                <behaviour name="Flare">
+                    <offset><x>0</x><y>0</y><z>0</z></offset>
+                    <color><r>255</r><g>255</g><b>255</b></color>
+                    <range><max>2000</max><inner>500</inner></range>
+                    <blink>true</blink>
+                    <objects_only>no</objects_only>
+                    <global>true</global>
+                </behaviour>
+            </moveable>
+			<cutscene>
+				<animminid>77</animminid>
+				<animmaxid>80</animmaxid>
+			</cutscene>
+		</global>
+		<levels>
+			<!-- Standard levels -->
+			<level id="gym.phd"			type="normal"	name="Lara's Home"/>
+			<level id="level1.phd"		type="normal"	name="Caves"/>
+			<level id="level2.phd"		type="normal"	name="City of Vilcabamba"/>
+			<level id="level3a.phd"		type="normal"	name="The Lost Valley">
+                <behaviour name="Zbias" objectid="68" objecttype="moveable">
+                    <polygoneoffset><factor>-40</factor><unit>-40</unit></polygoneoffset>
+                </behaviour>
+            </level>
+			<level id="level3b.phd"		type="normal"	name="Tomb of Qualopec"/>
+			<level id="level4.phd"		type="normal"	name="St Francis' Folly"/>
+			<level id="level5.phd"		type="normal"	name="Colosseum"/>
+			<level id="level6.phd"		type="normal"	name="Palace Midas">
+				<behaviour name="Lara">
+					<startanim>86</startanim>
+				</behaviour>
+			</level>
+			<level id="level7a.phd"		type="normal"	name="Cistern"/>
+			<level id="level7b.phd"		type="normal"	name="Tomb of Tihocan">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="level8a.phd"		type="normal"	name="City of Khamoon"/>
+			<level id="level8b.phd"		type="normal"	name="Obelisk of Khamoon"/>
+			<level id="level8c.phd"		type="normal"	name="Sanctuary of the Scion"/>
+			<level id="level10a.phd"	type="normal"	name="Natla's Mines">
+				<behaviour name="Lara">
+					<startanim>86</startanim>
+				</behaviour>
+			</level>
+			<level id="level10b.phd"	type="normal"	name="Atlantis"/>
+			<level id="level10c.phd"	type="normal"	name="The Great Pyramid"/>
+			<!--level id="title"		type="normal"	name="Title display"/-->
+			<level id="cut1.phd"		type="cutscene" name="Larson vs. Lara">
+				<lara>
+					<id>77</id>
+				</lara>
+                <behaviour name="Lara" objectid="77">
+                    <angle>90</angle>
+                </behaviour>
+                <behaviour name="CutScene" objectid="77" cutsceneonly="true"/>
+			</level>
+			<level id="cut2.phd"		type="cutscene" name="Lara reads Tihocan eulogy">
+				<lara>
+					<id>77</id>
+				</lara>
+                <behaviour name="Lara" objectid="77">
+                    <angle>-90</angle>
+                    <animobject>
+                        <pistol>1</pistol>
+                    </animobject>
+                </behaviour>
+                <behaviour name="CutScene" objectid="77" cutsceneonly="true"/>
+			</level>
+			<level id="cut3.phd"		type="cutscene" name="Natla installs Scion">
+				<globaltintcolor><r>25</r><g>25</g><b>25</b></globaltintcolor>
+				<lara>
+					<id>77</id>
+				</lara>
+                <behaviour name="Lara" objectid="77">
+                </behaviour>
+                <behaviour name="CutScene" objectid="77" cutsceneonly="true"/>
+			</level>
+			<level id="cut4.phd"		type="cutscene" name="Lara vs. Natla">
+				<lara>
+					<id>77</id>
+				</lara>
+                <behaviour name="Lara" objectid="77">
+                    <animobject>
+                        <pistol>1</pistol>
+                    </animobject>
+                </behaviour>
+                <behaviour name="CutScene" objectid="77" cutsceneonly="true"/>
+			</level>
+			<!-- Gold levels -->
+			<level id="egypt.tub"		type="normal"	name="Return to Egypt"		gold="1">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="cat.tub"			type="normal"	name="Temple of the Cat"	gold="1">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="end.tub"			type="normal"	name="Atlantean Stronghold" gold="1">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="end2.tub"		type="normal"	name="The Hive"				gold="1"/>
+		</levels>
+	</game>
+	
+	<!-- TR2 -->
+	<game id="TR2">
+		<global>
+			<water>
+				<colorin><r>153</r><g>255</g><b>306</b></colorin>
+				<colorout><r>153</r><g>255</g><b>306</b></colorout>
+			</water>
+			<camera>
+				<fov>70</fov>
+				<neardist>50</neardist>
+				<fardist>300000</fardist>
+			</camera>
+			<fog>
+				<neardist>14000</neardist>
+				<fardist>21000</fardist>
+				<color><r>0</r><g>0</g><b>0</b></color>
+			</fog>
+			<meshswap>
+				<objid1>97</objid1>
+				<objid2>98</objid2>
+				<objid3>99</objid3>
+			</meshswap>
+            <behaviour name="BasicControl" objectid="0" objecttype="camera">
+                <scale><move>6000</move><rotation>100</rotation><mouserotation>10</mouserotation></scale>
+            </behaviour>
+            <behaviour name="Sky">
+                <id>254</id>
+            </behaviour>
+            <moveable id="0">
+                <behaviour name="Lara">
+                    <startanim>103</startanim>
+                    <dirdist>1200</dirdist>
+                    <updist>1000</updist>
+                    <animobject>
+                        <pistol>1</pistol>
+                    </animobject>
+                </behaviour>
+                <behaviour name="Flare">
+                    <offset><x>0</x><y>0</y><z>0</z></offset>
+                    <color><r>255</r><g>255</g><b>255</b></color>
+                    <range><max>2000</max><inner>500</inner></range>
+                    <blink>true</blink>
+                    <objects_only>no</objects_only>
+                    <global>true</global>
+                </behaviour>
+            </moveable>
+            <moveable id="253">
+                <spritesequence>252</spritesequence>
+                <behaviour name="ParticleSystem">
+                    <particlesys_name>TRPlayer/Fire</particlesys_name>
+                    <particlesys_offset><x>0</x><y>0</y><z>0</z></particlesys_offset>
+                </behaviour>
+            </moveable>
+			<cutscene>
+				<animminid>123</animminid>
+				<animmaxid>132</animmaxid>
+			</cutscene>
+		</global>
+		<levels>
+			<!-- Standard levels -->
+			<level id="assault.tr2"		type="normal"	name="Lara's Home"/>
+			<level id="wall.tr2"		type="normal"	name="The Great Wall">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+                <moveable id="253">
+                    <behaviour name="ParticleSystem">
+                        <particlesys_name>TRPlayer/Smoke</particlesys_name>
+                        <particlesys_offset><x>0</x><y>-50</y><z>0</z></particlesys_offset>
+                    </behaviour>
+                </moveable>
+			</level>
+			<level id="boat.tr2"		type="normal"	name="Venice">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="venice.tr2"		type="normal"	name="Bartoli's Hideout"/>
+			<level id="opera.tr2"		type="normal"	name="Opera House">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<level id="rig.tr2"			type="normal"	name="Offshore Rig"/>
+			<level id="platform.tr2"	type="normal"	name="Diving Area"/>
+			<level id="unwater.tr2"		type="normal"	name="40 Fathoms">
+				<behaviour name="Lara">
+					<startanim>86</startanim>
+				</behaviour>
+			</level>
+			<level id="keel.tr2"		type="normal"	name="Wreck of the Maria Doria"/>
+			<level id="living.tr2"		type="normal"	name="Living Quarters">
+                <behaviour name="Lara">
+					<startanim>86</startanim>
+					<starttrans><x>0</x><y>500</y><z>0</z></starttrans>
+                </behaviour>
+			</level>
+			<level id="deck.tr2"		type="normal"	name="The Deck"/>
+			<level id="skidoo.tr2"		type="normal"	name="Tibetan Foothills"/>
+			<level id="monastry.tr2"	type="normal"	name="Barkhang Monastery">
+                <moveable id="253">
+                    <behaviour name="ParticleSystem">
+                        <particlesys_name>TRPlayer/Fire</particlesys_name>
+                        <particlesys_offset><x>0</x><y>-200</y><z>0</z></particlesys_offset>
+                    </behaviour>
+                </moveable>
+			</level>
+			<level id="catacomb.tr2"	type="normal"	name="Catacombs of the Talion"/>
+			<level id="icecave.tr2"		type="normal"	name="Ice Palace"/>
+			<level id="emprtomb.tr2"	type="normal"	name="Temple of Xian"/>
+			<level id="floating.tr2"	type="normal"	name="Floating Islands"/>
+			<level id="xian.tr2"		type="normal"	name="Dragon's Lair"/>
+			<level id="house.tr2"		type="normal"	name="Home Sweet Home"/>
+			<!--level id="title"		type="normal"	name="Title display"/-->
+			<level id="cut1.tr2"		type="cutscene"	name="At the Fancy Door">
+                <moveable id="253">
+                    <behaviour name="ParticleSystem">
+                        <particlesys_name>TRPlayer/Smoke</particlesys_name>
+                        <particlesys_offset><x>0</x><y>0</y><z>0</z></particlesys_offset>
+                    </behaviour>
+                </moveable>
+                <behaviour name="MakeLayeredMesh" objectid="123" cutsceneonly="true"/>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+			</level>
+			<level id="cut2.tr2"	type="cutscene"	name="Lara the Stowaway">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut3.tr2"	type="cutscene"	name="Bartoli vs. Monk">
+                <meshswap>
+                    <objid1>0</objid1>
+                    <objid2>0</objid2>
+                    <objid3>99</objid3>
+                </meshswap>
+                <cutscene>
+                    <animids>97,98</animids>
+                    <animminid>123</animminid>
+                    <animmaxid>132</animmaxid>
+                </cutscene>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut4.tr2"	type="cutscene"	name="Bartoli Stabs Himself">
+                <moveable id="253">
+                    <behaviour name="ParticleSystem">
+                        <particlesys_name>TRPlayer/Fire</particlesys_name>
+                        <particlesys_offset><x>0</x><y>-1350</y><z>0</z></particlesys_offset>
+                    </behaviour>
+                </moveable>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+			</level>
+			<!-- Gold levels -->
+			<level id="level1.tr2"		type="normal"	name="The Cold War"			gold="1">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="level2.tr2"		type="normal"	name="Fool's Gold"			gold="1"/>
+			<level id="level3.tr2"		type="normal"	name="Furnace of the Gods"	gold="1">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="level4.tr2"		type="normal"	name="Kingdom"				gold="1"/>
+			<level id="level5.tr2"		type="normal"	name="Nightmare in Vegas"	gold="1"/>
+		</levels>
+	</game>
+	
+	<!-- TR3 -->
+	<game id="TR3">
+		<global>
+			<water>
+				<colorin><r>153</r><g>255</g><b>306</b></colorin>
+				<colorout><r>153</r><g>255</g><b>306</b></colorout>
+			</water>
+			<camera>
+				<fov>70</fov>
+				<neardist>50</neardist>
+				<fardist>300000</fardist>
+			</camera>
+			<fog>
+				<neardist>14000</neardist>
+				<fardist>21000</fardist>
+				<color><r>0</r><g>0</g><b>0</b></color>
+			</fog>
+			<meshswap>
+				<objid1>122</objid1>
+				<objid2>123</objid2>
+				<objid3>124</objid3>
+			</meshswap>
+            <behaviour name="BasicControl" objectid="0" objecttype="camera">
+                <scale><move>6000</move><rotation>100</rotation><mouserotation>10</mouserotation></scale>
+            </behaviour>
+            <behaviour name="Sky">
+                <id>355</id>
+                <removepoly><start>16</start><num>16</num></removepoly>
+                <noanim>true</noanim>
+            </behaviour>
+            <moveable id="0">
+                <visuid>315</visuid>
+                <behaviour name="Lara">
+                    <startanim>103</startanim>
+                    <dirdist>1200</dirdist>
+                    <updist>1000</updist>
+                    <animobject>
+                        <pistol>1</pistol>
+                    </animobject>
+                </behaviour>
+                <behaviour name="Flare">
+                    <offset><x>0</x><y>0</y><z>0</z></offset>
+                    <color><r>255</r><g>255</g><b>255</b></color>
+                    <range><max>2000</max><inner>500</inner></range>
+                    <blink>true</blink>
+                    <objects_only>no</objects_only>
+                    <global>true</global>
+                </behaviour>
+            </moveable>
+			<cutscene>
+				<animminid>148</animminid>
+				<animmaxid>156</animmaxid>
+			</cutscene>
+		</global>
+		<levels>
+			<!-- Standard levels -->
+			<level id="house.tr2"		type="normal"	name="Lara's Home"/>
+			<level id="jungle.tr2"		type="normal"	name="Jungle"/>
+			<level id="temple.tr2"		type="normal"	name="Temple Ruins"/>
+			<level id="quadchas.tr2"	type="normal"	name="The River Ganges"/>
+			<level id="tonyboss.tr2"	type="normal"	name="Caves of Kaliya"/>
+			<level id="shore.tr2"		type="normal"	name="Coastal Village">
+                <behaviour name="Lara">
+					<startanim>86</startanim>
+					<starttrans><x>0</x><y>500</y><z>0</z></starttrans>
+                </behaviour>
+			</level>
+			<level id="crash.tr2"		type="normal"	name="Crash Site"/>
+			<level id="rapids.tr2"		type="normal"	name="Madubu Gorge"/>
+			<level id="triboss.tr2"		type="normal"	name="Temple of Puna"/>
+			<level id="roofs.tr2"		type="normal"	name="Thames Wharf"/>
+			<level id="sewer.tr2"		type="normal"	name="Aldwych">
+				<behaviour name="Lara">
+					<startanim>23</startanim>
+				</behaviour>
+			</level>
+			<level id="tower.tr2"		type="normal"	name="Lud's Gate"/>
+			<level id="office.tr2"		type="normal"	name="City">
+                <behaviour name="Sky">
+                    <noanim>false</noanim>
+                </behaviour>
+			</level>
+			<level id="nevada.tr2"		type="normal"	name="Nevada Desert">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<level id="compound.tr2"	type="normal"	name="High Security Compound"/>
+			<level id="area51.tr2"		type="normal"	name="Area 51"/>
+			<level id="antarc.tr2"		type="normal"	name="Antarctica"/>
+			<level id="mines.tr2"		type="normal"	name="RX-Tech Mines"/>
+			<level id="city.tr2"		type="normal"	name="Lost City of Tinnos"/>
+			<level id="chamber.tr2"		type="normal"	name="Meteorite Cavern">
+                <behaviour name="Sky">
+                    <removepoly><num>0</num></removepoly>
+                </behaviour>
+			</level>
+			<level id="stpaul.tr2"		type="normal"	name="All Hallows">
+                <behaviour name="Sky">
+                    <noanim>false</noanim>
+                </behaviour>
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<!--level id="title"		type="normal"	name="Title display"/-->
+			<level id="cut1.tr2"		type="cutscene"	name="Lara Meets Amputated Mercenary">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut2.tr2"		type="cutscene"	name="Saved by the Bell">
+                <behaviour name="Lara">
+                    <angle>90</angle>
+                </behaviour>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+			</level>
+			<level id="cut3.tr2"		type="cutscene"	name="Lara gets the artifacts to Willard">
+                <behaviour name="MakeLayeredMesh" objectid="148" cutsceneonly="true"/>
+                <behaviour name="MakeLayeredMesh" objectid="149" cutsceneonly="true"/>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut4.tr2"		type="cutscene"	name="Lara confronts tribesman about artifact">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut5.tr2"		type="cutscene"	name="Lara meets the leader of the Damned">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut6.tr2"		type="cutscene"	name="Lara at Tony's camp">
+                <behaviour name="Lara">
+                    <angle>-90</angle>
+                </behaviour>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+			</level>
+			<level id="cut7.tr2"		type="cutscene"	name="Lara Drives Over Fence">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut8.tr2"		type="cutscene"	name="Lara the stowaway in a delivery truck">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut9.tr2"		type="cutscene"	name="Lara meets Tony again">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut11.tr2" 		type="cutscene"	name="Lara meets Sophia Lee">
+                <behaviour name="MakeLayeredMesh" objectid="148" cutsceneonly="true"/>
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<level id="cut12.tr2" 		type="cutscene"	name="Lara watches Willard transform">
+                <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
+            </level>
+			<!-- Gold levels -->
+			<level id="01-highland-fling.tr2"			type="normal"	name="Highland Fling" gold="1"/>
+			<level id="02-willards-lair.tr2"			type="normal"	name="Willard's Lair" gold="1"/>
+			<level id="03-shakespeare-cliff.tr2"		type="normal"	name="Shakespeare Cliff" gold="1"/>
+			<level id="04-sleeping-with-the-fishes.tr2"	type="normal"	name="Sleeping with the Fishes" gold="1"/>
+			<level id="05-its-a-madhouse.tr2"			type="normal"	name="It's a Madhouse" gold="1"/>
+			<level id="06-reunion.tr2"					type="normal"	name="Reunion" gold="1"/>
+		</levels>
+	</game>
+	
+	<!-- TR4 -->
+	<game id="TR4">
+		<global>
+			<water>
+				<colorin><r>255</r><g>255</g><b>255</b></colorin>
+				<colorout><r>180</r><g>180</g><b>180</b></colorout>
+			</water>
+			<camera>
+				<fov>70</fov>
+				<neardist>50</neardist>
+				<fardist>300000</fardist>
+			</camera>
+			<fog>
+				<neardist>14000</neardist>
+				<fardist>21000</fardist>
+				<color><r>0</r><g>0</g><b>0</b></color>
+			</fog>
+            <behaviour name="BasicControl" objectid="0" objecttype="camera">
+                <scale><move>6000</move><rotation>100</rotation><mouserotation>10</mouserotation></scale>
+            </behaviour>
+            <behaviour name="ScrollTexture" objectid="423"/>
+            <behaviour name="ScrollTexture" objectid="424"/>
+            <behaviour name="ScrollTexture" objectid="425"/>
+            <behaviour name="Skydome">
+                <color><r>255</r><g>255</g><b>255</b></color>
+            </behaviour>
+            <behaviour name="Sky">
+                <id>459</id>
+                <noanim>true</noanim>
+            </behaviour>
+            <moveable id="0">
+                <visuid>8</visuid>
+                <behaviour name="Pick"/>
+                <behaviour name="Lara">
+                    <startanim>103</startanim>
+                    <dirdist>1430</dirdist>
+                    <updist>800</updist>
+                    <animobject>
+                        <pistol>1</pistol>
+                        <holster>13</holster>
+                        <holster_pistols>14</holster_pistols>
+                    </animobject>
+                </behaviour>
+                <behaviour name="Flare">
+                    <offset><x>0</x><y>0</y><z>0</z></offset>
+                    <color><r>0</r><g>255</g><b>0</b></color>
+                    <range><max>2000</max><inner>500</inner></range>
+                    <blink>true</blink>
+                    <objects_only>no</objects_only>
+                    <global>true</global>
+                </behaviour>
+            </moveable>
+            <moveable id="144">
+                <behaviour name="ParticleSystem">
+                    <particlesys_name>TRPlayer/Torch</particlesys_name>
+                    <particlesys_offset><x>0</x><y>0</y><z>250</z></particlesys_offset>
+                </behaviour>
+                <behaviour name="Light">
+                    <color><r>255</r><g>255</g><b>255</b></color>
+                    <range><max>2000</max><inner>500</inner></range>
+                    <blink>true</blink>
+                    <objects_only>no</objects_only>
+                </behaviour>
+                <behaviour name="RemoveObject"/>
+            </moveable>
+		</global>
+		<levels>
+			<level id="angkor1.tr4"			type="normal"	name="Angkor Wat">
+                <behaviour name="Lara">
+                    <animobject>
+                        <pistol>-1</pistol>
+                        <holster>-1</holster>
+                        <holster_pistols>-1</holster_pistols>
+                    </animobject>
+                </behaviour>
+				<behaviour name="UVRotate" objectid="73" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="74" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="75" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="76" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="77" objecttype="room"/>
+			</level>
+			<level id="ang_race.tr4"		type="normal"	name="Race For The Iris">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+                    <animobject>
+                        <pistol>-1</pistol>
+                        <holster>-1</holster>
+                        <holster_pistols>-1</holster_pistols>
+                    </animobject>
+				</behaviour>
+                <behaviour name="RemoveObject" objectid="431" cutsceneonly="true"/>
+            </level>
+			<level id="settomb1.tr4"		type="normal"	name="The Tomb Of Seth"/>
+			<level id="settomb2.tr4"		type="normal"	name="Burial Chambers">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+            </level>
+			<level id="jeepchas.tr4"		type="normal"	name="Valley Of The Kings">
+                <behaviour name="Skydome">
+					<color><r>255</r><g>190</g><b>255</b></color>
+                </behaviour>
+                <behaviour name="SetAnimation" objectid="34">
+                    <anim>7</anim>
+                </behaviour>
+			</level>
+			<level id="jeepchs2.tr4"		type="normal"	name="KV5">
+                <behaviour name="Skydome">
+					<color><r>255</r><g>160</g><b>130</b></color>
+                </behaviour>
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<level id="karnak1.tr4"			type="normal"	name="Temple Of Karnak">
+                <behaviour name="RemoveObject" objectid="41" cutsceneonly="true"/>
+                <behaviour name="RemoveObject" objectid="145" cutsceneonly="true"/>
+                <behaviour name="RemoveObject" objectid="408" cutsceneonly="true"/>
+                <behaviour name="RemoveObject" objectid="31" objecttype="staticmesh" cutsceneonly="true"/>
+            </level>
+			<level id="hall.tr4"			type="normal"	name="The Great Hypostyle Hall">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+            </level>
+			<level id="lake.tr4"			type="normal"	name="The Sacred Lake">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+            </level>
+			<level id="semer.tr4"			type="normal"	name="The Tomb of Semerkhet"/>
+			<level id="semer2.tr4"			type="normal"	name="Guardian Of Semerket"/>
+			<level id="train.tr4"			type="normal"	name="Desert Railroad"/>
+			<level id="alexhub.tr4"			type="normal"	name="Alexandria">
+				<behaviour name="RemoveObject" objectid="422" cutsceneonly="true"/>
+            </level>
+			<level id="alexhub2.tr4"		type="normal"	name="Coastal Ruins">
+            </level>
+			<level id="csplit1.tr4"			type="normal"	name="Catacombs"/>
+			<level id="csplit2.tr4"			type="normal"	name="Temple Of Poseidon"/>
+			<level id="library.tr4"			type="normal"	name="The Lost Library"/>
+			<level id="libend.tr4"			type="normal"	name="Hall Of Demetrius">
+                <behaviour name="RemoveObject" objectid="41" cutsceneonly="true"/>
+            </level>
+			<level id="palaces.tr4"			type="normal"	name="Pharos,Temple Of Isis">
+				<behaviour name="Lara">
+					<startanim>86</startanim>
+				</behaviour>
+            </level>
+			<level id="palaces2.tr4"		type="normal"	name="Cleopatra´s Palaces">
+            </level>
+			<level id="bikebit.tr4"			type="normal"	name="City Of The Dead">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>100</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+			</level>
+			<level id="cortyard.tr4"		type="normal"	name="Chambers Of Tulun">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>100</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<level id="highstrt.tr4"		type="normal"	name="Citadel Gate">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>100</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+                <behaviour name="RemoveObject" objectid="408" cutsceneonly="true"/>
+                <behaviour name="RemoveObject" objectid="435" cutsceneonly="true"/>
+			</level>
+			<level id="nutrench.tr4"		type="normal"	name="Trenches">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>100</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<level id="lowstrt.tr4"			type="normal"	name="Street Bazar">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>100</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+				<behaviour name="RemoveObject" objectid="201" cutsceneonly="true"/>
+			</level>
+			<level id="citnew.tr4"			type="normal"	name="Citadel">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>100</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+				<behaviour name="RemoveObject" objectid="394" cutsceneonly="true"/>
+				<behaviour name="RemoveObject" objectid="422" cutsceneonly="true"/>
+			</level>
+			<level id="joby1a.tr4"			type="normal"	name="The Sphinx Complex">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+                <behaviour name="RemoveObject" objectid="422" cutsceneonly="true"/>
+			</level>
+			<level id="joby2.tr4"			type="normal"	name="Underneath The Sphinx"/>
+			<level id="joby3a.tr4"			type="normal"	name="Menkaure's Pyramid">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+                <behaviour name="Zbias" objectid="12" objecttype="staticmesh">
+                    <polygoneoffset><factor>-1</factor><unit>1</unit></polygoneoffset>
+                </behaviour>
+                <behaviour name="RemoveObject" objectid="408" cutsceneonly="true"/>
+                <behaviour name="RemoveObject" objectid="443" cutsceneonly="true"/>
+			</level>
+			<level id="joby3b.tr4"			type="normal"	name="Inside Menkaure's Pyramid">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+			</level>
+			<level id="joby4a.tr4"			type="normal"	name="The Mastabas">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+			</level>
+			<level id="joby4b.tr4"			type="normal"	name="The Great Pyramid">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+				<behaviour name="Lara">
+					<startanim>105</startanim>
+				</behaviour>
+			</level>
+			<level id="joby4c.tr4"			type="normal"	name="Khufu's Queens Pyramids">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+			</level>
+			<level id="joby5a.tr4"			type="normal"	name="Inside The Great Pyramid">
+				<behaviour name="Lara">
+					<startanim>70</startanim>
+				</behaviour>
+            </level>
+			<level id="joby5b.tr4"			type="normal"	name="Temple Of Horus">
+				<behaviour name="RemoveObject" objectid="394" cutsceneonly="true"/>
+				<behaviour name="RemoveObject" objectid="408" cutsceneonly="true"/>
+            </level>
+
+			<level id="joby5c.tr4"			type="normal"	name="Temple Of Horus">
+				<behaviour name="RemoveObject" objectid="394" cutsceneonly="true"/>
+				<behaviour name="RemoveObject" objectid="422" cutsceneonly="true"/>
+				<behaviour name="RemoveObject" objectid="433" cutsceneonly="true"/>
+            </level>
+			<level id="joby1b.tr4"			type="normal"	name="The Valley Temple">
+                <behaviour name="Skydome">
+					<color><r>100</r><g>30</g><b>0</b></color>
+                </behaviour>
+                <behaviour name="Sky">
+                    <hide>true</hide>
+                </behaviour>
+            </level>
+			<level id="joby5b.tr4"			type="normal"	name="Temple Of Horus">
+			</level>
+			<level id="title.tr4"		type="normal"	name="Title"/>
+		</levels>
+	</game>
+</tombraider>

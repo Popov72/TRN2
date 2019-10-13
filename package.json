@@ -1,0 +1,31 @@
+{
+  "name": "trn",
+  "version": "1.0.0",
+  "description": "Tomb Raider Nostalgia",
+  "main": "babylonJS/public/dist/trn_babylon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tombraider",
+    "javascript",
+    "typescript",
+    "viewer"
+  ],
+  "author": "E. Popov",
+  "license": "MIT",
+  "dependencies": {
+    "babylonjs": "^4.0.3",
+    "babylonjs-loaders": "^4.0.3",
+    "three": "^0.109.0",
+    "ts-loader": "^6.1.0",
+    "typescript": "^3.6.3",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.31",
+    "@types/pako": "^1.0.1"
+  }
+}
