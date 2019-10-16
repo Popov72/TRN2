@@ -1,0 +1,57 @@
+    00:30 - FMV
+#6  00:44 - angkor1
+#5  05:12 - angkor1 - backpack
+#8  08:13 - ang_race - loosing the race
+#7  08:38 - ang_race - winning the race
+#9  09:08 - ang_race - revealing Iris
+
+
+    13:18 - settomb1 - travelling qui remonte vers Lara / gugus allume une torche (29s)
+    13:47 - settomb1 - vers la fin du niveau, gugus éclaire un truc et s'enfuit (21s)
+#14 14:08 - settomb2 - (23s)
+
+    14:31 - FMV
+    17:28 - jeepchas - gugus marche entre les véhicules au début du niveau => 2 cutscenes (17:38) ? (24s)
+    17:52 - FMV
+#12 21:28 - karnak1 (26s)
+#13 21:54 - hall - les bad guys arrivent (enchainement avec la cinématique #12) (28s)
+    22:22 - FMV
+    27:03 - train - travelling extérieur jusqu'à l'intérieur derrière Lara (26s)
+    27:29 - alexhub - travelling début level (13s)
+    27:42 - FMV
+
+#17 29:33 - alexhub - 1er dialogue avec Jean-Yves (27s)
+    30:00 - alexhub2 - devant le charmeur de serpent (14s)
+#21 30:14 - alexhub2 -  (19s)
+#18 30:33 - alexhub - 2ème dialogue avec Jean-Yves (22s)
+    30:55 - alexhub2 - travelling sur la dernière partie du niveau (24s)
+    31:19 - alexhub2 - 2 sequelettes sortent du sol (18s)
+#19 31:37 - alexhub - 3ème dialogue avec Jean-Yves (48s)
+
+    32:25 - library - Lara joue de la harpe pour ouvrir un passage secret (15s)
+#10 32:40 - libend - Lara lit un parchemin / S'échappe suite à l'arrivée de Von Croy et de bad guys (1mn28s)
+#20 34:08 - alexhub - 4ème dialogue avec Jean-Yves (33s)
+    34:41 - palaces2 - Lara et son double (14s)
+#22 34:55 - palaces2 (34s)
+
+    35:29 - FMV
+#26 37:17 - highstrt - Lara discute avec un blessé (Aziz) (1mn53s)
+    39:10 - highstrt - Apparition de la bête (17s)
+#25 39:27 - highstrt - 2ème dialogue avec Aziz (15s)
+#24 39:42 - lowstrt - Dialogue avec un autre blessé pour récupérer le code (1mn13s)
+#11 40:55 - highstrt - retour vers Aziz / Destruction de la bête (1mn54s)
+
+#16 42:49 - citnew - Lara libère Jean-Yves qui est attaché à un poteau (1mn45s)
+#15 44:34 - citnew - Lara rencontre Von Croy avec 4 chiens (1mn02s)
+    45:36 - citnew - Lara plonge dans la mer à la fin du niveau (12s)
+
+#3  45:48 - joby1a (1mn05s)
+#1  46:53 - joby1a (9s)
+#2  47:02 - joby1a (5s)
+#4  47:07 - joby3a - bad guy combat un scorpion géant / Lara tue le scorpion / bad guy donne les clés (31s)
+    47:38 - joby4b - Travelling devant la grande pyramide (29s)
+    48:07 - joby5b - Lara au-dessus du puits de lumière (31s)
+#23 48:38 - joby5b - Lara active le gugus dans le puits de lumière (24s)
+    49:02 - FMV
+#27 50:20 - joby5c - Lara remonte le  puits de lumière et le ferme (14s)
+    50:34 - FMV
