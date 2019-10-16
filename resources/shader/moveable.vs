@@ -20,6 +20,7 @@ uniform float 	curTime;
 uniform vec4 	offsetRepeat;
 uniform float 	rnd;
 uniform float 	lighting; /* not used */
+uniform vec3    camPosition;
 
 uniform vec3 	ambientColor;
 
@@ -115,7 +116,7 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
 #endif
 
 void main() {
-    vwCamPos = cameraPosition;
+    vwCamPos = camPosition;
     
 	mat4 boneMatX = getBoneMatrix( skinIndex.x );
 	mat4 boneMatY = getBoneMatrix( skinIndex.y );

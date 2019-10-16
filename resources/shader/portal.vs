@@ -1,8 +1,10 @@
+attribute vec3 vertColor;
+
 varying vec2 vUv;
 varying vec3 vColor;
 
 void main() {
-	vColor = color;
+	vColor = vertColor;
 	vUv = uv;
 
 	vec4 mvPosition;

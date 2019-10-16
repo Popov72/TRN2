@@ -4,6 +4,7 @@ uniform vec4 offsetRepeat;
 uniform float curTime;
 uniform float rnd;
 uniform vec3 lighting;
+uniform vec3 camPosition;
 
 varying vec2 vUv;
 varying vec3 vColor;
@@ -13,7 +14,7 @@ varying vec3 vwCamPos;
 const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
 
 void main() {
-    vwCamPos = cameraPosition;
+    vwCamPos = camPosition;
 
 	vec3 pos = position;
 
