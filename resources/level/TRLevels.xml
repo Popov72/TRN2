@@ -11,7 +11,7 @@
 			<camera>
 				<fov>70</fov>
 				<neardist>50</neardist>
-				<fardist>300000</fardist>
+				<fardist>100000</fardist>
 			</camera>
 			<fog>
 				<neardist>14000</neardist>
@@ -153,7 +153,7 @@
 			<camera>
 				<fov>70</fov>
 				<neardist>50</neardist>
-				<fardist>300000</fardist>
+				<fardist>100000</fardist>
 			</camera>
 			<fog>
 				<neardist>14000</neardist>
@@ -319,7 +319,7 @@
 			<camera>
 				<fov>70</fov>
 				<neardist>50</neardist>
-				<fardist>300000</fardist>
+				<fardist>100000</fardist>
 			</camera>
 			<fog>
 				<neardist>14000</neardist>
@@ -477,7 +477,7 @@
 			<camera>
 				<fov>70</fov>
 				<neardist>50</neardist>
-				<fardist>300000</fardist>
+				<fardist>100000</fardist>
 			</camera>
 			<fog>
 				<neardist>14000</neardist>
