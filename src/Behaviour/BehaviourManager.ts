@@ -93,13 +93,13 @@ export class BehaviourManager {
         if (_lstObjs !== undefined) {
             lstObjs = _lstObjs;
         } else {
-            const objList: MeshList | Array<ICamera> | null = objecttype ? (objecttype == 'camera' ? [this.gameData.camera] : this.objMgr.objectList[objecttype]) : null;
+            const objList: MeshList | Array<ICamera> | null = objecttype !== undefined ? (objecttype == 'camera' ? [this.gameData.camera] : this.objMgr.objectList[objecttype]) : null;
 
-            if ((!objList || objectid === undefined || !objList[objectid]) && (objectid !== null || objecttype !== null)) {
+            if ((objList === null || objectid === undefined || !objList[objectid]) && (objectid !== undefined || objecttype !== undefined)) {
                 return null;
             }
 
-            if (objList && objectid !== null && objList[objectid]) {
+            if (objList && objectid !== undefined && objList[objectid]) {
                 const objs = objList[objectid];
                 if (!Array.isArray(objs)) {
                     lstObjs = [objs];
