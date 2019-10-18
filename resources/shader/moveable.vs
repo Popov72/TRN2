@@ -155,7 +155,7 @@ void main() {
 
 	vec3 objectNormal = skinnedNormal.xyz;
 
-	vec3 transformedNormal = normalMatrix * objectNormal;
+	vec3 transformedNormal = mat3(modelViewMatrix) * objectNormal; // transposeMat3(inverseMat3(mat3(modelViewMatrix)))
 
 	transformedNormal = normalize( transformedNormal );
 
