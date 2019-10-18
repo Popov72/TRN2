@@ -2,7 +2,7 @@ module.exports = {
     mode: 'development',
     devtool: "source-map",
 
-    entry: './src/index.ts',
+    entry: './src/TRN.ts',
     output: {
         path: require('path').join(__dirname, './public/dist/'),
         filename: 'trn_three.js',

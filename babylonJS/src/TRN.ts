@@ -1,21 +1,21 @@
-declare var glMatrix: any;
-
 import { 
     Engine as BEngine,
     Mesh as BMesh,
-    TargetCamera 
+    TargetCamera, 
+    TransformNode
 } from "babylonjs";
 
 import Engine from "../../src/Proxy/Engine";
-import Camera from "./Camera";
-import Mesh from "./Mesh";
-import Scene from "./Scene";
-import Renderer from "./Renderer";
-import SceneParser from "./SceneParser";
-
 import "../../src/Main";
 
 import "./Behaviours";
+import Camera from "./Camera";
+import Mesh from "./Mesh";
+import Node from "./Node";
+import Renderer from "./Renderer";
+import SceneParser from "./SceneParser";
+
+declare var glMatrix: any;
 
 glMatrix.glMatrix.setMatrixArrayType(Array);
 
@@ -23,16 +23,18 @@ const canvas = document.createElement("canvas"),
       engine = new BEngine(canvas, true);
 
 Engine.registerFunctions( {
-    "makeMesh": (obj: any) => new Mesh(obj as BMesh),
+    "makeMesh":     (obj: any) => new Mesh(obj as BMesh),
 
-    "makeCamera": (obj: any) => new Camera(obj as TargetCamera),
+    "makeCamera":   (obj: any) => new Camera(obj as TargetCamera),
 
-    "parseScene": (sceneJSON: any, callback: (scene: Scene) => void ) => {
-        console.log(sceneJSON);
+    "makeNode":     () => new Node(),
 
+    "parseScene":   (sceneJSON: any) => {
         const sceneParser = new SceneParser(engine);
 
-        sceneParser.parse(sceneJSON, callback);
+        return new Promise<any>((resolve, reject) => {
+            sceneParser.parse(sceneJSON, resolve);
+        });
     },
 
     "createRenderer": (container: Element) => {

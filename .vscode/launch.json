@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "TRN BabylonJS",
-            "url": "http://localhost:9000",
+            "url": "http://localhost:9000/TRN.html",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
                 "webpack:///./src/*": "${workspaceRoot}/babylonJS/src/*",
@@ -19,7 +19,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "TRN ThreeJS",
-            "url": "http://localhost:9001",
+            "url": "http://localhost:9001/TRN.html",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
                 "webpack:///./src/*": "${workspaceRoot}/threeJS/src/*",
