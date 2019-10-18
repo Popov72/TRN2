@@ -1,12 +1,32 @@
-TRN.TRLevel = function() {
-    this.movObjID2Index = {};
-}
+import IGameData from "../Player/IGameData";
+import { IMesh } from "../Proxy/IMesh";
+import { IScene } from "../Proxy/IScene";
+import { ObjectManager } from "./ObjectManager";
+import { ConfigManager } from "../ConfigManager";
+import { ShaderManager } from "../ShaderManager";
+import { Position } from "../Proxy/INode";
 
-TRN.TRLevel.prototype = {
+declare var glMatrix: any;
 
-    constructor : TRN.TRLevel,
+export class TRLevel {
 
-    initialize : function(gameData) {
+    private movObjID2Index: Map<number, number>;
+    private trlevel: any;
+    private sceneRender: IScene;
+    private sceneData: any;
+    private objMgr: ObjectManager;
+    private confMgr: ConfigManager;
+    private shdMgr: ShaderManager;
+
+    constructor() {
+        this.movObjID2Index = new Map();
+        this.sceneRender = <any>null;
+        this.objMgr = <any>null;
+        this.confMgr = <any>null;
+        this.shdMgr = <any>null;
+    }
+
+    public initialize(gameData: IGameData): void {
         this.trlevel = gameData.sceneData.trlevel;
         this.sceneRender = gameData.sceneRender;
         this.sceneData = gameData.sceneData;
@@ -16,15 +36,15 @@ TRN.TRLevel.prototype = {
     
         for (let m = 0; m < this.trlevel.moveables.length; ++m) {
             const moveable = this.trlevel.moveables[m];
-            this.movObjID2Index[moveable.objectID] = m;
+            this.movObjID2Index.set(moveable.objectID, m);
         }
-    },
+    }
 
-    getRoomByPos : function(pos) {
+    public getRoomByPos(pos: Position): number {
         const trlevel = this.trlevel,
-              x = Math.floor(pos.x),
-              y = -Math.floor(pos.y),
-              z = -Math.floor(pos.z);
+              x = Math.floor(pos[0]),
+              y = -Math.floor(pos[1]),
+              z = -Math.floor(pos[2]);
 
         for (let r = 0; r < trlevel.rooms.length; ++r) {
             const room = trlevel.rooms[r];
@@ -38,14 +58,14 @@ TRN.TRLevel.prototype = {
             }
         }
         return -1;
-    },
+    }
 
-    isPointInRoom : function(pos, roomIndex) {
+    public isPointInRoom(pos: Position, roomIndex: number): boolean {
         const room = this.trlevel.rooms[roomIndex];
 
-        const x = Math.floor(pos.x),
-              y = -Math.floor(pos.y),
-              z = -Math.floor(pos.z);
+        const x = Math.floor(pos[0]),
+              y = -Math.floor(pos[1]),
+              z = -Math.floor(pos[2]);
 
         const mx = room.info.x + room.numXsectors * 1024;
         const mz = room.info.z + room.numZsectors * 1024;
@@ -55,9 +75,9 @@ TRN.TRLevel.prototype = {
         }
 
         return false;
-    },
+    }
 
-    getItemsWithObjID : function(objID) {
+    public getItemsWithObjID(objID: number): Array<any> {
         const items = [];
         for (let i = 0; i < this.trlevel.items.length; ++i) {
             const item = this.trlevel.items[i];
@@ -67,9 +87,9 @@ TRN.TRLevel.prototype = {
             }
         }
         return items;
-    },
+    }
 
-	convertIntensity : function(intensity) {
+	public convertIntensity(intensity: number): Array<number> {
 		let l = [intensity/8192.0, intensity/8192.0, intensity/8192.0];
 
 		if (this.trlevel.rversion == 'TR3' || this.trlevel.rversion == 'TR4') {
@@ -81,27 +101,27 @@ TRN.TRLevel.prototype = {
 		}
 
 		return l;
-    },
+    }
     
-    convertLighting : function(lighting1) {
+    public convertLighting(lighting1: number): Array<number> {
 		let color = [0, 0, 0];
 
 		switch(this.trlevel.rversion) {
 			case 'TR1':
             case 'TR2': {
-                lighting = Math.floor((1.0-lighting1/8192.)*2*256);
+                let lighting = Math.floor((1.0-lighting1/8192.)*2*256);
 				if (lighting > 255) lighting = 255;
 				color = [lighting/255.0, lighting/255.0, lighting/255.0];
                 break;
             }
 			case 'TR3': {
-				lighting = lighting1;
+				let lighting = lighting1;
                 const r = (lighting & 0x7C00) >> 10, g = (lighting & 0x03E0) >> 5, b = (lighting & 0x001F);
                 color = [((r << 3) + 0x7)/255.0, ((g << 3) + 0x7)/255.0, ((b << 3) + 0x7)/255.0];
                 break;
             }
 			case 'TR4': {
-				lighting = lighting1;
+				let lighting = lighting1;
 				let r = (((lighting & 0x7C00) >> 7) + 7) << 1, g = (((lighting & 0x03E0) >> 2) + 7) << 1, b = (((lighting & 0x001F) << 3) + 7) << 1;
 				if (r > 255) r = 255;
 				if (g > 255) g = 255;
@@ -112,9 +132,9 @@ TRN.TRLevel.prototype = {
 		}
 
         return color;
-    },
+    }
 
-	createObjectsInLevel : function () {
+	public createObjectsInLevel (): void {
 		for (let i = 0; i < this.trlevel.items.length; ++i) {
 			const item = this.trlevel.items[i];
 
@@ -122,21 +142,22 @@ TRN.TRLevel.prototype = {
 
 			glMatrix.quat.setAxisAngle(q, [0,1,0], glMatrix.glMatrix.toRadian(-(item.angle >> 14) * 90) );
 
-			const m = this.movObjID2Index[item.objectID];
+			const m = this.movObjID2Index.get(item.objectID);
 			if (m == null) {
                 const obj = this.objMgr.createSprite(-item.objectID, roomIndex, this.convertLighting(lighting), true);
                 //console.log('spriteseq', item.objectID, this.convertLighting(lighting))
                 if (obj != null) {
-                    obj.position.set(item.x, -item.y, -item.z);
-                    obj.updateMatrix();
+                    obj.setPosition([item.x, -item.y, -item.z]);
+                    obj.matrixAutoUpdate = true;
+                    //obj.updateMatrix();
                 }
 			} else {
-                let obj = this.objMgr.createMoveable(item.objectID, roomIndex, lighting != -1 ? this.convertIntensity(lighting) : undefined);
+                let obj: IMesh | null = this.objMgr.createMoveable(item.objectID, roomIndex, lighting != -1 ? this.convertIntensity(lighting) : undefined);
 
                 if (obj != null) {
-                    obj.position.set(item.x, -item.y, -item.z);
-                    obj.quaternion.set(q[0], q[1], q[2], q[3]);
-                    //this.sceneRender.add(new THREE.BoxHelper(obj, new THREE.Color(1,1,1)));
+                    obj.setPosition([item.x, -item.y, -item.z]);
+                    obj.setQuaternion(q);
+                    obj.matrixAutoUpdate = true;
                 } else {
                     // moveable is a placeholder with no geometry
                     const spriteSeqObjID = this.confMgr.number('moveable[id="' + item.objectID + '"] > spritesequence', true, -1);
@@ -144,14 +165,15 @@ TRN.TRLevel.prototype = {
                     if (spriteSeqObjID >= 0) {
                         obj = this.objMgr.createSprite(-spriteSeqObjID, roomIndex, [1, 1, 1], true);
                         if (obj != null) {
-                            obj.position.set(item.x, -item.y, -item.z);
-                            obj.updateMatrix();
+                            obj.setPosition([item.x, -item.y, -item.z]);
+                            obj.matrixAutoUpdate = true;
+                            //obj.updateMatrix();
                         }
                     }
                 }
             }
         }
-        
+
 		for (let m = 0; m < this.trlevel.rooms.length; ++m) {
             const room = this.trlevel.rooms[m],
                   info = room.info, 
@@ -159,9 +181,9 @@ TRN.TRLevel.prototype = {
                   data = this.sceneData.objects['room' + m];
 
             // create portals
-            const portals = data.portals, meshPortals = [];
+            const portals = data.portals, meshPortals: Array<IMesh> = [];
             data.meshPortals = meshPortals;
-            for (let p = 0; p < portals.length; ++p) {
+            /*for (let p = 0; p < portals.length; ++p) {
                 const portal = portals[p], geom = new THREE.Geometry();
                 geom.vertices.push(
                     new THREE.Vector3(portal.vertices[0].x, portal.vertices[0].y, portal.vertices[0].z),
@@ -197,7 +219,7 @@ TRN.TRLevel.prototype = {
 				mesh.geometry.computeBoundingSphere();
                 meshPortals.push(mesh);
                 this.sceneRender.add(mesh);
-            }
+            }*/
 
 			// static meshes in the room
 			for (let s = 0; s < room.staticMeshes.length; ++s) {
@@ -216,21 +238,21 @@ TRN.TRLevel.prototype = {
                 
 				glMatrix.quat.setAxisAngle( q, [0,1,0], glMatrix.glMatrix.toRadian(-rot) );
 
-				const obj = this.objMgr.createStaticMesh(objectID, m, this.convertIntensity(staticMesh.intensity1), true);
-
+                const obj = this.objMgr.createStaticMesh(objectID, m, this.convertIntensity(staticMesh.intensity1), true);
+                
                 if (obj != null) {
                     obj.visible = !data.isAlternateRoom;
-                    obj.position.set(x, y, z);
-                    obj.quaternion.set(q[0], q[1], q[2], q[3]);
-                    obj.updateMatrix();
-                    //this.sceneRender.add(new THREE.BoxHelper(obj, new THREE.Color(1,1,1)));
+                    obj.setPosition([x, y, z]);
+                    obj.setQuaternion(q);
+                    obj.matrixAutoUpdate = false;
+                    //obj.updateMatrix();
                 }
             }
             
 			// sprites in the room
 			for (let s = 0; s < rdata.sprites.length; ++s) {
                 const sprite = rdata.sprites[s], 
-                      spriteIndex = sprite.texture;
+                      spriteIndex = sprite.texture,
                       rvertex = rdata.vertices[sprite.vertex],
                       lighting = this.trlevel.rversion == 'TR1' ? rvertex.lighting1 : rvertex.lighting2;
 
@@ -238,9 +260,9 @@ TRN.TRLevel.prototype = {
 
                 if (obj != null) {
                     obj.visible = !data.isAlternateRoom;
-                    obj.position.set(rvertex.vertex.x + info.x, -rvertex.vertex.y, -rvertex.vertex.z - info.z);
-                    obj.updateMatrix();
-                    //this.sceneRender.add(new THREE.BoxHelper(obj, new THREE.Color(1,1,1)));
+                    obj.setPosition([rvertex.vertex.x + info.x, -rvertex.vertex.y, -rvertex.vertex.z - info.z]);
+                    obj.matrixAutoUpdate = true;
+                    //obj.updateMatrix();
                 }
 			}
         }

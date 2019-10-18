@@ -1,12 +1,29 @@
-TRN.AnimationManager = function() {
-    this.paused = false;
-}
+import IGameData from "../Player/IGameData";
+import { ObjectManager } from "../Player/ObjectManager";
+import { MaterialManager } from "../Player/MaterialManager";
+import Track from "../Animation/Track";
+import TrackInstance from "../Animation/TrackInstance";
+import { IMesh } from "../Proxy/IMesh";
+import { Commands } from "./Commands";
 
-TRN.AnimationManager.prototype = {
+export class AnimationManager {
 
-    constructor : TRN.AnimationManager,
+    protected paused: boolean;
+    protected gameData: IGameData;
+    protected sceneData: any;
+    protected matMgr: MaterialManager;
+    protected objMgr: ObjectManager;
+    protected trversion: string;
 
-    initialize : function(gameData) {
+    constructor() {
+        this.paused = false;
+        this.gameData = <any>null;
+        this.matMgr = <any>null;
+        this.objMgr = <any>null;
+        this.trversion = <any>null;
+    }
+
+    public initialize (gameData: IGameData): void {
         this.gameData = gameData;
         this.sceneData = gameData.sceneData;
         this.matMgr = gameData.matMgr;
@@ -14,27 +31,29 @@ TRN.AnimationManager.prototype = {
         this.trversion = gameData.confMgr.trversion;
     
         this.makeTracks();
-    },
+    }
 
-    pause : function(pause) {
+    public pause(pause: boolean): void {
         this.paused = pause;
-    },
+    }
 
-    makeTracks : function() {
-        var animTracks = [];
+    public makeTracks(): void {
+        const animTracks = [];
 
         // create one track per animation
-        for (var t = 0; t < this.sceneData.animTracks.length; ++t) {
-            TRN.Animation.addTrack(this.sceneData.animTracks[t], animTracks);
+        for (let t = 0; t < this.sceneData.animTracks.length; ++t) {
+            const track = Track.createTrack(this.sceneData.animTracks[t]);
+
+            animTracks.push(track);
         }
 
         this.sceneData.animTracks = animTracks;
-    },
+    }
 
-    setAnimation : function (obj, animIndex, desynchro) {
-        var data = this.sceneData.objects[obj.name],
-            track = this.sceneData.animTracks[animIndex + data.animationStartIndex],
-            trackInstance = track ? new TRN.Animation.TrackInstance(track, data.skeleton) : null;
+    public setAnimation(obj: IMesh, animIndex: number, desynchro: boolean = false): TrackInstance | null {
+        const data = this.sceneData.objects[obj.name],
+              track = this.sceneData.animTracks[animIndex + data.animationStartIndex],
+              trackInstance = track ? new TrackInstance(track, data.skeleton) : null;
 
         if (trackInstance) {
             trackInstance.setNextTrackInstance(trackInstance, track.nextTrackFrame);
@@ -48,29 +67,28 @@ TRN.AnimationManager.prototype = {
         }
 
         return trackInstance;
-    },
+    }
 
-	animateObjects : function(delta) {
+	public animateObjects(delta: number): void {
         if (this.paused) {
             return;
         }
 
-        var animatables = this.objMgr.objectList['moveable'];
+        const animatables = this.objMgr.objectList['moveable'];
 
-		for (var objID in animatables) {
-            var lstObj = animatables[objID];
+		for (const objID in animatables) {
+            const lstObj = animatables[objID] as Array<IMesh>;
             
-            for (var i = 0; i < lstObj.length; ++i) {
-                var obj = lstObj[i];
-
-                data = this.sceneData.objects[obj.name];
+            for (let i = 0; i < lstObj.length; ++i) {
+                const obj = lstObj[i],
+                      data = this.sceneData.objects[obj.name];
 
                 if (data.has_anims && data.trackInstance && (obj.visible || this.gameData.isCutscene)) {
                     if (!data.trackInstance.runForward(delta)) {
                         // it's the end of the current track and we are in a cut scene => we link to the next track
-                        var trackInstance = data.trackInstance;
+                        let trackInstance = data.trackInstance;
 
-                        var nextTrackFrame = trackInstance.track.nextTrackFrame + trackInstance.param.curFrame - trackInstance.track.numFrames;//trackInstance.param.interpFactor;
+                        const nextTrackFrame = trackInstance.track.nextTrackFrame + trackInstance.param.curFrame - trackInstance.track.numFrames;//trackInstance.param.interpFactor;
                         
                         trackInstance = data.allTrackInstances[trackInstance.track.nextTrack];
                         data.trackInstance = trackInstance;
@@ -85,7 +103,9 @@ TRN.AnimationManager.prototype = {
                         this.processAnimCommands(data.prevTrackInstance, data.prevTrackInstanceFrame, 1e10, obj);
                         this.processAnimCommands(data.trackInstance, 0, data.trackInstance.param.curFrame, obj);
                     } else {
-                        var frm1 = data.prevTrackInstanceFrame, frm2 = data.trackInstance.param.curFrame;
+                        const frm1 = data.prevTrackInstanceFrame, 
+                              frm2 = data.trackInstance.param.curFrame;
+
                         if (frm1 > frm2) {
                             // we have looped in the same animation
                             this.processAnimCommands(data.trackInstance, frm1, 1e10, obj);
@@ -102,48 +122,42 @@ TRN.AnimationManager.prototype = {
 
                     data.trackInstance.interpolate();
 
-                    var boundingBox = data.trackInstance.track.keys[data.trackInstance.param.curKey].boundingBox;
+                    const boundingBox = data.trackInstance.track.keys[data.trackInstance.param.curKey].boundingBox;
 
-                    boundingBox.getBoundingSphere(obj.geometry.boundingSphere);
-                    obj.geometry.boundingBox = boundingBox;
+                    obj.setBoundingBox(boundingBox);
 
                     if (data.layer) {
                         data.layer.update();
                         data.layer.setBoundingObjects();
                     }
-
-                    if (obj.boxHelper) {
-                        obj.boxHelper.box = boundingBox;
-                    }
                 }
             }
 		}
-	},
+	}
 
-	processAnimCommands : function (trackInstance, prevFrame, curFrame, obj) {
+	public processAnimCommands(trackInstance: TrackInstance, prevFrame: number, curFrame: number, obj: IMesh): void {
+		const commands = trackInstance.track.commands;
 
-		var commands = trackInstance.track.commands;
-
-		for (var i = 0; i < commands.length; ++i) {
-			var command = commands[i];
+		for (let i = 0; i < commands.length; ++i) {
+			const command = commands[i];
 
 			switch (command.cmd) {
 
-				case TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME: {
+				case Commands.ANIMCMD_MISCACTIONONFRAME: {
 
-					var frame = command.params[0] - commands.frameStart, action = command.params[1];
+					var frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1];
 					if (frame < prevFrame || frame >= curFrame) { continue; }
 
 					//console.log(action,'done for frame',frame,obj.name)
 
 					switch (action) {
 
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_COLORFLASH: {
+						case Commands.Misc.ANIMCMD_MISC_COLORFLASH: {
 							this.gameData.globalTintColor[0] = this.gameData.globalTintColor[1] = this.gameData.globalTintColor[2] = (this.gameData.globalTintColor[0] < 0.5 ? 1.0 : 0.1);
 							break;
 						}
 
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
+						/*case Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
                             const layer = this.sceneData.objects[obj.name].layer;
 
                             if (this.trversion == 'TR4') {
@@ -161,7 +175,7 @@ TRN.AnimationManager.prototype = {
 							break;
 						}
 
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN: {
+						case Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN: {
                             const layer = this.sceneData.objects[obj.name].layer;
 
                             if (this.trversion == 'TR4') {
@@ -178,10 +192,10 @@ TRN.AnimationManager.prototype = {
 							break;
 						}
 
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_MESHSWAP1:
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_MESHSWAP2:
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_MESHSWAP3: {
-                            var idx = action - TRN.Animation.Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
+						case Commands.Misc.ANIMCMD_MISC_MESHSWAP1:
+						case Commands.Misc.ANIMCMD_MISC_MESHSWAP2:
+						case Commands.Misc.ANIMCMD_MISC_MESHSWAP3: {
+                            var idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
                             
 							var oswap = this.objMgr.objectList['moveable'][TRN.ObjectID['meshswap' + idx]];
 
@@ -201,19 +215,19 @@ TRN.AnimationManager.prototype = {
                             }
                             
 							break;
-						}
+						}*/
 
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_HIDEOBJECT: {
+						case Commands.Misc.ANIMCMD_MISC_HIDEOBJECT: {
 							obj.visible = false;
 							break;
 						}
 
-						case TRN.Animation.Commands.Misc.ANIMCMD_MISC_SHOWOBJECT: {
+						case Commands.Misc.ANIMCMD_MISC_SHOWOBJECT: {
 							obj.visible = true;
 							break;
                         }
                         
-                        case TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION: {
+                        case Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION: {
                             //console.log('custom function at frame #', curFrame, ' (' + frame + ')');
                             command.params[2]();
                             break;
