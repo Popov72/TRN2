@@ -580,6 +580,9 @@
 				<behaviour name="Lara">
 					<startanim>70</startanim>
 				</behaviour>
+                <behaviour name="SetAnimation" objectid="34">
+                    <anim>7</anim>
+                </behaviour>
 			</level>
 			<level id="karnak1.tr4"			type="normal"	name="Temple Of Karnak">
                 <behaviour name="RemoveObject" objectid="41" cutsceneonly="true"/>

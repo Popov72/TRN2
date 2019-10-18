@@ -4,6 +4,11 @@ import { Box3 } from "../Utils/Box3";
 import { IMaterial } from "./IMaterial";
 import { Position, Quaternion } from "./INode";
 
+export function isMesh(obj: any): obj is IMesh {
+
+        return obj.materials !== undefined;
+
+}
 
 export interface IMesh {
 
