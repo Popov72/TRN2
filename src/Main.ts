@@ -1,11 +1,10 @@
-import { RawLevel } from "./Loading/LevelLoader";
-import LevelConverter from "./Loading/LevelConverter";
-
 import TR4CutSceneDecoder from "./Loading/TR4CutScene/TR4CutSceneDecoder";
 
-import Browser from "./Utils/Browser";
 import { IScene } from "./Proxy/IScene";
+
+import Browser from "./Utils/Browser";
 import { ProgressBar } from "./Utils/ProgressBar";
+
 import MasterLoader from "./Loading/MasterLoader";
 import Play from "./Player/Play";
 
@@ -18,11 +17,60 @@ function setContainerDimensions() {
 	}
 }
 
-jQuery(window).on('resize', function() {
-	setContainerDimensions();
-})
-
+jQuery(window).on('resize', setContainerDimensions);
 jQuery(window).on('load', setContainerDimensions);
+
+jQuery(document).on('keydown', function(event) {
+	//console.log(event.which)
+	switch(event.which) {
+		case 72: // H
+			jQuery("#help").css('display', jQuery('#help').css('display') == 'block' ? 'none' : 'block');
+			break;
+		case 13: // Enter
+			jQuery("#panel").css('display', jQuery('#panel').css('display') == 'block' ? 'none' : 'block');
+			jQuery("#stats").css('display', jQuery('#stats').css('display') == 'block' ? 'none' : 'block');
+			break;
+		case 36: // Home
+            let qgame = Browser.QueryString.trgame, 
+                prm = '';
+			
+			if (qgame) {
+				prm = '?trgame=' + qgame;
+            }
+            
+            document.location.href = 'index.html' + prm;
+			break;
+	}
+});
+
+function loadAndPlayLevel(level: string | any) {
+    const progressbar = new ProgressBar(document.getElementById('container') as Element);
+
+    progressbar.show();
+
+    MasterLoader.loadLevel(level).then( (res) => {
+        if (!showTiles) {
+            const play = new Play(document.getElementById('container') as Element);
+            (window as any).play = play;
+            fetch('/resources/template/help.html').then( (response) => {
+                response.text().then( (html) => {
+                    jQuery(html).appendTo(document.body);
+                });
+            });
+            if (Browser.QueryString.autostart == '1') {
+                progressbar.hide();
+                play.start(res[0], res[1]);
+            } else {
+                progressbar.showStart(function() { 
+                    progressbar.hide(); 
+                    play.start(res[0], res[1]);
+                });
+            }
+        } else {
+            progressbar.hide();
+        }
+    });
+}
 
 function handleFileSelect(evt: Event) {
 
@@ -31,21 +79,12 @@ function handleFileSelect(evt: Event) {
 		const freader = new FileReader();
 		freader.onload = ( (theFile) => {
 			return function(e: any) {
-                const progressbar = new ProgressBar(document.getElementById('container') as Element);
-                MasterLoader.loadLevel({
+                jQuery('#files').css('display', 'none');
+
+                loadAndPlayLevel({
                     "data":         e.target.result,
                     "name":         theFile.name,
                     "showTiles":    showTiles,
-                }, progressbar, (level: RawLevel, scene: IScene) => {
-                    jQuery('#files').css('display', 'none');
-                    const play = new Play(document.getElementById('container') as Element);
-                    (window as any).play = play;
-                    if (Browser.QueryString.autostart == '1') {
-                        progressbar.hide();
-                        play.start(level, scene);
-                    } else {
-                        progressbar.showStart(function() { progressbar.hide(); play.start(level, scene); });
-                    }
                 });
 			};
 		})(f);
@@ -58,34 +97,12 @@ function handleFileSelect(evt: Event) {
 }
 
 if (Browser.QueryString.level) {
-	let html: any;
-	jQuery.ajax({
-		type: "GET",
-		url: '/resources/template/help.html',
-		dataType: "html",
-		cache: false,
-		async: false
-	}).done(function(data) { html = data; });
-
-	jQuery(html).appendTo(document.body);
-
-	const progressbar = new ProgressBar(document.getElementById('container') as Element);
-          
-    MasterLoader.loadLevel('/resources/level/' + Browser.QueryString.level, progressbar, (level: RawLevel, scene: IScene) => {
-        const play = new Play(document.getElementById('container' ) as Element);
-        (window as any).play = play;
-		if (Browser.QueryString.autostart == '1') {
-			progressbar.hide();
-			play.start(level, scene);
-		} else {
-            progressbar.showStart(() => { progressbar.hide(); play.start(level, scene); });
-		}
-	});
+    loadAndPlayLevel('/resources/level/' + Browser.QueryString.level);
 } else {
     jQuery('body').prepend('<input type="file" id="files" multiple="multiple" _style="display: none" />');
 
-    document.getElementById("files")!.style.display = "block";
-    document.getElementById("files")!.addEventListener("change", handleFileSelect, false);
+    jQuery('#files').css('display', 'block');
+    jQuery('#files').on('change', handleFileSelect);
 }
 
 /*

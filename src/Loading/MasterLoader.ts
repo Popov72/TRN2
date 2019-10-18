@@ -2,10 +2,8 @@ import Engine from "../Proxy/Engine";
 import { IMesh } from "../Proxy/IMesh";
 import { IScene } from "../Proxy/IScene";
 
-import { LevelLoader, RawLevel } from "./LevelLoader";
+import { LevelLoader } from "./LevelLoader";
 import LevelConverter from "./LevelConverter";
-
-import { ProgressBar } from "../Utils/ProgressBar";
 
 export default class MasterLoader {
 
@@ -13,38 +11,44 @@ export default class MasterLoader {
 	 	* a string which is the name of the level to download.
 	 	* a JSON object like { data:XXX, name:YYY } where data are the binary data of the TR level and YYY the filename
 	 */	
-	public static async loadLevel(trlevel: string | any, progressbar: ProgressBar, callbackLevelLoaded: any) {
-		progressbar.show();
+	public static loadLevel(trlevel: string | any): Promise<any> {
+        const loader = new LevelLoader();
 
-        const loader = new LevelLoader(),
-              converter = new LevelConverter();
+        return new Promise<any>((resolve, reject) => {
+            if (typeof(trlevel) != 'string') {
+                loader.load(trlevel.data, trlevel.name, trlevel.showTiles);
+                resolve(loader.level);
+            } else {
+                fetch(trlevel).then((response: Response) => {
+                    response.arrayBuffer().then( (blob) => {
+                        loader.load(blob, trlevel);
+                        resolve(loader.level);
+                    });
+                });
+            }
+        }).then( (level) => {
+            if (trlevel.showTiles) {
+                return Promise.resolve(level);
+            }
+    
+            const converter = new LevelConverter();
 
-		if (typeof(trlevel) != 'string') {
-            loader.load(trlevel.data, trlevel.name, trlevel.showTiles);
-		} else {
-            const blob = await (await fetch(trlevel)).arrayBuffer();
+            converter.convert(level);
 
-            loader.load(blob, trlevel);
-        }
+            return Engine.parseScene(converter.sceneJSON).then( (scene: IScene) => {
+                MasterLoader._postProcessLevel(converter.sceneJSON, scene);
 
-        if (trlevel.showTiles) {
-            callbackLevelLoaded(loader.level);
-            return;
-        }
-
-        converter.convert(loader.level);
-
-        Engine.parseScene(converter.sceneJSON, (scene: IScene) => {
-            progressbar.setMessage('Processing...');
-            console.log(scene);
-            window.setTimeout( () => MasterLoader._postProcessLevel(progressbar, callbackLevelLoaded, converter.sceneJSON, scene), 0);
-		});
+                return Promise.resolve([converter.sceneJSON, scene]);
+            });
+        });
 	}
 
-	private static _postProcessLevel(progressbar: any, callbackLevelLoaded: any, sceneJSON: RawLevel, scene: IScene): void {
+	private static _postProcessLevel(sceneJSON: any, scene: IScene): void {
 		const sceneData = sceneJSON.data, sceneRender = scene;
 
         sceneData.textures = sceneRender.textures;
+
+        console.log(scene);
 
         // Set all objects as auto update=false
         // Camera, skies, animated objects will have their matrixAutoUpdate set to true later
@@ -72,7 +76,5 @@ export default class MasterLoader {
 		});
 
         objToRemoveFromScene.forEach( (obj) => sceneRender.remove(obj) );
-
-		callbackLevelLoaded(sceneJSON, scene);
     }
 }
