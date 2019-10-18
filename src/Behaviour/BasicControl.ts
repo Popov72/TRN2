@@ -1,5 +1,6 @@
 import { ICamera } from "../Proxy/ICamera";
-import { IMesh, Quaternion } from "../Proxy/IMesh";
+import { IMesh } from "../Proxy/IMesh";
+import { Quaternion } from "../Proxy/INode";
 import IGameData from "../Player/IGameData";
 
 import { BehaviourManager } from "./BehaviourManager";
