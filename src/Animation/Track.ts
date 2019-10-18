@@ -1,4 +1,4 @@
-import { Box3, Vector3, Quaternion } from "../../threeJS/src/threejs/src/Three";
+import { Box3 } from "../Utils/Box3";
 
 import Key from "./Key";
 
@@ -6,13 +6,15 @@ export default class Track {
 
     private static _counter: number = 0;
 
-    private nextTrack: number;
-    private nextTrackFrame: number;
+    public keys: Array<Key>;
     public remainingFrames: number;
     public numDataPerKey: number;
+    public commandsFrameStart: number;
+
+    private nextTrack: number;
+    private nextTrackFrame: number;
     private boundingBox: Box3;
-    public keys: Array<Key>;
-    private commands: Array<any>;
+    private _commands: Array<any>;
 
     public static createTrack(trackJSON: any): Track {
         const keys = trackJSON.keys;
@@ -22,19 +24,18 @@ export default class Track {
         track.setNextTrack(trackJSON.nextTrack, trackJSON.nextTrackFrame);
         track.setCommands(trackJSON.commands, trackJSON.frameStart);
 
-        /*animTracks.push(track);*/
-
         for (let k = 0; k < keys.length; ++k) {
             const keyJSON = keys[k], dataJSON = keyJSON.data, bbox = keyJSON.boundingBox;
 
-            const boundingBox = new Box3(new Vector3(bbox.xmin, bbox.ymin, bbox.zmin), new Vector3(bbox.xmax, bbox.ymax, bbox.zmax));
+            const boundingBox = new Box3([bbox.xmin, bbox.ymin, bbox.zmin], [bbox.xmax, bbox.ymax, bbox.zmax]);
 
             const key = new Key(keyJSON.time, boundingBox);
 
             for (let d = 0; d < dataJSON.length; ++d) {
-                const q = dataJSON[d].quaternion;
-
-                key.addData(dataJSON[d].position, new Quaternion(q.x, q.y, q.z, q.w));
+                key.addData(
+                    [dataJSON[d].position.x, dataJSON[d].position.y, dataJSON[d].position.z], 
+                    [dataJSON[d].quaternion.x, dataJSON[d].quaternion.y, dataJSON[d].quaternion.z, dataJSON[d].quaternion.w]
+                );
             }
 
             track.addKey(key);
@@ -50,15 +51,20 @@ export default class Track {
         this.remainingFrames = numFrames - Math.floor((numFrames - 1) / frameRate) * frameRate;
         this.numDataPerKey = 99999;
         this.boundingBox = new Box3();
+        this.commandsFrameStart = 0;
 
         if (typeof(id) == 'undefined') {
             this.id = 'track' + (++Track._counter);
         }
 
         this.keys = [];
-        this.commands = [];
+        this._commands = [];
     }
 
+    get commands(): Array<any> {
+        return this._commands;
+    }
+    
     public addKey(key: Key): void {
         this.keys.push(key);
 
@@ -77,8 +83,8 @@ export default class Track {
     }
 
     public setCommands(commands: Array<any>, frameStart: number): void {
-        this.commands = commands;
-        (this.commands as any).frameStart = frameStart;
+        this._commands = commands;
+        this.commandsFrameStart = frameStart;
     }
 
 }

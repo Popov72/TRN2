@@ -1,12 +1,14 @@
-import { Quaternion } from "../../threeJS/src/threejs/src/Three";
+import Engine from "../Proxy/Engine";
+import { INode, Position } from "../Proxy/INode";
 
 import Skeleton from "../Player/Skeleton";
-
 import Track from "./Track";
+
+declare var glMatrix: any;
 
 export default class TrackInstance {
 
-    private track: Track;
+    private _track: Track;
     private skeleton: Skeleton;
     private overallSpeed: number;
     private activateInterpolation: boolean;
@@ -14,25 +16,25 @@ export default class TrackInstance {
     private nextTrackInstanceFrame: number;
     private noInterpolationToNextTrack: boolean;
     private noInterpolationToNextTrackValue: number;
-    private interpolatedData: any;
+    private interpolatedData: Array<INode>;
     private param: any;
     private paramSave: any;
 
     constructor(track: Track, skeleton: Skeleton) {
 
-        this.track = track;
+        this._track = track;
         this.skeleton = skeleton;
 
         this.overallSpeed = 1.0;
         this.activateInterpolation = true;
 
-        this.nextTrackInstance = null;
+        this.nextTrackInstance = <any>null;
         this.nextTrackInstanceFrame = 0;
 
         this.noInterpolationToNextTrack = false;
         this.noInterpolationToNextTrackValue = 0.0;
 
-        this.interpolatedData = null;
+        this.interpolatedData = <any>null;
 
         this.param = {
             curKey : 0,
@@ -44,6 +46,10 @@ export default class TrackInstance {
         this.pushState();
     }
 
+    get track(): Track {
+        return this._track;
+    }
+
     private pushState(): void {
         this.paramSave = jQuery.extend(true, {}, this.param);
     }
@@ -53,7 +59,7 @@ export default class TrackInstance {
     }
 
     public setNextTrackInstance(trackInstance: TrackInstance, frame: number): void {
-        if (frame >= trackInstance.track.numFrames) {
+        if (frame >= trackInstance._track.numFrames) {
             frame = 0;
         }
 
@@ -63,16 +69,13 @@ export default class TrackInstance {
 
     private makeCache(): void {
         this.interpolatedData = [];
-        for (let numData = 0; numData < this.track.numDataPerKey; ++numData) {
-            this.interpolatedData.push({
-                position : { x:0, y:0, z:0 },
-                quaternion : new Quaternion()
-            });
+        for (let numData = 0; numData < this._track.numDataPerKey; ++numData) {
+            this.interpolatedData.push(Engine.makeNode());
         }
     }
 
     public runForward(elapsedTime: number): boolean {
-        this.param.curFrame += (elapsedTime * this.track.animFPS) * this.overallSpeed;
+        this.param.curFrame += (elapsedTime * this._track.animFPS) * this.overallSpeed;
 
         return this.setCurrentFrame(this.param.curFrame);
     }
@@ -81,13 +84,13 @@ export default class TrackInstance {
         this.param.curFrame = frame;
 
         // Have we reached the end of the animation ?
-        if (this.param.curFrame >= this.track.numFrames) {
+        if (this.param.curFrame >= this._track.numFrames) {
 
             // Yes. Is the next animation not the current one ?
-            if (this.nextTrackInstance.track.id != this.track.id) {
+            if (this.nextTrackInstance._track.id != this._track.id) {
 
                 // Yes. The caller must handle this situation
-                const curKey = this.param.curFrame / this.track.frameRate;
+                const curKey = this.param.curFrame / this._track.frameRate;
 
                 this.param.interpFactor = this.activateInterpolation ? curKey - Math.floor(curKey) : 0.0;
                 this.noInterpolationToNextTrack = false;
@@ -96,27 +99,27 @@ export default class TrackInstance {
             }
 
             // The next animation is the current one (looping). Reset internal variables
-            this.param.curFrame -= this.track.numFrames;
+            this.param.curFrame -= this._track.numFrames;
             this.param.curFrame += this.nextTrackInstanceFrame;
             
             // The next test should always fail, but if the frame rate is *very* bad
             // (elapsedTime is huge), it could succeed
-            if (this.param.curFrame >= this.track.numFrames) this.param.curFrame = this.track.numFrames - 1;
+            if (this.param.curFrame >= this._track.numFrames) this.param.curFrame = this._track.numFrames - 1;
 
             this.noInterpolationToNextTrack = false;
         }
 
         // Calculate the current key
-        const curKey = this.param.curFrame / this.track.frameRate;
+        const curKey = this.param.curFrame / this._track.frameRate;
 
         this.param.curKey = Math.floor(curKey);
 
         // Use the next key for the interpolation. Handle the case where the
         // next key is in the next animation and not in the current one
-        const nextFrame = Math.floor((this.param.curKey + 1) * this.track.frameRate);
+        const nextFrame = Math.floor((this.param.curKey + 1) * this._track.frameRate);
         let speedFactor = 1.0;
 
-        if (nextFrame < this.track.numFrames) {
+        if (nextFrame < this._track.numFrames) {
             // The key to use for the interpolation is the next one in the current animation
             this.param.nextKeyIsInCurrentTrack = true;
         } else {
@@ -127,7 +130,7 @@ export default class TrackInstance {
             // the first one of the next animation. Indeed, interpolation would fail if the number
             // of frames after the last key of the current animation is not equal to the animation
             // frameRate (which is possible)
-            speedFactor = this.track.frameRate / this.track.remainingFrames;
+            speedFactor = this._track.frameRate / this._track.remainingFrames;
         }
 
         this.param.interpFactor = this.activateInterpolation ? (curKey - this.param.curKey) * speedFactor : 0.0;
@@ -139,50 +142,58 @@ export default class TrackInstance {
         return true;
     }
 
-    public interpolate(buffer: any, detectRecursInfinite: boolean): void {
+    public interpolate(buffer?: Array<INode>, detectRecursInfinite: boolean = false): void {
         this._interpolate(buffer, detectRecursInfinite);
         this.skeleton.updateBoneMatrices();
     }
 
-    private _interpolate(buffer: any, detectRecursInfinite: boolean): void {
+    private _interpolate(buffer?: Array<INode>, detectRecursInfinite: boolean = false): void {
         if (!this.interpolatedData) {
             this.makeCache();
         }
 
         const curKey = this.param.curKey;
-        let internalBuffer = buffer == null;
+        let internalBuffer = !buffer;
 
-        if (internalBuffer) {
+        if (!buffer) {
             buffer = this.skeleton.bones;
         }
 
-        if (this.param.nextKeyIsInCurrentTrack || this.track.numKeys == 1 || detectRecursInfinite) {
+        if (this.param.nextKeyIsInCurrentTrack || this._track.numKeys == 1 || detectRecursInfinite) {
             let nextKey = curKey + 1;
 
-            if (nextKey >= this.track.numKeys) nextKey = 0; // to handle animations with only one key
+            if (nextKey >= this._track.numKeys) nextKey = 0; // to handle animations with only one key
 
-            if (detectRecursInfinite && !this.param.nextKeyIsInCurrentTrack && this.track.numKeys != 1) {
-                nextKey = this.track.numKeys - 1;
+            if (detectRecursInfinite && !this.param.nextKeyIsInCurrentTrack && this._track.numKeys != 1) {
+                nextKey = this._track.numKeys - 1;
             }
 
-            for (var numData = 0; numData < this.track.numDataPerKey; ++numData) {
+            for (let numData = 0; numData < this._track.numDataPerKey; ++numData) {
 
-                var dataCurKey  = this.track.keys[curKey].data[numData];
-                var dataNextKey = this.track.keys[nextKey].data[numData];
+                const dataCurKey  = this._track.keys[curKey].data[numData];
+                const dataNextKey = this._track.keys[nextKey].data[numData];
 
                 if (!buffer[numData] || !dataCurKey || !dataNextKey) continue; // without this line, the lost artifact TR3 levels bug
 
-                buffer[numData].position.x = dataCurKey.position.x + (dataNextKey.position.x - dataCurKey.position.x) * this.param.interpFactor;
-                buffer[numData].position.y = dataCurKey.position.y + (dataNextKey.position.y - dataCurKey.position.y) * this.param.interpFactor;
-                buffer[numData].position.z = dataCurKey.position.z + (dataNextKey.position.z - dataCurKey.position.z) * this.param.interpFactor;
+                const newpos: Position = [
+                    dataCurKey.position[0] + (dataNextKey.position[0] - dataCurKey.position[0]) * this.param.interpFactor,
+                    dataCurKey.position[1] + (dataNextKey.position[1] - dataCurKey.position[1]) * this.param.interpFactor,
+                    dataCurKey.position[2] + (dataNextKey.position[2] - dataCurKey.position[2]) * this.param.interpFactor
+                ];
 
                 if (internalBuffer) {
-                    buffer[numData].position.x += this.skeleton.bonesStartingPos[numData].pos_init[0];
-                    buffer[numData].position.y += this.skeleton.bonesStartingPos[numData].pos_init[1];
-                    buffer[numData].position.z += this.skeleton.bonesStartingPos[numData].pos_init[2];
+                    buffer[numData].setPosition([
+                        newpos[0] + this.skeleton.bonesStartingPos[numData].pos_init[0], 
+                        newpos[1] + this.skeleton.bonesStartingPos[numData].pos_init[1], 
+                        newpos[2] + this.skeleton.bonesStartingPos[numData].pos_init[2]
+                    ]);
+                } else {
+                    buffer[numData].setPosition(newpos);
                 }
 
-                Quaternion.slerp(dataCurKey.quaternion, dataNextKey.quaternion, buffer[numData].quaternion, this.param.interpFactor);
+                const q = buffer[numData].quaternion;
+                glMatrix.quat.slerp(q, dataCurKey.quaternion, dataNextKey.quaternion, this.param.interpFactor);
+                buffer[numData].setQuaternion(q);
             }
         } else {
             this.nextTrackInstance.pushState();
@@ -192,23 +203,31 @@ export default class TrackInstance {
 
             this.nextTrackInstance.popState();
 
-            for (let numData = 0; numData < this.track.numDataPerKey; ++numData) {
-                const dataCurKey  = this.track.keys[curKey].data[numData];
+            for (let numData = 0; numData < this._track.numDataPerKey; ++numData) {
+                const dataCurKey  = this._track.keys[curKey].data[numData];
                 const dataNextKey = this.interpolatedData[numData];
 
                 if (!buffer[numData] || !dataCurKey || !dataNextKey) continue; // without this line, the lost artifact TR3 levels bug
-
-                buffer[numData].position.x = dataCurKey.position.x + (dataNextKey.position.x - dataCurKey.position.x) * this.param.interpFactor;
-                buffer[numData].position.y = dataCurKey.position.y + (dataNextKey.position.y - dataCurKey.position.y) * this.param.interpFactor;
-                buffer[numData].position.z = dataCurKey.position.z + (dataNextKey.position.z - dataCurKey.position.z) * this.param.interpFactor;
+                
+                const newpos: Position = [
+                    dataCurKey.position[0] + (dataNextKey.position[0] - dataCurKey.position[0]) * this.param.interpFactor,
+                    dataCurKey.position[1] + (dataNextKey.position[1] - dataCurKey.position[1]) * this.param.interpFactor,
+                    dataCurKey.position[2] + (dataNextKey.position[2] - dataCurKey.position[2]) * this.param.interpFactor
+                ];
 
                 if (internalBuffer) {
-                    buffer[numData].position.x += this.skeleton.bonesStartingPos[numData].pos_init[0];
-                    buffer[numData].position.y += this.skeleton.bonesStartingPos[numData].pos_init[1];
-                    buffer[numData].position.z += this.skeleton.bonesStartingPos[numData].pos_init[2];
+                    buffer[numData].setPosition([
+                        newpos[0] + this.skeleton.bonesStartingPos[numData].pos_init[0], 
+                        newpos[1] + this.skeleton.bonesStartingPos[numData].pos_init[1], 
+                        newpos[2] + this.skeleton.bonesStartingPos[numData].pos_init[2]
+                    ]);
+                } else {
+                    buffer[numData].setPosition(newpos);
                 }
 
-                Quaternion.slerp(dataCurKey.quaternion, dataNextKey.quaternion, buffer[numData].quaternion, this.param.interpFactor);
+                const q = buffer[numData].quaternion;
+                glMatrix.quat.slerp(q, dataCurKey.quaternion, dataNextKey.quaternion, this.param.interpFactor);
+                buffer[numData].setQuaternion(q);
             }
         }
     }

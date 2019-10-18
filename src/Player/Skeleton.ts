@@ -1,16 +1,17 @@
-import { Object3D } from "../../threeJS/src/threejs/src/Three";
+import Engine from "../Proxy/Engine";
+import { INode } from "../Proxy/INode";
 
 export default class Skeleton {
 
-    private _bones: Array<any>;
-    private _bonesStartingPos: Array<any>;
-    private _boneMatrices: Float32Array;
+    private _bones:             Array<INode>;
+    private _bonesStartingPos:  Array<any>;
+    private _boneMatrices:      Float32Array;
 
     constructor(bonesStartingPos: any) {
         this._bones = [];
         this._bonesStartingPos = bonesStartingPos;
 
-        this._boneMatrices = new Float32Array( 64 * 16 );
+        this._boneMatrices = new Float32Array(64 * 16);
 
         for (let i = 0; i < 64; ++i) {
             this._boneMatrices.set([1], 0 + 16 * i);
@@ -21,7 +22,7 @@ export default class Skeleton {
 
         for (let b = 0; b < bonesStartingPos.length; ++b) {
             const parent = bonesStartingPos[b].parent,
-                  bone = new Object3D();
+                  bone = Engine.makeNode();
 
             this.bones.push(bone);
 
@@ -44,7 +45,7 @@ export default class Skeleton {
     }
 
     public updateBoneMatrices(): void {
-        this._bones[0].updateMatrixWorld(true);
+        this._bones[0].updateMatrixWorld();
         this._setBoneMatrices();
     }
 
@@ -52,7 +53,7 @@ export default class Skeleton {
         for (let b = 0; b < this._bones.length; b ++) {
             const bone = this._bones[b];
 
-            bone.matrixWorld.toArray(this._boneMatrices, b * 16);
+            bone.matrixWorldToArray(this._boneMatrices, b * 16);
         }
     }
 
