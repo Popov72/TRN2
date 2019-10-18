@@ -1,6 +1,5 @@
 import Engine from "../Proxy/Engine";
 
-import { ICamera } from "../Proxy/ICamera";
 import { IScene } from "../Proxy/IScene";
 import { IRenderer } from "../Proxy/IRenderer";
 
@@ -8,10 +7,12 @@ import Browser from "../Utils/Browser";
 import IGameData from "./IGameData";
 import { baseFrameRate, ObjectID } from "../Constants";
 import { RawLevel } from "../Loading/LevelLoader";
+import { AnimationManager } from "../Animation/AnimationManager";
 import { BehaviourManager } from "../Behaviour/BehaviourManager";
 import { ShaderManager } from "../ShaderManager";
 import { ObjectManager } from "./ObjectManager";
 import { MaterialManager } from "./MaterialManager";
+import { TRLevel } from "./TRLevel";
 import { Panel } from "../Utils/Panel";
 
 declare var Stats: any;
@@ -41,8 +42,8 @@ export default class Play {
             "objMgr": <any>null,
             "matMgr": <any>null,
             "confMgr": <any>null,
-            "anmMgr": null,
-            "trlvl": null,
+            "trlvl":  <any>null,
+            "anmMgr": <any>null,
 
             "startTime": -1,
             "lastTime": -1,
@@ -88,23 +89,25 @@ export default class Play {
             console.log("Can't find camera!");
         }
 
-        camera.setPosition([70469,7070,-39321]);
-        camera.setQuaternion([0.18415,-0.58809,-0.13972,-0.77506]);
-        //camera.setQuaternion([0, 0, 0, 1]);
+        //camera.setPosition([70469,7070,-39321]);
+        //camera.setQuaternion([0.18415,-0.58809,-0.13972,-0.77506]);
+
+        camera.setPosition([32751,-827,-55979]);
+        camera.setQuaternion([0.20377,0.22280,0.04768,-0.95214]);
 
         this.gameData.confMgr = this.gameData.sceneData.trlevel.confMgr;
         this.gameData.bhvMgr  = new BehaviourManager();
         this.gameData.matMgr  = new MaterialManager();
         this.gameData.objMgr  = new ObjectManager();
-        //!this.gameData.trlvl   = new TRLevel();
-        //!this.gameData.anmMgr  = new AnimationManager();
+        this.gameData.trlvl   = new TRLevel();
+        this.gameData.anmMgr  = new AnimationManager();
         this.gameData.shdMgr  = new ShaderManager();
 
         this.gameData.bhvMgr.initialize(this.gameData);
         this.gameData.matMgr.initialize(this.gameData);
         this.gameData.objMgr.initialize(this.gameData);
-        //!this.gameData.trlvl.initialize(this.gameData);
-        //!this.gameData.anmMgr.initialize(this.gameData);
+        this.gameData.trlvl.initialize(this.gameData);
+        this.gameData.anmMgr.initialize(this.gameData);
 
         delete this.gameData.sceneData.trlevel.confMgr;
         delete this.gameData.sceneData.trlevel;
@@ -136,7 +139,7 @@ export default class Play {
 			this.gameData.camera.setQuaternion([parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3])]);
 		}
 
-        //!this.gameData.trlvl.createObjectsInLevel();
+        this.gameData.trlvl.createObjectsInLevel();
 
         // create behaviours
         let allPromises: Array<Promise<void>> = this.gameData.bhvMgr.loadBehaviours() || [];
@@ -194,7 +197,7 @@ export default class Play {
 
         this.gameData.bhvMgr.frameStarted(curTime, delta);
 
-		/*!this.gameData.anmMgr.animateObjects(delta);*/
+		this.gameData.anmMgr.animateObjects(delta);
 
 		this.gameData.camera.updateMatrixWorld();
 
