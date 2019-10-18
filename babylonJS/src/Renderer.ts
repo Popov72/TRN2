@@ -1,16 +1,23 @@
-import { Engine, Scene as BScene, SceneInstrumentation } from "babylonjs";
+import { Engine, Scene as BScene, SceneInstrumentation, EngineInstrumentation, PerfCounter } from "babylonjs";
 
 import { IRenderer, PerfData } from "../../src/Proxy/IRenderer";
+
 import Camera from "./Camera";
 import Scene from "./Scene";
 
 export default class Renderer implements IRenderer {
 
     protected _engine: Engine;
+    protected _sctc: PerfCounter;
 
     constructor(container: Element, engine: Engine, canvas: HTMLCanvasElement) {
         container.appendChild(canvas);
         this._engine = engine;
+
+        const ei = new EngineInstrumentation(this._engine);
+        ei.captureShaderCompilationTime = true;
+
+        this._sctc = ei.shaderCompilationTimeCounter;
     }
 
     get engine(): Engine {
@@ -37,7 +44,7 @@ export default class Renderer implements IRenderer {
     }
  
     public getPerfData(scenes: Array<Scene>): PerfData {
-        let numDrawCalls = 0, numObjects = 0, numGeometries = 0, numFaces = 0, numTextures = 0, numParticles = 0;
+        let numDrawCalls = 0, numObjects = 0, numGeometries = 0, numFaces = 0, numTextures = 0, numParticles = 0, numPrograms = 0;
 
         scenes.forEach( (scene) => {
             numObjects += scene.object.getActiveMeshes().length;
@@ -48,6 +55,7 @@ export default class Renderer implements IRenderer {
         });
 
         numDrawCalls = new SceneInstrumentation(scenes[0].object).drawCallsCounter.current;
+        numPrograms = this._sctc.count;
 
         return {
             "numDrawCalls" : numDrawCalls,
@@ -56,7 +64,7 @@ export default class Renderer implements IRenderer {
             "numTextures": numTextures,
             "numGeometries": numGeometries,
             "numParticles": numParticles,
-            "numPrograms": -1,
+            "numPrograms": numPrograms,
         }
     }
     

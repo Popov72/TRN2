@@ -5,4 +5,6 @@ export interface IMaterial {
 
     uniformsUpdated(names?: Array<string>): void;
     
+    clone(): IMaterial;
+    
 }

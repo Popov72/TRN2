@@ -1,65 +1,74 @@
-import { Scene as BScene, Color4 } from "babylonjs";
+import { 
+    Scene as BScene, 
+    Color4 
+} from "babylonjs";
 
 import { IScene, TextureList } from "../../src/Proxy/IScene";
+
 import Camera from "./Camera";
 import Mesh from "./Mesh";
 
 export default class Scene implements IScene {
 
-    public textures: TextureList | undefined;
+    public textures:        TextureList | undefined;
 
-    protected scene: BScene;
-    protected children: Array<Mesh>;
-    protected camera: Camera;
+    protected _scene:       BScene;
+    protected _children:    Array<Mesh>;
+    protected _camera:      Camera;
 
     constructor(scene: BScene, textures?: TextureList) {
-        this.scene = scene;
-        this.children = [];
+        this._scene = scene;
+        this._children = [];
         this.textures = textures;
-        this.scene.clearColor = new Color4(0,0,0,1)
-        this.camera = <any>null;
+        this._scene.clearColor = new Color4(0, 0, 0, 1);
+        this._camera = <any>null;
     }
 
     get totalNumObjects(): number {
-        return this.scene.getActiveMeshes().length;
+        return this._scene.getActiveMeshes().length;
     }
 
     get object(): BScene {
-        return this.scene;
+        return this._scene;
     }
 
     public traverse( callback: (obj: Mesh) => void ): void {
-		for (let i = 0; i < this.children.length; i ++ ) {
-			this.children[i].traverse(callback);
-		}
+		for (let i = 0; i < this._children.length; i ++ ) {
+            const child = this._children[i];
+            callback(child);
+        }
     }
 
     public add(obj: Mesh): void {
-        if (this.scene.meshes.indexOf(obj.object) < 0) {
-            this.scene.addMesh(obj.object);
+        if (this._scene.meshes.indexOf(obj.object) < 0) {
+            this._scene.addMesh(obj.object);
         }
-        this.children.push(obj);
+        this._children.push(obj);
     }
 
     public remove(obj: Mesh): void {
-        this.scene.removeMesh(obj.object);
+		const index = this._children.indexOf(obj);
+
+        if (index !== - 1) {
+			this._children.splice(index, 1);
+        }
+        this._scene.removeMesh(obj.object);
     }
 
     public setCamera(camera: Camera): void {
-        this.camera = camera;
+        this._camera = camera;
     }
 
     public getCamera(): Camera {
-        return this.camera;
+        return this._camera;
     }
 
     public getObjectByName(name: string): Mesh | undefined {
-		for (let i = 0; i < this.children.length; ++i) {
-			const child = this.children[i],
-			      object = child.getObjectByName(name);
+		for (let i = 0; i < this._children.length; ++i) {
+			const child = this._children[i];
 
-			if (object !== undefined) {
-				return object;
+			if (child.name === name) {
+				return child;
 			}
 		}
 

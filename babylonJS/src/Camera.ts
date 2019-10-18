@@ -4,42 +4,42 @@ import {
     Vector3
 } from "babylonjs";
 
-import { Position, Quaternion } from "../../src/Proxy/IMesh";
-import { ICamera } from "../../src/Proxy/ICamera";
 import { Behaviour } from "../../src/Behaviour/Behaviour";
+import { ICamera } from "../../src/Proxy/ICamera";
+import { Position, Quaternion } from "../../src/Proxy/INode";
 
-const  rotY180 = BQuaternion.RotationAxis(new Vector3(0,1,0), Math.PI);//new BQuaternion(0, -1, 0, 0); // x <=> -x
+const  rotY180 = BQuaternion.RotationAxis(new Vector3(0,1,0), Math.PI); // x <=> -x
 
 export default class Camera implements ICamera {
 
     public behaviours: Array<Behaviour>;
 
-    protected camera: TargetCamera;
+    protected _camera: TargetCamera;
 
     constructor(camera: TargetCamera) {
-        this.camera = camera;
+        this._camera = camera;
         this.behaviours = [];
     }
 
     get object(): TargetCamera {
-        return this.camera;
+        return this._camera;
     }
     
     public get position(): Position {
-        return [this.camera.position.x, this.camera.position.y, this.camera.position.z];
+        return [this._camera.position.x, this._camera.position.y, this._camera.position.z];
     }
 
     public setPosition(pos: Position): void {
-        this.camera.position.set(...pos);
+        this._camera.position.set(...pos);
     }
 
     public get quaternion(): Quaternion {
-        let q = this.camera.rotationQuaternion.multiply(rotY180);
+        let q = this._camera.rotationQuaternion.multiply(rotY180);
         return [q.x, q.y, q.z, q.w];
         //return [this.camera.rotationQuaternion.x, this.camera.rotationQuaternion.y, this.camera.rotationQuaternion.z, this.camera.rotationQuaternion.w];
     }
     public setQuaternion(quat: Quaternion): void {
-        this.camera.rotationQuaternion = new BQuaternion(...quat).multiply(rotY180);
+        this._camera.rotationQuaternion = new BQuaternion(...quat).multiply(rotY180);
         //this.camera.rotationQuaternion.set(...quat);
     }
 
@@ -51,10 +51,9 @@ export default class Camera implements ICamera {
     }
 
     public updateMatrixWorld(): void {
-        this.camera.computeWorldMatrix();
+        this._camera.computeWorldMatrix();
     }
 
     public updateProjectionMatrix(): void {
-        //!this.camera.updateProjectionMatrix();
     }
 }

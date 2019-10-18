@@ -1,9 +1,14 @@
+import { ICamera } from "../Proxy/ICamera";
+import { IMaterial } from "../Proxy/IMaterial";
 import { IMesh } from "../Proxy/IMesh";
 import { IScene } from "../Proxy/IScene";
+import { Position} from "../Proxy/INode";
+
+import { AnimationManager } from "../Animation/AnimationManager";
 import { BehaviourManager } from "../Behaviour/BehaviourManager";
-import { Position } from "../Proxy/IMesh";
 import IGameData from "../Player/IGameData";
-import { ICamera } from "../Proxy/ICamera";
+import { MaterialManager } from "./MaterialManager";
+import Skeleton from "../Player/Skeleton";
 
 export interface MeshList {
     [id:number]: IMesh | Array<IMesh>,
@@ -22,6 +27,8 @@ export class ObjectManager {
     private sceneRender: IScene;
     private sceneData: any;
     private bhvMgr: BehaviourManager;
+    private matMgr: MaterialManager;
+    private anmMgr: AnimationManager;
     private camera: ICamera;
 
     constructor() {
@@ -29,6 +36,8 @@ export class ObjectManager {
         this.count = 0;
         this.sceneRender = <any>null;
         this.bhvMgr = <any>null;
+        this.matMgr = <any>null;
+        this.anmMgr = <any>null;
         this.gameData = <any>null;
         this.camera = <any>null;
     }
@@ -37,9 +46,9 @@ export class ObjectManager {
         this.gameData = gameData;
         this.sceneRender = gameData.sceneRender;
         this.sceneData = gameData.sceneData;
-        //!this.matMgr = gameData.matMgr;
+        this.matMgr = gameData.matMgr;
         this.bhvMgr = gameData.bhvMgr;
-        /*this.anmMgr = gameData.anmMgr;*/
+        this.anmMgr = gameData.anmMgr;
         this.camera = gameData.camera;
     
         this.buildLists();
@@ -82,12 +91,8 @@ export class ObjectManager {
             }
         } );
     }
-/*
-    createSprite : function(spriteID, roomIndex, color, addToScene) {
-        if (addToScene === undefined) {
-            addToScene = true;
-        }
 
+    public createSprite(spriteID: number, roomIndex: number, color: Array<number>, addToScene: boolean = true): IMesh | null {
         const data = this.sceneData.objects[spriteID < 0 ? 'spriteseq' + (-spriteID) : 'sprite' + spriteID];
 
         if (spriteID < 0) {
@@ -98,22 +103,23 @@ export class ObjectManager {
             return null;
         }
 
-        let obj = data.liveObj.clone();
+        let obj = (data.liveObj as IMesh).clone();
 
         // copy material
-        const newMaterial = [];
+        const newMaterial: Array<IMaterial> = [];
 
-        for (let m = 0; m < obj.material.length; ++m) {
-            const material = obj.material[m];
+        for (let m = 0; m < obj.materials.length; ++m) {
+            const material = obj.materials[m];
             
             newMaterial[m] = material.clone();
-            newMaterial[m].userData = material.userData;
             newMaterial[m].uniforms.lighting.value = color;
             newMaterial[m].uniforms.map.value = material.uniforms.map.value;
             newMaterial[m].uniforms.mapBump.value = material.uniforms.mapBump.value;
+
+            newMaterial[m].uniformsUpdated();
         }
 
-        obj.material = newMaterial;
+        obj.materials = newMaterial;
         obj.name = data.type + spriteID + '_room' + roomIndex + '_dyncreate_' + (this.count++);
         obj.visible = true;
 
@@ -133,7 +139,7 @@ export class ObjectManager {
             this.objectList[data.type][spriteID] = lst;
         }
 
-        lst.push(obj);
+        (lst as Array<IMesh>).push(obj);
 
         if (addToScene) {
             this.sceneRender.add(obj);
@@ -142,33 +148,30 @@ export class ObjectManager {
         return obj;
     }
 
-    createStaticMesh : function(staticmeshID, roomIndex, color, addToScene) {
-        if (addToScene === undefined) {
-            addToScene = true;
-        }
-
+    public createStaticMesh(staticmeshID: number, roomIndex: number, color: Array<number>, addToScene: boolean = true): IMesh | null {
         const data = this.sceneData.objects['staticmesh' + staticmeshID];
 
         if (!data || !data.liveObj) {
             return null;
         }
 
-        let obj = data.liveObj.clone();
+        let obj = (data.liveObj as IMesh).clone();
 
         // copy material
-        const newMaterial = [];
+        const newMaterial: Array<IMaterial> = [];
 
-        for (let m = 0; m < obj.material.length; ++m) {
-            const material = obj.material[m];
+        for (let m = 0; m < obj.materials.length; ++m) {
+            const material = obj.materials[m];
             
             newMaterial[m] = material.clone();
-            newMaterial[m].userData = material.userData;
             newMaterial[m].uniforms.lighting.value = color;
             newMaterial[m].uniforms.map.value = material.uniforms.map.value;
             newMaterial[m].uniforms.mapBump.value = material.uniforms.mapBump.value;
+
+            newMaterial[m].uniformsUpdated();
         }
 
-        obj.material = newMaterial;
+        obj.materials = newMaterial;
         obj.name = 'staticmesh' + staticmeshID + '_room' + roomIndex + '_dyncreate_' + (this.count++);
         obj.visible = true;
 
@@ -188,7 +191,7 @@ export class ObjectManager {
             this.objectList[data.type][staticmeshID] = lst;
         }
 
-        lst.push(obj);
+        (lst as Array<IMesh>).push(obj);
 
         if (addToScene) {
             this.sceneRender.add(obj);
@@ -197,51 +200,44 @@ export class ObjectManager {
         return obj;
     }
 
-    createMoveable : function(moveableID, roomIndex, extrnColor, addToScene, setAnimation) {
-        if (addToScene === undefined) {
-            addToScene = true;
-        }
-
-        if (setAnimation === undefined) {
-            setAnimation = true;
-        }
-
+    public createMoveable(moveableID: number, roomIndex: number, extrnColor?: Array<number>, addToScene: boolean = true, setAnimation: boolean = true): IMesh | null {
         const data = this.sceneData.objects['moveable' + moveableID];
 
         if (!data || !data.liveObj) {
             return null;
         }
 
-        let obj = data.liveObj.clone();
+        let obj = (data.liveObj as IMesh).clone();
 
         // copy material
-        const newMaterial = [];
+        const newMaterial: Array<IMaterial> = [];
 
-        const skeleton = typeof(setAnimation) == 'boolean' ? new TRN.Skeleton(data.bonesStartingPos) : setAnimation;
+        const skeleton = typeof(setAnimation) == 'boolean' ? new Skeleton(data.bonesStartingPos) : setAnimation;
 
-        for (let m = 0; m < obj.material.length; ++m) {
-            const material = obj.material[m];
+        for (let m = 0; m < obj.materials.length; ++m) {
+            const material = obj.materials[m];
             
             newMaterial[m] = material.clone();
-            newMaterial[m].userData = material.userData;
             newMaterial[m].uniforms.map.value = material.uniforms.map.value;
             newMaterial[m].uniforms.mapBump.value = material.uniforms.mapBump.value;
             newMaterial[m].uniforms.boneMatrices = { "type":"m4v", "value":null };
             if (skeleton) {
-                newMaterial[m].uniforms.boneMatrices.value = skeleton.getBoneMatrices();
+                newMaterial[m].uniforms.boneMatrices.value = skeleton.boneMatrices;
             }
 
             if (extrnColor) {
                 newMaterial[m].uniforms.ambientColor.value = extrnColor;
             }
+
+            newMaterial[m].uniformsUpdated();
         }
 
-        obj.material = newMaterial;
+        obj.materials = newMaterial;
         obj.name = 'moveable' + moveableID + '_room' + roomIndex + '_dyncreate_' + (this.count++);
         obj.visible = true;
         obj.matrixAutoUpdate = true;
 
-        const newData = {
+        const newData: any = {
             "type"   	            : 'moveable',
             "roomIndex"             : roomIndex,
             "has_anims"				: data.has_anims && typeof(setAnimation) == 'boolean',
@@ -264,7 +260,7 @@ export class ObjectManager {
             this.objectList['moveable'][moveableID] = lst;
         }
 
-        lst.push(obj);
+        (lst as Array<IMesh>).push(obj);
 
         this.matMgr.createLightUniformsForObject(obj);
 
@@ -278,7 +274,7 @@ export class ObjectManager {
 
         return obj;
     }
-*/
+
     public removeObjectFromScene(obj: IMesh, removeBehaviours?: boolean) {
         if (removeBehaviours === undefined) {
             removeBehaviours = true;

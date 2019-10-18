@@ -1,36 +1,32 @@
 import { PerspectiveCamera } from "three";
 
 import { ICamera } from "../../src/Proxy/ICamera";
-import { Behaviour } from "../../src/Behaviour/Behaviour";
 
-import Mesh from "./Mesh";
+import Node from "./Node";
 
-export default class Camera extends Mesh implements ICamera {
+export default class Camera extends Node implements ICamera {
 
-    public behaviours: Array<Behaviour>;
-    
-    protected camera: PerspectiveCamera;
+    protected _camera: PerspectiveCamera;
 
     constructor(camera: PerspectiveCamera) {
         super(camera);
 
-        this.camera = camera;
-        this.behaviours = [];
+        this._camera = camera;
     }
 
     get object(): PerspectiveCamera {
-        return this.camera;
+        return this._camera;
     }
     
     get aspect(): number {
-        return this.camera.aspect;
+        return this._camera.aspect;
     }
 
     set aspect(a: number) {
-        this.camera.aspect = a;
+        this._camera.aspect = a;
     }
 
     public updateProjectionMatrix(): void {
-        this.camera.updateProjectionMatrix();
+        this._camera.updateProjectionMatrix();
     }
 }

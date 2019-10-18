@@ -1,63 +1,77 @@
 import { 
     AbstractMesh,
+    BoundingInfo,
     MultiMaterial,
     ShaderMaterial,
     Vector3, 
     Quaternion as BQuaternion
 } from "babylonjs";
 
+import { IMesh } from "../../src/Proxy/IMesh";
+import { Position, Quaternion } from "../../src/Proxy/INode";
+import { Box3 } from "../../src/Utils/Box3";
 import { Behaviour } from "../../src/Behaviour/Behaviour";
 
-import { IMesh, Position, Quaternion } from "../../src/Proxy/IMesh";
 import Material from "./Material";
 
-const  rotY180 = new BQuaternion(0, -1, 0, 0); // x <=> -x
+//const  rotY180 = new BQuaternion(0, -1, 0, 0); // x <=> -x
 
 export default class Mesh implements IMesh {
 
-    public materials: Array<Material>;
-    public behaviours: Array<Behaviour>;
+    public behaviours:      Array<Behaviour>;
 
-    protected obj: AbstractMesh;
-    protected children: Array<Mesh>;
+    protected _materials:   Array<Material>;
+    protected _mesh:        AbstractMesh;
+    protected _visible:     boolean;
 
-    private _visible: boolean;
-
-    get object(): AbstractMesh {
-        return this.obj
-    }
-    
     constructor(obj: AbstractMesh) {
-        this.obj = obj;
-        this.children = [];
+        this._mesh = obj;
         this.behaviours = [];
-        this.materials = [];
+        this._materials = [];
         this._visible = true;
 
         if (obj.material instanceof MultiMaterial) {
             for (let m = 0; m < obj.material.subMaterials.length; ++m) {
-                this.materials.push(new Material(obj, obj.material.subMaterials[m] as ShaderMaterial));
+                this._materials.push(new Material(obj.material.subMaterials[m] as ShaderMaterial));
             }
         }
     }
 
+    get object(): AbstractMesh {
+        return this._mesh
+    }
+    
+    get materials(): Array<Material> {
+        return this._materials;
+    }
+
+    set materials(mat: Array<Material>) {
+        this._materials = mat;
+
+        const objmat = this._mesh.material = new MultiMaterial(this._mesh.name, this._mesh.getScene());
+
+        objmat.subMaterials = [];
+
+        mat.forEach((m) => objmat.subMaterials.push(m.material));
+    }
+
     public get position(): Position {
-        return [this.obj.position.x, this.obj.position.y, this.obj.position.z];
+        return [this._mesh.position.x, this._mesh.position.y, this._mesh.position.z];
     }
 
     public setPosition(pos: Position): void {
-        this.obj.position.set(...pos);
+        this._mesh.position.set(...pos);
     }
 
     public get quaternion(): Quaternion {
-        let q = this.obj.rotationQuaternion!.multiply(rotY180);
-        return [q.x, q.y, q.z, q.w];
-        //return [this.obj.rotationQuaternion!.x, this.obj.rotationQuaternion!.y, this.obj.rotationQuaternion!.z, this.obj.rotationQuaternion!.w];
+        //let q = this.obj.rotationQuaternion!.multiply(rotY180);
+        //return [q.x, q.y, q.z, q.w];
+        return [this._mesh.rotationQuaternion!.x, this._mesh.rotationQuaternion!.y, this._mesh.rotationQuaternion!.z, this._mesh.rotationQuaternion!.w];
     }
 
     public setQuaternion(quat: Quaternion): void {
-        this.obj.rotationQuaternion = new BQuaternion(...quat).multiply(rotY180);
-        //this.obj.rotationQuaternion!.set(...quat);
+        //this.obj.rotationQuaternion = new BQuaternion(...quat).multiply(rotY180);
+        this._mesh.rotationQuaternion!.set(...quat);
     }
 
     get matrixAutoUpdate(): boolean {
@@ -68,11 +82,11 @@ export default class Mesh implements IMesh {
     }
 
     get name(): string {
-        return this.obj.name;
+        return this._mesh.name;
     }
 
     set name(n: string) {
-        this.obj.name = n;
+        this._mesh.name = n;
     }
 
     get visible(): boolean {
@@ -80,59 +94,29 @@ export default class Mesh implements IMesh {
     }
 
     set visible(v: boolean) {
-        this.obj.setEnabled(v);
+        this._mesh.setEnabled(v);
         this._visible = v;
     }
 
-    public traverse( callback: (obj: Mesh) => void ): void {
-		callback(this);
-
-		for (let i = 0; i < this.children.length; i ++ ) {
-			this.children[i].traverse(callback);
-		}
-    }
-
-    public add(child: Mesh): void {
-        this.obj.addChild(child.obj);
-        this.children.push(child);
-    }
-
-    public remove(child: Mesh): void {
-		const index = this.children.indexOf(child);
-
-        if (index !== - 1) {
-			this.children.splice(index, 1);
-            this.obj.removeChild(child.obj);
-		}
-    }
-
-    public getObjectByName(name: string): Mesh | undefined {
-		if (this.obj.name === name) {
-            return this;
-        }
-
-		for (let i = 0; i < this.children.length; ++i) {
-			const child = this.children[i],
-			      object = child.getObjectByName(name);
-
-			if (object !== undefined) {
-				return object;
-			}
-		}
-
-		return undefined;
-    }
-
     public updateMatrixWorld(): void {
-        this.obj.computeWorldMatrix();
+        this._mesh.computeWorldMatrix();
     }
 
     public containsPoint(pos: Position): boolean {
-        return this.obj.getBoundingInfo().boundingBox.intersectsPoint(new Vector3(pos[0], pos[1], pos[2]));
+        return this._mesh.getBoundingInfo().boundingBox.intersectsPoint(new Vector3(pos[0], pos[1], pos[2]));
     }
 
     public showBoundingBox(show: boolean): void {
-        this.obj.showBoundingBox = show;
+        this._mesh.showBoundingBox = show;
+    }
+
+    public clone(): Mesh {
+        return new Mesh(this._mesh.clone(this._mesh.name, null as any) as AbstractMesh);
+    }
+
+    public setBoundingBox(box: Box3): void {
+        const boundingInfo = new BoundingInfo(new Vector3(box.min[0], box.min[1], box.min[2]), new Vector3(box.max[0], box.max[1], box.max[2]), this._mesh.getWorldMatrix());
+        this._mesh.setBoundingInfo(boundingInfo);
     }
 
 }

@@ -1,6 +1,6 @@
 import { Behaviour } from "../Behaviour/Behaviour";
 
-import { Position, Quaternion } from "./IMesh";
+import { Position, Quaternion } from "./INode";
 
 export interface ICamera {
 

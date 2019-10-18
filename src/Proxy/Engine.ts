@@ -1,12 +1,14 @@
-import { IMesh } from "./IMesh";
 import { ICamera } from "./ICamera";
-import { IScene } from "./IScene";
+import { IMesh } from "./IMesh";
+import { INode } from "./INode";
 import { IRenderer } from "./IRenderer";
+import { IScene } from "./IScene";
 
 export interface funcPointers {
     "makeMesh":         (obj: any) => IMesh,
     "makeCamera":       (obj: any) => ICamera,
-    "parseScene":       (sceneJSON: any, callback: (scene: IScene) => void ) => void,
+    "makeNode":         () => INode,
+    "parseScene":       (sceneJSON: any) => Promise<IScene>,
     "createRenderer":   (container: Element) => IRenderer,
 };
 
@@ -26,8 +28,12 @@ export default class Engine {
         return Engine.pointers.makeCamera(obj);
     }
 
-    public static parseScene(sceneJSON: any, callback: (scene: IScene) => void ): void {
-        Engine.pointers.parseScene(sceneJSON, callback);
+    public static makeNode(): INode {
+        return Engine.pointers.makeNode();
+    }
+
+    public static parseScene(sceneJSON: any): Promise<any> {
+        return Engine.pointers.parseScene(sceneJSON);
     }
 
     public static createRenderer(container: Element): IRenderer {

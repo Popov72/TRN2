@@ -31,12 +31,12 @@ import {
     Mesh as TMesh,
     PerspectiveCamera,
     Scene as TScene,
-    ShaderMaterial,
     Texture
 } from 'three';
 
-import Mesh from "./Mesh";
 import Camera from "./Camera";
+import Mesh from "./Mesh";
+import Node from "./Node";
 import Scene  from "./Scene";
 
 export default class SceneParser extends Loader {
@@ -75,7 +75,10 @@ export default class SceneParser extends Loader {
 
 		var object: any = this.parseObject( json.object, geometries, materials, textures );
 
-        object.setCamera(object.getObjectByName("camera1"));
+        const camera = object.getObjectByName("camera1");
+        
+        object.setCamera(camera);
+        object.remove(camera);
 
 		return object;
 
@@ -314,7 +317,7 @@ export default class SceneParser extends Loader {
 	public parseObject ( data: any, geometries: any, materials: any, textures: any ) {
 
         var object: any;
-        var tobject: Mesh;
+        var tobject: Node;
 
 		function getGeometry( name: string ) {
 
@@ -419,7 +422,6 @@ export default class SceneParser extends Loader {
 
 			default:
 
-                //object = new Object3D();
                 console.log(data);
 
                 throw "Unknown object type! " + data.type

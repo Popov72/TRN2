@@ -112,9 +112,9 @@ export default class SceneParser {
 
         this.createScene();
 
-        console.log(this.scene);
-
         //this.scene.debugLayer.show();
+
+        this.scene.getBoundingBoxRenderer().showBackLines = false;
 
         onLoad(this.tscene);
 	}
@@ -132,7 +132,7 @@ export default class SceneParser {
                     break;
 
                 case "Mesh":
-                    if (!object.name.startsWith('room')) continue;
+                    //if (!object.name.startsWith('room76') && !object.name.startsWith('moveable425') && !object.name.startsWith('room146')) continue;
                     //if (object.name != "room23") continue;
                     this.createMesh(object);
                 break;
@@ -224,7 +224,7 @@ export default class SceneParser {
                 const material = this.getMaterial(materials[m]);
 
                 let uniformsUsed = new Set<string>(),
-                    vertexCode =this.getShader("Vertex", material.vertexShader, uniformsUsed),
+                    vertexCode = this.getShader("Vertex", material.vertexShader, uniformsUsed),
                     fragmentCode = this.getShader("Fragment", material.fragmentShader, uniformsUsed);
 
                 let uniforms = Array.from<string>(uniformsUsed);
@@ -296,9 +296,11 @@ export default class SceneParser {
                 'precision highp float;\n' +
                 'uniform mat4 world;\n' +
                 'uniform mat4 worldView;\n' +
+                'uniform mat4 view;\n' +
                 'uniform mat4 projection;\n\n' +
                 'attribute vec3 position;\n' +
                 'attribute vec2 uv;\n' +
+                'attribute vec3 normal;\n' +
                 code;
         } else {
             code =

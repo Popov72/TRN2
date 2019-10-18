@@ -1,22 +1,26 @@
 import {
-    AbstractMesh,
     ShaderMaterial,
-    Vector3, Vector4
+    Vector3, 
+    Vector4
 } from "babylonjs";
 
 import { IMaterial } from "../../src/Proxy/IMaterial";
 
 export default class Material implements IMaterial {
 
-    public userData: any;
-    public uniforms: any;
+    public userData:    any;
+    public uniforms:    any;
 
-    private material: ShaderMaterial;
+    private _material:  ShaderMaterial;
 
-    constructor(obj: AbstractMesh, mat: ShaderMaterial) {
-        this.material = mat;
+    constructor(mat: ShaderMaterial) {
+        this._material = mat;
         this.userData = mat.metadata.userData;
         this.uniforms = mat.metadata.uniforms;
+    }
+
+    get material(): ShaderMaterial {
+        return this._material;
     }
 
     public uniformsUpdated(names?: Array<string>): void {
@@ -38,30 +42,74 @@ export default class Material implements IMaterial {
     protected _setUniformValue(uname: string, uval: any): void {
         switch(uval.type) {
             case 'i':
-                this.material.setInt(uname, uval.value);
+                this._material.setInt(uname, uval.value);
                 break;
             case 'f':
-                this.material.setFloat(uname, uval.value);
+                this._material.setFloat(uname, uval.value);
                 break;
             case 'f3':
                 if (!uval._value) {
                     uval._value = new Vector3(0, 0, 0);
                 }
                 uval._value.copyFromFloats(uval.value[0], uval.value[1], uval.value[2]);
-                this.material.setVector3(uname, uval._value);
-                break;
-            case 'fv1':
-            case 'fv':
-                this.material.setFloats(uname, uval.value);
+                this._material.setVector3(uname, uval._value);
                 break;
             case 'f4':
                 if (!uval._value) {
                     uval._value = new Vector4(0, 0, 0, 0);
                 }
                 uval._value.copyFromFloats(uval.value[0], uval.value[1], uval.value[2], uval.value[3]);
-                this.material.setVector4(uname, uval._value);
+                this._material.setVector4(uname, uval._value);
+                break;
+            case 'fv1':
+                this._material.setFloats(uname, uval.value);
+                break;
+            case 'fv':
+                this._material.setArray3(uname, uval.value);
+                break;
+            case 'm4v':
+                /*if (this._material.getEffect() === null) {
+                    this._material.isReady();
+                }
+                this._material.getEffect()!.setMatrices(uname, uval.value);*/
+                (this._material as any).setMatrices(uname, uval.value);
                 break;
         }
     }
 
+    public clone(): Material {
+        const shd = this._material.clone(this._material.name);
+
+        shd.alphaMode = this._material.alphaMode;
+
+        shd.metadata = {
+            "userData": this.userData,
+            "uniforms": this.cloneUniforms(this.uniforms),
+        }
+
+        return new Material(shd);
+    }
+
+    protected cloneUniforms(src: any): any {
+        const dst: any = {};
+    
+        for (const u in src) {
+            dst[u] = {};
+    
+            for (const p in src[u]) {
+                const property = src[u][p];
+    
+                if (p === "_value") continue;
+
+                if (Array.isArray(property)) {
+                    dst[u][p] = property.slice();
+                } else {
+                    dst[u][p] = property;
+                }
+            }
+        }
+    
+        return dst;
+    }
+    
 }

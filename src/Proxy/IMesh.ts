@@ -1,9 +1,9 @@
 import { Behaviour } from "../Behaviour/Behaviour";
+import { Box3 } from "../Utils/Box3";
 
 import { IMaterial } from "./IMaterial";
+import { Position, Quaternion } from "./INode";
 
-export type Position = [ number, number, number ];
-export type Quaternion = [ number, number, number, number ];
 
 export interface IMesh {
 
@@ -16,17 +16,17 @@ export interface IMesh {
     readonly quaternion: Quaternion;
     setQuaternion(quat: Quaternion): void;
 
-    matrixAutoUpdate: boolean;
+    matrixAutoUpdate: boolean; // the setter should update the local model matrix each time it is called
     name: string;
     visible: boolean;
-
-    add(obj: IMesh): void;
-
-    remove(obj: IMesh): void;
 
     updateMatrixWorld(): void;
 
     containsPoint(pos: Position): boolean;
 
     showBoundingBox(show: boolean): void;
+
+    clone(): IMesh;
+
+    setBoundingBox(box: Box3): void;
 }
