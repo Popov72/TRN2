@@ -13,8 +13,6 @@ export class BasicControl extends BasicControlBase {
     constructor(nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) {
         super(nbhv, gameData, objectid, objecttype);
         
-        //this.xSign = -1;
-
         const sceneRender: BScene = (gameData.sceneRender as Scene).object;
 
         sceneRender.onPointerObservable.add( ( pointerInfo ) => {
