@@ -1,7 +1,6 @@
 import {
     Buffer,
     Camera as BCamera,
-    Effect,
     Engine,
     Mesh as BMesh,
     MultiMaterial,
@@ -17,72 +16,10 @@ import {
 
 import { TextureList } from "../../src/Proxy/IScene";
 
-import Mesh from "./Mesh";
 import Camera from "./Camera";
+import Mesh from "./Mesh";
 import Scene  from "./Scene";
-
-/*
-  Stolen from GLTF v1.0 loader
-*/
-enum ETokenType {
-    IDENTIFIER = 1,
-
-    UNKNOWN = 2,
-    END_OF_INPUT = 3
-}
-
-class Tokenizer {
-    private _toParse: string;
-    private _pos: number = 0;
-    private _maxPos: number;
-
-    public currentToken: ETokenType = ETokenType.UNKNOWN;
-    public currentIdentifier: string = "";
-    public currentString: string = "";
-    public isLetterOrDigitPattern: RegExp = /^[a-zA-Z0-9]+$/;
-
-    constructor(toParse: string) {
-        this._toParse = toParse;
-        this._maxPos = toParse.length;
-    }
-
-    public getNextToken(): ETokenType {
-        if (this.isEnd()) { return ETokenType.END_OF_INPUT; }
-
-        this.currentString = this.read();
-        this.currentToken = ETokenType.UNKNOWN;
-
-        if (this.currentString === "_" || this.isLetterOrDigitPattern.test(this.currentString)) {
-            this.currentToken = ETokenType.IDENTIFIER;
-            this.currentIdentifier = this.currentString;
-            while (!this.isEnd() && (this.isLetterOrDigitPattern.test(this.currentString = this.peek()) || this.currentString === "_")) {
-                this.currentIdentifier += this.currentString;
-                this.forward();
-            }
-        }
-
-        return this.currentToken;
-    }
-
-    public peek(): string {
-        return this._toParse[this._pos];
-    }
-
-    public read(): string {
-        return this._toParse[this._pos++];
-    }
-
-    public forward(): void {
-        this._pos++;
-    }
-
-    public isEnd(): boolean {
-        return this._pos >= this._maxPos;
-    }
-}
-
-const tokenSource = ["modelMatrix", "modelViewMatrix",  "projectionMatrix", "viewMatrix",   "normalMatrix", "cameraPosition"],
-      tokenDest =   ["world",       "worldView",        "projection",       "view",         null,           null];
+import Shader  from "./Shader";
 
 export default class SceneParser {
 
@@ -92,7 +29,6 @@ export default class SceneParser {
     private textureMap: {
         [name: string] : Texture
     };
-    private shaderMap: Map<string, number>;
 
     private scene: BScene;
     private tscene: Scene;
@@ -104,7 +40,6 @@ export default class SceneParser {
         this.textures = [];
         this.tscene = new Scene(this.scene, this.textures);
         this.textureMap = {};
-        this.shaderMap = new Map();
     }
 
 	public parse(json: any, onLoad: any): void {
@@ -224,8 +159,8 @@ export default class SceneParser {
                 const material = this.getMaterial(materials[m]);
 
                 let uniformsUsed = new Set<string>(),
-                    vertexCode = this.getShader("Vertex", material.vertexShader, uniformsUsed),
-                    fragmentCode = this.getShader("Fragment", material.fragmentShader, uniformsUsed);
+                    vertexCode = Shader.getShader("Vertex", material.name, material.vertexShader, uniformsUsed),
+                    fragmentCode = Shader.getShader("Fragment", material.name, material.fragmentShader, uniformsUsed);
 
                 let uniforms = Array.from<string>(uniformsUsed);
                 let samplers = ["map", "mapBump"];
@@ -290,75 +225,6 @@ export default class SceneParser {
         this.tscene.add(new Mesh(mesh));
     }
 
-    private getShader(shaderType: string, code: string, uniformsUsed: Set<string>): string {
-        if (shaderType == 'Vertex') {
-            code = 
-                'precision highp float;\n' +
-                'uniform mat4 world;\n' +
-                'uniform mat4 worldView;\n' +
-                'uniform mat4 view;\n' +
-                'uniform mat4 projection;\n\n' +
-                'attribute vec3 position;\n' +
-                'attribute vec2 uv;\n' +
-                'attribute vec3 normal;\n' +
-                code;
-        } else {
-            code =
-                'precision highp float;\n' +
-                code;
-        }
-
-        code = this.parseShader(code, uniformsUsed);
-        
-        let num = this.shaderMap.get(code);
-
-        if (num === undefined) {
-            num = this.shaderMap.size;
-            this.shaderMap.set(code, num);
-            Effect.ShadersStore[`TRN${num}${shaderType}Shader`] = code;
-        }
-
-        return `TRN${num}`;
-    }
-
-    private parseShader(code: string, uniformsUsed: Set<string>): string {
-        let tokenizer = new Tokenizer(code),
-            newcode = "";
-
-        while (!tokenizer.isEnd() && tokenizer.getNextToken()) {
-            let tokenType = tokenizer.currentToken;
-
-            if (tokenType !== ETokenType.IDENTIFIER) {
-                newcode += tokenizer.currentString;
-                continue;
-            }
-
-            const token = this.parseShaderTokens(tokenizer);
-            if (token == null) {
-                console.log(code);
-                throw `Can't parse shader because the token "${tokenizer.currentIdentifier}" is used in the original shader and can't be mapped!`;
-            }
-
-            uniformsUsed.add(token);
-
-            newcode += token;
-        }
-
-        return newcode;
-    }
-
-    private parseShaderTokens(tokenizer: Tokenizer): string | null {
-        for (let i = 0; i < tokenSource.length; ++i) {
-            const tokenSrc = tokenSource[i];
-    
-            if (tokenizer.currentIdentifier === tokenSrc) {
-                return tokenDest[i];
-            }
-        }
-    
-        return tokenizer.currentIdentifier;
-    };
-    
     private getImage(id: string): any {
         for (let i = 0; i < this.json.images.length; ++i) {
             const image = this.json.images[i];
