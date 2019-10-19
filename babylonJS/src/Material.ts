@@ -143,5 +143,9 @@ export default class Material implements IMaterial {
     
         return dst;
     }
-    
+
+    public setZBias(factor: number, unit: number): void {
+        this._material.zOffset = factor;
+    }
+
 }

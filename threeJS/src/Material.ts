@@ -53,4 +53,10 @@ export default class Material implements IMaterial {
         return new Material(this._material.clone());
     }
     
+    public setZBias(factor: number, unit: number): void {
+        this._material.polygonOffset = true;
+        this._material.polygonOffsetFactor = factor;
+        this._material.polygonOffsetUnits = unit;
+    }
+
 }

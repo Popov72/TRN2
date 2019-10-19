@@ -8,3 +8,4 @@ import "../../src/Behaviour/SetAnimation";
 import "../../src/Behaviour/Sky";
 import "../../src/Behaviour/Sprite";
 import "../../src/Behaviour/UVRotate";
+import "../../src/Behaviour/Zbias";

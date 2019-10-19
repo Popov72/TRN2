@@ -12,4 +12,5 @@ export interface IMaterial {
     
     clone(): IMaterial;
     
+    setZBias(factor: number, unit: number): void;
 }
