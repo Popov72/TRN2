@@ -10,8 +10,9 @@ declare var glMatrix: any;
 
 export class TRLevel {
 
+    public trlevel: any;
+
     private movObjID2Index: Map<number, number>;
-    private trlevel: any;
     private sceneRender: IScene;
     private sceneData: any;
     private objMgr: ObjectManager;
