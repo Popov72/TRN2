@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform int useFog;
 uniform sampler2D map;
 uniform sampler2D mapBump;

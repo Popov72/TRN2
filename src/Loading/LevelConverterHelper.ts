@@ -61,7 +61,7 @@ export default class LevelConverterHelper {
         const matName = 'TR_' + objType;
 
         const mat = {
-            "type": "ShaderMaterial",
+            "type": "RawShaderMaterial",
             "name": matName,
             "uniforms": {
                 "map":          { type: "t",  value: "" },
@@ -77,11 +77,14 @@ export default class LevelConverterHelper {
                 "lighting":     { type: "f3", value: [0, 0, 0] },
                 "camPosition":  { type: "f3", value: [0, 0, 0] }
             },
-            "vertexShader": this.shaderMgr.getVertexShader(objType),
-            "fragmentShader": this.shaderMgr.getFragmentShader('standard'),
+            "vertexShader": "",
+            "fragmentShader": "",
             "vertexColors": false,
             "userData": {}
         };
+
+        let vertexShaderName = objType,
+            fragmentShaderName = "standard";
 
         switch(objType) {
             case 'moveable':
@@ -92,13 +95,16 @@ export default class LevelConverterHelper {
                 break;
             case 'sky':
                 mat.vertexColors = false;
-                mat.fragmentShader = this.shaderMgr.getFragmentShader('sky');
+                fragmentShaderName = "sky";
                 break;
             case 'skydome':
-                mat.fragmentShader = this.shaderMgr.getFragmentShader('skydome');
+                fragmentShaderName = "skydome";
                 mat.vertexColors = false;
                 break;
         }
+
+        mat.vertexShader = this.shaderMgr.getVertexShader(vertexShaderName);
+        mat.fragmentShader = this.shaderMgr.getFragmentShader(fragmentShaderName);
 
         mat.vertexShader   = mat.vertexShader.replace(/##tr_version##/g, this.sc.data.trlevel.rversion.substr(2));
         mat.fragmentShader = mat.fragmentShader.replace(/##tr_version##/g, this.sc.data.trlevel.rversion.substr(2));

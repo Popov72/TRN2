@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform sampler2D map;
 
 varying vec3 vColor;

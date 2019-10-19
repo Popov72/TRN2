@@ -1,3 +1,13 @@
+precision highp float;
+
+uniform mat4 modelMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+attribute vec3 position;
+attribute vec2 uv;
+attribute vec3 normal;
+
 attribute vec3 vertColor;
 
 varying vec2 vUv;
