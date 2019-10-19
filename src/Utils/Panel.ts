@@ -1,5 +1,4 @@
 import IGameData from "../Player/IGameData";
-import Engine from "../Proxy/Engine";
 import { IRenderer } from "../Proxy/IRenderer";
 
 export class Panel {
@@ -31,10 +30,12 @@ export class Panel {
 
 	public show(): void {
 		this.elem.css('display', 'block');
+        jQuery("#stats").css('display', 'block');
     }
     
 	public hide(): void {
 		this.elem.css('display', 'none');
+        jQuery("#stats").css('display', 'none');
 	}
 
 	public showInfo(): void {
