@@ -24,6 +24,7 @@ export interface IMesh {
     matrixAutoUpdate: boolean; // the setter should update the local model matrix each time it is called
     name: string;
     visible: boolean;
+    renderOrder: number;
 
     updateMatrixWorld(): void;
 

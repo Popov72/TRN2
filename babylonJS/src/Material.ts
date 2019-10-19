@@ -23,6 +23,38 @@ export default class Material implements IMaterial {
         return this._material;
     }
 
+    get depthWrite(): boolean {
+        return !this._material.disableDepthWrite;
+    }
+
+    set depthWrite(dw: boolean) {
+        this._material.disableDepthWrite = !dw;
+    }
+
+    get vertexShader(): string {
+        const mat = this._material;
+
+        return (mat as any)._shaderPath.vertex;
+    }
+
+    set vertexShader(vs: string) {
+        const mat = this._material;
+
+        (mat as any)._shaderPath.vertex = vs;
+    }
+
+    get fragmentShader(): string {
+        const mat = this._material;
+
+        return (mat as any)._shaderPath.fragment;
+    }
+
+    set fragmentShader(fs: string) {
+        const mat = this._material;
+
+        (mat as any)._shaderPath.fragment = fs;
+    }
+
     public uniformsUpdated(names?: Array<string>): void {
         if (names !== undefined) {
             for (let i = 0; i < names.length; ++i) {

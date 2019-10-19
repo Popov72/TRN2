@@ -21,6 +21,32 @@ export default class Material implements IMaterial {
         return this._material;
     }
 
+    get depthWrite(): boolean {
+        return this._material.depthWrite;
+    }
+
+    set depthWrite(d: boolean) {
+        this._material.depthWrite = d;
+    }
+    
+    get vertexShader(): string {
+        return this._material.vertexShader;
+    }
+
+    set vertexShader(vs: string) {
+        this._material.vertexShader = vs;
+        this._material.needsUpdate = true;
+    }
+
+    get fragmentShader(): string {
+        return this._material.fragmentShader;
+    }
+
+    set fragmentShader(fs: string) {
+        this._material.fragmentShader = fs;
+        this._material.needsUpdate = true;
+    }
+
     public uniformsUpdated(names?: Array<string> | null): void { }
 
     public clone(): Material {

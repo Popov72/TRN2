@@ -98,6 +98,14 @@ export default class Mesh implements IMesh {
         this._visible = v;
     }
 
+    get renderOrder(): number {
+        return this._mesh.renderingGroupId;
+    }
+
+    set renderOrder(ro: number) {
+        this._mesh.renderingGroupId = ro;
+    }
+
     public updateMatrixWorld(): void {
         this._mesh.computeWorldMatrix();
     }

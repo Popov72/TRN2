@@ -62,6 +62,14 @@ export default class Node implements INode {
         this._obj.visible = v;
     }
 
+    get renderOrder(): number {
+        return this._obj.renderOrder;
+    }
+
+    set renderOrder(ro: number) {
+        this._obj.renderOrder = ro;
+    }
+
     public add(child: Node): void {
         this._obj.add(child._obj);
         this._children.push(child);
