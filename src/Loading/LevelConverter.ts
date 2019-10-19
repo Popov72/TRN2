@@ -584,8 +584,8 @@ export default class LevelConverter {
 					glMatrix.quat.setAxisAngle(qy, [0,1,0], -angleY);
 					glMatrix.quat.setAxisAngle(qz, [0,0,1], -angleZ);
 
-					glMatrix.quat.multiply(qy, qy, qx);
-					glMatrix.quat.multiply(qy, qy, qz);
+					glMatrix.quat.mul(qy, qy, qx);
+					glMatrix.quat.mul(qy, qy, qz);
 
                     keyData.push({
                         "position": 	{ x:transX, y:transY, z:transZ },
