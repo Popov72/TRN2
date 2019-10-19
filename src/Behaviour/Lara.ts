@@ -7,6 +7,7 @@ import { ObjectManager } from "../Player/ObjectManager";
 import { ConfigManager } from "../ConfigManager";
 import { AnimationManager } from "../Animation/AnimationManager";
 import { ObjectID } from "../Constants";
+import { Layer, LAYER, MASK } from "../Player/Layer";
 
 declare var glMatrix: any;
 
@@ -37,10 +38,10 @@ export class Lara extends Behaviour {
 
         this.lara = lstObjs![0] as IMesh;
 
-        const dataLara = this.sceneData.objects[this.lara.name]/*,
-              layer = new TRN.Layer(this.lara, this.gameData)*/;
+        const dataLara = this.sceneData.objects[this.lara.name],
+              layer = new Layer(this.lara, this.gameData);
 
-        //!dataLara.layer = layer;
+        dataLara.layer = layer;
 
         if (!this.gameData.isCutscene) {
             if (startTrans) {
@@ -82,13 +83,13 @@ export class Lara extends Behaviour {
         ObjectID.PistolAnim = this.nbhv.animobject && this.nbhv.animobject.pistol ? parseInt(this.nbhv.animobject.pistol) : -1;
 
         const mvbPistolAnim = this.objMgr.createMoveable(ObjectID.PistolAnim, -1, undefined, true, dataLara.skeleton);
-        /*!if (mvbPistolAnim) {
+        if (mvbPistolAnim) {
             if (this.confMgr.trversion == 'TR4') {
                 // for some reason, pistol animation mesh is only for left hand in TR4... So copy it to do right hand animation
-                new TRN.MeshBuilder(mvbPistolAnim).copyFacesWithSkinIndex(TRN.Layer.BONE.ARM_L3, TRN.Layer.BONE.ARM_R3);
+                //!new TRN.MeshBuilder(mvbPistolAnim).copyFacesWithSkinIndex(TRN.Layer.BONE.ARM_L3, TRN.Layer.BONE.ARM_R3);
             }
-            layer.setMesh(TRN.Layer.LAYER.WEAPON, mvbPistolAnim, 0);
-        }*/
+            layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
+        }
 
         // create "holster empty" object
         ObjectID.HolsterEmpty = this.nbhv.animobject && this.nbhv.animobject.holster ? parseInt(this.nbhv.animobject.holster) : -1;
@@ -111,18 +112,18 @@ export class Lara extends Behaviour {
         }*/
 
         // create the meshswap objects
-        /*const meshSwapIds = [
+        const meshSwapIds = [
                 this.confMgr.number('meshswap > objid1', true, 0),
                 this.confMgr.number('meshswap > objid2', true, 0),
                 this.confMgr.number('meshswap > objid3', true, 0)
               ];
+
         for (let i = 0; i < meshSwapIds.length; ++i) {
             ObjectID['meshswap' + (i+1)] = meshSwapIds[i];
             if (ObjectID['meshswap' + (i+1)] > 0) {
                 const mvb = this.objMgr.createMoveable(ObjectID['meshswap' + (i+1)], -1, undefined, true, dataLara.skeleton);
                 if (mvb) {
-                    new TRN.MeshBuilder(mvb).makeSkinIndicesList();
-                    layer.setMask(mvb, 0);
+                    mvb.visible = false;
                 }
             }
         }
@@ -131,14 +132,14 @@ export class Lara extends Behaviour {
         layer.setBoundingObjects();
 
         if (this.confMgr.trversion == 'TR4') {
-            if (mvbHolsterFull) {
-                layer.updateMask(TRN.Layer.LAYER.HOLSTER_FULL, TRN.Layer.MASK.LEG_L1 | TRN.Layer.MASK.LEG_R1);
-            }
+            /*if (mvbHolsterFull) {
+                layer.updateMask(LAYER.HOLSTER_FULL, MASK.LEG_L1 | MASK.LEG_R1);
+            }*/
         } else if (mvbPistolAnim) {
             // put pistols in Lara holsters
-            layer.updateMask(TRN.Layer.LAYER.WEAPON, TRN.Layer.MASK.LEG_L1 | TRN.Layer.MASK.LEG_R1);
-            layer.updateMask(TRN.Layer.LAYER.MAIN,   TRN.Layer.MASK.LEG_L1 | TRN.Layer.MASK.LEG_R1);
-        }*/
+            layer.updateMask(LAYER.WEAPON, MASK.LEG_L1 | MASK.LEG_R1);
+            layer.updateMask(LAYER.MAIN,   MASK.LEG_L1 | MASK.LEG_R1);
+        }
 
         return [BehaviourRetCode.keepBehaviour, null];
     }
@@ -146,13 +147,6 @@ export class Lara extends Behaviour {
     public getObject(): IMesh {
         return this.lara;
     }
-
-    /*public frameEnded(curTime: number, delta: number): void {
-        for (let m = 0; m < this.lara.materials.length; ++m) {
-            const material = this.lara.materials[m];
-            material.uniformsUpdated();
-        }
-    }*/
 
 }
 

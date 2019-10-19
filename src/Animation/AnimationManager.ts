@@ -5,6 +5,8 @@ import Track from "../Animation/Track";
 import TrackInstance from "../Animation/TrackInstance";
 import { IMesh } from "../Proxy/IMesh";
 import { Commands } from "./Commands";
+import { ObjectID } from "../Constants";
+import { LAYER, MASK } from "../Player/Layer";
 
 export class AnimationManager {
 
@@ -145,7 +147,7 @@ export class AnimationManager {
 
 				case Commands.ANIMCMD_MISCACTIONONFRAME: {
 
-					var frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1];
+					const frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1];
 					if (frame < prevFrame || frame >= curFrame) { continue; }
 
 					//console.log(action,'done for frame',frame,obj.name)
@@ -157,17 +159,17 @@ export class AnimationManager {
 							break;
 						}
 
-						/*case Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
+						case Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
                             const layer = this.sceneData.objects[obj.name].layer;
 
                             if (this.trversion == 'TR4') {
-                                layer.updateMask(TRN.Layer.LAYER.HOLSTER_EMPTY, TRN.Layer.MASK.LEG_L1);
-                                layer.updateMask(TRN.Layer.LAYER.HOLSTER_FULL,  TRN.Layer.MASK.LEG_L1);
-                                layer.updateMask(TRN.Layer.LAYER.WEAPON,        TRN.Layer.MASK.ARM_L3);
+                                layer.updateMask(LAYER.HOLSTER_EMPTY, MASK.LEG_L1);
+                                layer.updateMask(LAYER.HOLSTER_FULL,  MASK.LEG_L1);
+                                layer.updateMask(LAYER.WEAPON,        MASK.ARM_L3);
                     
                             } else {
-                                layer.updateMask(TRN.Layer.LAYER.WEAPON, TRN.Layer.MASK.LEG_L1 | TRN.Layer.MASK.ARM_L3);
-                                layer.updateMask(TRN.Layer.LAYER.MAIN,   TRN.Layer.MASK.LEG_L1 | TRN.Layer.MASK.ARM_L3);
+                                layer.updateMask(LAYER.WEAPON, MASK.LEG_L1 | MASK.ARM_L3);
+                                layer.updateMask(LAYER.MAIN,   MASK.LEG_L1 | MASK.ARM_L3);
                             }
 
                             layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
@@ -179,12 +181,12 @@ export class AnimationManager {
                             const layer = this.sceneData.objects[obj.name].layer;
 
                             if (this.trversion == 'TR4') {
-                                layer.updateMask(TRN.Layer.LAYER.HOLSTER_EMPTY, TRN.Layer.MASK.LEG_R1);
-                                layer.updateMask(TRN.Layer.LAYER.HOLSTER_FULL,  TRN.Layer.MASK.LEG_R1);
-                                layer.updateMask(TRN.Layer.LAYER.WEAPON,        TRN.Layer.MASK.ARM_R3);
+                                layer.updateMask(LAYER.HOLSTER_EMPTY, MASK.LEG_R1);
+                                layer.updateMask(LAYER.HOLSTER_FULL,  MASK.LEG_R1);
+                                layer.updateMask(LAYER.WEAPON,        MASK.ARM_R3);
                             } else {
-                                layer.updateMask(TRN.Layer.LAYER.WEAPON, TRN.Layer.MASK.LEG_R1 | TRN.Layer.MASK.ARM_R3);
-                                layer.updateMask(TRN.Layer.LAYER.MAIN,   TRN.Layer.MASK.LEG_R1 | TRN.Layer.MASK.ARM_R3);
+                                layer.updateMask(LAYER.WEAPON, MASK.LEG_R1 | MASK.ARM_R3);
+                                layer.updateMask(LAYER.MAIN,   MASK.LEG_R1 | MASK.ARM_R3);
                             }
 
                             layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
@@ -195,19 +197,19 @@ export class AnimationManager {
 						case Commands.Misc.ANIMCMD_MISC_MESHSWAP1:
 						case Commands.Misc.ANIMCMD_MISC_MESHSWAP2:
 						case Commands.Misc.ANIMCMD_MISC_MESHSWAP3: {
-                            var idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
+                            const idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
                             
-							var oswap = this.objMgr.objectList['moveable'][TRN.ObjectID['meshswap' + idx]];
+							const oswap = this.objMgr.objectList['moveable'][ObjectID['meshswap' + idx]];
 
-							if (oswap) {
+							if (oswap && Array.isArray(oswap)) {
                                 const layer = this.sceneData.objects[obj.name].layer;
 
-                                if (layer.isEmpty(TRN.Layer.LAYER.MESHSWAP) || layer.getMesh(TRN.Layer.LAYER.MESHSWAP) != oswap[0]) {
-                                    layer.setMesh(TRN.Layer.LAYER.MESHSWAP, oswap[0], 0);
+                                if (layer.isEmpty(LAYER.MESHSWAP) || layer.getMesh(LAYER.MESHSWAP) != oswap[0]) {
+                                    layer.setMesh(LAYER.MESHSWAP, oswap[0], 0);
                                 }
 
-                                layer.updateMask(TRN.Layer.LAYER.MESHSWAP,  TRN.Layer.MASK.ALL);
-                                layer.updateMask(TRN.Layer.LAYER.MAIN,      TRN.Layer.MASK.ALL);
+                                layer.updateMask(LAYER.MESHSWAP,  MASK.ALL);
+                                layer.updateMask(LAYER.MAIN,      MASK.ALL);
     
                                 layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
 							} else {
@@ -215,7 +217,7 @@ export class AnimationManager {
                             }
                             
 							break;
-						}*/
+						}
 
 						case Commands.Misc.ANIMCMD_MISC_HIDEOBJECT: {
 							obj.visible = false;
