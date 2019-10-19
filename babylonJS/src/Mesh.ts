@@ -127,4 +127,11 @@ export default class Mesh implements IMesh {
         this._mesh.setBoundingInfo(boundingInfo);
     }
 
+    public getBoundingBox(): Box3 {
+        const boundingInfo = this._mesh.getBoundingInfo(),
+              boundingBox = boundingInfo.boundingBox;
+
+        return new Box3([boundingBox.minimum.x, boundingBox.minimum.y, boundingBox.minimum.z], [boundingInfo.maximum.x, boundingInfo.maximum.y, boundingInfo.maximum.z]);
+    }
+
 }

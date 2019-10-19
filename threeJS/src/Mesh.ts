@@ -80,4 +80,15 @@ export default class Mesh extends Node implements IMesh {
         }
     }
 
+    public getBoundingBox(): Box3 {
+        if (this._obj instanceof TMesh) {
+            const bbox = this._obj.geometry.boundingBox;
+
+            return new Box3([bbox.min.x, bbox.min.y, bbox.min.z], [bbox.max.x, bbox.max.y, bbox.max.z]);
+        }
+
+        return new Box3();
+    }
+
+
 }

@@ -29,7 +29,7 @@ export class BasicControl extends Behaviour {
     protected KEYS: myMap;
     protected states: States;
     protected enabled: boolean;
-    protected captureMouse: boolean;
+    protected _captureMouse: boolean;
     protected factor: number;
     protected moveFactor: number;
     protected rotFactor: number;
@@ -46,7 +46,7 @@ export class BasicControl extends Behaviour {
         this.STATES = { FASTER:0, FORWARD:1, LEFT:2, RIGHT:3, BACKWARD:4, UP:5, DOWN:6, ROTY:7, ROTNY:8, ROTX:9, ROTNX:10, SLOWER:11 };
         this.KEYS = { MOUSENX:300, MOUSEX:301, MOUSENY:302, MOUSEY:303 };
         this.enabled = true;
-        this.captureMouse = false;
+        this._captureMouse = false;
         this.object = null;
         this.xSign = 1;
         this.domElement = <any>null;
@@ -80,6 +80,10 @@ export class BasicControl extends Behaviour {
         this._mouseDeltaX = this._mouseDeltaY = 0;
     }
 
+    get captureMouse(): boolean {
+        return this._captureMouse;
+    }
+    
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
 
         if (lstObjs == null) {
@@ -236,7 +240,7 @@ export class BasicControl extends Behaviour {
         let quat: Quaternion = this.object.quaternion;
 
         glMatrix.quat.setAxisAngle( q, [ 0, 1, 0 ], glMatrix.glMatrix.toRadian( rotY ) );
-        glMatrix.quat.multiply( quat, q, quat );
+        glMatrix.quat.mul( quat, q, quat );
 
         let v = [ this.xSign, 0, 0 ];
 
@@ -258,7 +262,7 @@ export class BasicControl extends Behaviour {
     protected pointerLockChange (): void {
 
         var locked = document.pointerLockElement == this.domElement; 
-        this.captureMouse = locked;
+        this._captureMouse = locked;
 
     }
 
@@ -308,7 +312,7 @@ export class BasicControl extends Behaviour {
 
         } else {
 
-            if ( this.enabled === false || !this.captureMouse ) return;
+            if ( this.enabled === false || !this._captureMouse ) return;
 
             const curMouseX = event.clientX;
             const curMouseY = event.clientY;
@@ -336,11 +340,11 @@ export class BasicControl extends Behaviour {
 
         if ( event.button == 2 ) {
 
-            this.captureMouse = !this.captureMouse;
+            this._captureMouse = !this._captureMouse;
             this._mouseX = -1;
             this._mouseY = -1;
 
-            if ( this.captureMouse ) {
+            if ( this._captureMouse ) {
 
                 if ( this.domElement.requestPointerLock ) {
 

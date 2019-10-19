@@ -34,5 +34,7 @@ export interface IMesh {
 
     clone(): IMesh;
 
+    getBoundingBox(): Box3;
+
     setBoundingBox(box: Box3): void;
 }

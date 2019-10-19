@@ -121,4 +121,8 @@ export default class Node implements INode {
         this._obj.matrixWorld.toArray(arr, ofst);
     }
 
+    public lookAt(pos: Position): void {
+        this._obj.lookAt(...pos);
+    }
+
 }

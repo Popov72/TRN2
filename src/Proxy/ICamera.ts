@@ -7,6 +7,7 @@ export interface ICamera {
     behaviours: Array<Behaviour>;
     
     aspect: number;
+    fov: number;
 
     readonly position: Position;
     setPosition(pos: Position): void;
@@ -18,4 +19,5 @@ export interface ICamera {
 
     updateProjectionMatrix(): void;
 
+    lookAt(pos: Position): void;
 }

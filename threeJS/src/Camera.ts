@@ -26,7 +26,16 @@ export default class Camera extends Node implements ICamera {
         this._camera.aspect = a;
     }
 
+    get fov(): number {
+        return this._camera.fov;
+    }
+
+    set fov(f: number) {
+        this._camera.fov = f;
+    }
+
     public updateProjectionMatrix(): void {
         this._camera.updateProjectionMatrix();
     }
+
 }
