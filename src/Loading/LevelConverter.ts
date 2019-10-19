@@ -1152,7 +1152,7 @@ export default class LevelConverter {
 			"out" : this.confMgr.globalColor('water > colorout')
         };
 		this.sc.data.rversion = this.sc.data.trlevel.rversion;
-		this.sc.data.soundPath = "TRN/sound/" + this.sc.data.rversion.toLowerCase() + "/";
+		this.sc.data.soundPath = "resources/sound/" + this.sc.data.rversion.toLowerCase() + "/";
 
         this.helper = new LevelConverterHelper(this.sc, this.shaderMgr, this.objects);
 
