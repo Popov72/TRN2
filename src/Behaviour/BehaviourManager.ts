@@ -95,7 +95,7 @@ export class BehaviourManager {
         } else {
             const objList: MeshList | Array<ICamera> | null = objecttype !== undefined ? (objecttype == 'camera' ? [this.gameData.camera] : this.objMgr.objectList[objecttype]) : null;
 
-            if ((objList === null || objectid === undefined || !objList[objectid]) && (objectid !== undefined || objecttype !== undefined)) {
+            if ((objectid !== undefined || objecttype !== undefined) && (objList === null || objectid === undefined || !objList[objectid])) {
                 return null;
             }
 
@@ -209,7 +209,7 @@ export class BehaviourManager {
             }
     
             // create the behaviour
-            promises = promises.concat(this.addBehaviour(name, nbhv, objectid, objecttype) || []);
+            promises = promises.concat(this.addBehaviour(name, nbhv, objectid === null ? undefined : objectid, objecttype === null ? undefined : objecttype) || []);
         }
 
         return promises;
