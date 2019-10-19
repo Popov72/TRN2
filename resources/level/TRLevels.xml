@@ -290,6 +290,7 @@
                         <particlesys_offset><x>0</x><y>-1350</y><z>0</z></particlesys_offset>
                     </behaviour>
                 </moveable>
+                <behaviour name="MakeLayeredMesh" objectid="124" cutsceneonly="true"/>
                 <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
 			</level>
 			<!-- Gold levels -->
