@@ -1,15 +1,16 @@
-import { ICamera } from "./ICamera";
+import { ShaderManager } from "../ShaderManager";
 import { IMesh } from "./IMesh";
+import { IMeshBuilder } from "./IMeshBuilder";
 import { INode } from "./INode";
 import { IRenderer } from "./IRenderer";
 import { IScene } from "./IScene";
 
 export interface funcPointers {
-    "makeMesh":         (obj: any) => IMesh,
-    "makeCamera":       (obj: any) => ICamera,
     "makeNode":         () => INode,
+    "makeMeshBuilder":  (mesh: IMesh) => IMeshBuilder,
     "parseScene":       (sceneJSON: any) => Promise<IScene>,
     "createRenderer":   (container: Element) => IRenderer,
+    "getShaderMgr":     ShaderManager,
 };
 
 export default class Engine {
@@ -20,16 +21,12 @@ export default class Engine {
         Engine.pointers = pointers;
     }
 
-    public static makeMesh(obj: any): IMesh {
-        return Engine.pointers.makeMesh(obj);
-    }
-
-    public static makeCamera(obj: any): ICamera {
-        return Engine.pointers.makeCamera(obj);
-    }
-
     public static makeNode(): INode {
         return Engine.pointers.makeNode();
+    }
+
+    public static makeMeshBuilder(mesh: IMesh): IMeshBuilder {
+        return Engine.pointers.makeMeshBuilder(mesh);
     }
 
     public static parseScene(sceneJSON: any): Promise<any> {
@@ -38,5 +35,9 @@ export default class Engine {
 
     public static createRenderer(container: Element): IRenderer {
         return Engine.pointers.createRenderer(container);
+    }
+
+    public static getShaderMgr(): ShaderManager {
+        return Engine.pointers.getShaderMgr;
     }
 }

@@ -101,7 +101,7 @@ export default class Play {
         this.gameData.objMgr  = new ObjectManager();
         this.gameData.trlvl   = new TRLevel();
         this.gameData.anmMgr  = new AnimationManager();
-        this.gameData.shdMgr  = new ShaderManager();
+        this.gameData.shdMgr  = Engine.getShaderMgr();
 
         this.gameData.bhvMgr.initialize(this.gameData);
         this.gameData.matMgr.initialize(this.gameData);

@@ -9,8 +9,8 @@ interface FileCache {
 
 export class ShaderManager {
 
-    private _fpath: string;
-    private _fileCache: FileCache;
+    protected _fpath: string;
+    protected _fileCache: FileCache;
 
     constructor() {
 	    this._fpath = '/resources/shader/';
@@ -29,7 +29,7 @@ export class ShaderManager {
 		return this.getShader(shaderType.fragment, name);
 	}
 
-	private _getFile(fname: string) {
+	protected _getFile(fname: string) {
 		if (typeof this._fileCache[fname] != 'undefined') {
             return this._fileCache[fname];
         }
@@ -37,7 +37,7 @@ export class ShaderManager {
 		return this._fileCache[fname];
 	}
 
-	private _loadFile(fname: string): string {
+	protected _loadFile(fname: string) {
 		let res: string = "";
 		jQuery.ajax({
 			type:       "GET",
