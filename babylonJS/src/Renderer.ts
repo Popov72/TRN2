@@ -1,4 +1,11 @@
-import { Engine, Scene as BScene, SceneInstrumentation, EngineInstrumentation, PerfCounter } from "babylonjs";
+import {
+    Color4,
+    Engine,
+    EngineInstrumentation,
+    PerfCounter,
+    Scene as BScene,
+    SceneInstrumentation
+} from "babylonjs";
 
 import { IRenderer, PerfData } from "../../src/Proxy/IRenderer";
 
@@ -32,6 +39,8 @@ export default class Renderer implements IRenderer {
     public createScene(): Scene {
         let newScene = new BScene(this._engine);
         newScene.useRightHandedSystem = true;
+        //newScene.autoClear = false;
+        newScene.clearColor = new Color4(0, 0, 0, 1);
         return new Scene(newScene);
     }
 
@@ -40,7 +49,7 @@ export default class Renderer implements IRenderer {
 
     public render(scene: Scene, camera: Camera): void {
         scene.object.activeCamera = camera.object;
-        scene.object.render();
+        scene.object.render(false, true);
     }
  
     public getPerfData(scenes: Array<Scene>): PerfData {

@@ -35,8 +35,11 @@ export default class SceneParser {
 
     constructor(engine: Engine) {
         this.engine = engine;
+        
         this.scene = new BScene(engine);
         this.scene.useRightHandedSystem = true;
+        this.scene.autoClear = false;
+
         this.textures = [];
         this.tscene = new Scene(this.scene, this.textures);
         this.textureMap = {};
