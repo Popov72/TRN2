@@ -65,13 +65,13 @@ export class ConfigManager {
 		return x != null && y != null && z != null ? { x:parseFloat(x), y:parseFloat(y), z:parseFloat(z) } : null;
 	}
 
-	float(path: string, checkinglobal: boolean = false, defvalue: number = -1e20): number {
+	float(path: string, checkinglobal: boolean = false, defvalue: number = -Infinity): number {
 		const v = this.param(path, checkinglobal);
 		
 		return v != null ? parseFloat(v) : defvalue;
 	}
 
-	number(path: string, checkinglobal: boolean = false, defvalue: number = -1e20) {
+	number(path: string, checkinglobal: boolean = false, defvalue: number = -Infinity): number {
 		const v = this.param(path, checkinglobal);
 		
 		return v != null ? parseInt(v) : defvalue;
