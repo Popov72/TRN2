@@ -1,3 +1,6 @@
+import Browser from "./Browser";
+import BinaryBuffer from "./BinaryBuffer";
+
 export default class Utils {
 
 	public static toHexString32(n: number) {
@@ -140,4 +143,52 @@ export default class Utils {
         return children;
     }
 
+	public static startSound(sound: any): void {
+		if (sound == null) return;
+
+		sound.start ? sound.start(0) : sound.noteOn ? sound.noteOn(0) : '';
+	}
+
+    public static async loadSoundAsync(filepath: string) {
+        if (!filepath || !Browser.AudioContext) {
+            return Promise.resolve(null);
+        }
+
+        const binaryBuffer = new BinaryBuffer([filepath]),
+              pbinBuff = binaryBuffer.load();
+
+        return pbinBuff.then( (bufferList) => {
+            if (bufferList != null && bufferList.length > 0) {
+                return (new Promise( (resolve, reject) => 
+                    Browser.AudioContext.decodeAudioData(
+                        bufferList[0],
+                        (buffer: any) => {
+                            const ret: any = {
+                                code: 0
+                            }
+                            if (!buffer) {
+                                ret.code = -1;
+                            } else {
+                                ret.sound = Browser.AudioContext.createBufferSource();
+                                ret.sound.buffer = buffer;
+                                ret.sound.connect(Browser.AudioContext.destination);
+                            }
+                            resolve(ret);
+                        }    
+                    )
+                ));
+            } else {
+                console.log('Error when loading sound async. path=', filepath);
+                return Promise.resolve(null);
+            }
+        });
+    }
+
+	public static lerp(a: number, b: number, t: number): number {
+    	if (t <= 0.0) return a;
+        if (t >= 1.0) return b;
+        
+    	return a + (b - a) * t;
+    }
+    
 }
