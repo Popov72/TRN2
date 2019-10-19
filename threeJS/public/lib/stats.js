@@ -6,7 +6,8 @@ var Stats = function () {
 
 	var mode = 0;
 
-	var container = document.createElement( 'div' );
+    var container = document.createElement( 'div' );
+    container.setAttribute("id", "stats");
 	container.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
 	container.addEventListener( 'click', function ( event ) {
 
