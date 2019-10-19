@@ -174,11 +174,10 @@ export class Panel {
 				for (let i = 0; i < materials.length; ++i) {
 					const material = materials[i], origFragmentShader = (material as any).origFragmentShader;
 					if (!origFragmentShader) {
-						(material as any).origFragmentShader = (material as any).fragmentShader;
+                        (material as any).origFragmentShader = material.fragmentShader;
 					}
 
-					(material as any).fragmentShader = this.checked ? shader : (material as any).origFragmentShader;
-					(material as any).needsUpdate = true;
+					material.fragmentShader = this.checked ? shader : (material as any).origFragmentShader;
 				}
 			});
 		});
