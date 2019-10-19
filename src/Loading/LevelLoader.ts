@@ -432,10 +432,10 @@ export class LevelLoader {
 	 		}
 		}
 
-		const skyRemovePolyStart = this._level.confMgr.number('sky > removepoly > start', true, 0);
-		const skyRemovePolyNum   = this._level.confMgr.number('sky > removepoly > num', true, 0);
+		const skyRemovePolyStart = this._level.confMgr.number('behaviour[name="Sky"] > removepoly > start', true, 0);
+		const skyRemovePolyNum   = this._level.confMgr.number('behaviour[name="Sky"] > removepoly > num', true, 0);
 		if (skyRemovePolyNum > 0) {
-			const skyId = this._level.confMgr.number('sky > objectid', true, 0);
+			const skyId = this._level.confMgr.number('behaviour[name="Sky"] > id', true, 0);
 			if (skyId) {
 				for (let m = 0; m < this._level.moveables.length; ++m) {
 					let moveable = this._level.moveables[m];
