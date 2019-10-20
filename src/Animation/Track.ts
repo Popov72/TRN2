@@ -10,9 +10,9 @@ export default class Track {
     public remainingFrames: number;
     public numDataPerKey: number;
     public commandsFrameStart: number;
+    public nextTrack: number;
+    public nextTrackFrame: number;
 
-    private nextTrack: number;
-    private nextTrackFrame: number;
     private boundingBox: Box3;
     private _commands: Array<any>;
 
