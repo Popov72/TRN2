@@ -1,3 +1,4 @@
+import Engine from "../Proxy/Engine";
 import { ICamera } from "../Proxy/ICamera";
 import { IMesh } from "../Proxy/IMesh";
 import IGameData from "../Player/IGameData";
@@ -7,7 +8,7 @@ import { ObjectManager } from "../Player/ObjectManager";
 import { ConfigManager } from "../ConfigManager";
 import { AnimationManager } from "../Animation/AnimationManager";
 import { ObjectID } from "../Constants";
-import { Layer, LAYER, MASK } from "../Player/Layer";
+import { Layer, LAYER, MASK, BONE } from "../Player/Layer";
 
 declare var glMatrix: any;
 
@@ -86,30 +87,35 @@ export class Lara extends Behaviour {
         if (mvbPistolAnim) {
             if (this.confMgr.trversion == 'TR4') {
                 // for some reason, pistol animation mesh is only for left hand in TR4... So copy it to do right hand animation
-                //!new TRN.MeshBuilder(mvbPistolAnim).copyFacesWithSkinIndex(TRN.Layer.BONE.ARM_L3, TRN.Layer.BONE.ARM_R3);
+                const meshb = Engine.makeMeshBuilder(mvbPistolAnim);
+                meshb.copyFacesWithSkinIndex(BONE.ARM_L3, BONE.ARM_R3);
+                layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
+            } else {
+                layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
             }
-            layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
         }
 
         // create "holster empty" object
         ObjectID.HolsterEmpty = this.nbhv.animobject && this.nbhv.animobject.holster ? parseInt(this.nbhv.animobject.holster) : -1;
 
-        /*!const mvbHolsterEmpty = this.objMgr.createMoveable(TRN.ObjectID.HolsterEmpty, -1, undefined, true, dataLara.skeleton);
+        const mvbHolsterEmpty = this.objMgr.createMoveable(ObjectID.HolsterEmpty, -1, undefined, true, dataLara.skeleton);
         if (mvbHolsterEmpty) {
             // for some reason, holster meshes are made of 17 bones and not 15 as Lara mesh...
             // so, modify the skin indices so that left and right holsters match the right bones in Lara mesh
-            new TRN.MeshBuilder(mvbHolsterEmpty).replaceSkinIndices({4:TRN.Layer.BONE.LEG_L1, 8:TRN.Layer.BONE.LEG_R1});
-            layer.setMesh(TRN.Layer.LAYER.HOLSTER_EMPTY, mvbHolsterEmpty, 0);
-        }*/
+            const meshb = Engine.makeMeshBuilder(mvbHolsterEmpty);
+            meshb.replaceSkinIndices({4:BONE.LEG_L1, 8:BONE.LEG_R1});
+            layer.setMeshBuilder(LAYER.HOLSTER_EMPTY, meshb, 0);
+        }
 
         // create "holster full" object
         ObjectID.HolsterFull = this.nbhv.animobject && this.nbhv.animobject.holster_pistols ? parseInt(this.nbhv.animobject.holster_pistols) : -1;
 
-        /*!const mvbHolsterFull = this.objMgr.createMoveable(TRN.ObjectID.HolsterFull, -1, undefined, true, dataLara.skeleton);
+        const mvbHolsterFull = this.objMgr.createMoveable(ObjectID.HolsterFull, -1, undefined, true, dataLara.skeleton);
         if (mvbHolsterFull) {
-            new TRN.MeshBuilder(mvbHolsterFull).replaceSkinIndices({4:TRN.Layer.BONE.LEG_L1, 8:TRN.Layer.BONE.LEG_R1});
-            layer.setMesh(TRN.Layer.LAYER.HOLSTER_FULL, mvbHolsterFull, 0);
-        }*/
+            const meshb = Engine.makeMeshBuilder(mvbHolsterFull);
+            meshb.replaceSkinIndices({4:BONE.LEG_L1, 8:BONE.LEG_R1});
+            layer.setMeshBuilder(LAYER.HOLSTER_FULL, meshb, 0);
+        }
 
         // create the meshswap objects
         const meshSwapIds = [
@@ -132,9 +138,9 @@ export class Lara extends Behaviour {
         layer.setBoundingObjects();
 
         if (this.confMgr.trversion == 'TR4') {
-            /*if (mvbHolsterFull) {
+            if (mvbHolsterFull) {
                 layer.updateMask(LAYER.HOLSTER_FULL, MASK.LEG_L1 | MASK.LEG_R1);
-            }*/
+            }
         } else if (mvbPistolAnim) {
             // put pistols in Lara holsters
             layer.updateMask(LAYER.WEAPON, MASK.LEG_L1 | MASK.LEG_R1);
