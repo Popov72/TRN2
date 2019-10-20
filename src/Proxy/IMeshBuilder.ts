@@ -1,15 +1,25 @@
 import { IMesh } from "./IMesh";
 
-export type skinIndices = Array<number>;
+export type indexList = Array<number>;
 
 export interface IMeshBuilder {
 
     mesh: IMesh;
 
-    skinIndicesList: Array<skinIndices>;
+    skinIndicesList: Array<indexList>;
 
-    setIndex(index: skinIndices): void;
+    setIndex(index: indexList): void;
 
     makeSkinIndicesList(): void;
+
+    createFaces(faces: Array<any>, matIndex: number): void;
+
+    copyFace(faceIdx: number): any;
+
+    removeFaces(remove: Set<number>): void;
+
+    replaceSkinIndices(remap: any): void;
+
+    copyFacesWithSkinIndex(skinidx: number, newskinidx: number): void;
 
 }

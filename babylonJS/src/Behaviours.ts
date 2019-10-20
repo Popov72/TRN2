@@ -1,6 +1,8 @@
 import "../../src/Behaviour/AnimatedTexture";
 import "./Behaviour/BasicControl";
 import "../../src/Behaviour/CutScene";
+import "../../src/Behaviour/Fade";
+import "../../src/Behaviour/FadeUniformColor";
 import "../../src/Behaviour/Lara";
 import "../../src/Behaviour/MakeLayeredMesh";
 import "../../src/Behaviour/RemoveObject";

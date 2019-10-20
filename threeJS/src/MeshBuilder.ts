@@ -4,7 +4,7 @@ import {
 } from "three";
 
 import { IMesh } from "../../src/Proxy/IMesh";
-import { IMeshBuilder, skinIndices } from "../../src/Proxy/IMeshBuilder";
+import { IMeshBuilder, indexList } from "../../src/Proxy/IMeshBuilder";
 
 import Mesh from "./Mesh";
 
@@ -12,7 +12,7 @@ export default class MeshBuilder implements IMeshBuilder {
     
     protected _mesh:        TMesh;
     protected _tmesh:       Mesh;
-    protected _skinIndices: Array<skinIndices>;
+    protected _skinIndices: Array<indexList>;
 
     constructor(mesh: Mesh) {
         this._tmesh = mesh;
@@ -24,15 +24,15 @@ export default class MeshBuilder implements IMeshBuilder {
         return this._tmesh;
     }
 
-    get skinIndicesList(): Array<skinIndices> {
+    get skinIndicesList(): Array<indexList> {
         return this._skinIndices;
     }
 
-    /*createFaces : function(faces, matIndex) {
-        const geometry = this.mesh.geometry,
+    public createFaces(faces: Array<any>, matIndex: number): void {
+        const geometry = this._mesh.geometry as BufferGeometry,
               index = Array.from(geometry.index.array),
               positions = Array.from(geometry.attributes.position.array),
-              colors = Array.from(geometry.attributes.color.array),
+              colors = Array.from(geometry.attributes.vertColor.array),
               normals = Array.from(geometry.attributes.normal.array),
               uvs = Array.from(geometry.attributes.uv.array),
               _flags = Array.from(geometry.attributes._flags.array);
@@ -52,7 +52,7 @@ export default class MeshBuilder implements IMeshBuilder {
             addIndex.push(ofstIdx, ofstIdx + 1, ofstIdx + 2);
         }
 
-        index.splice(geometry.groups[matIndex].start, null, ...addIndex);
+        index.splice(geometry.groups[matIndex].start, 0, ...addIndex);
 
         geometry.setIndex(index);
 
@@ -63,32 +63,32 @@ export default class MeshBuilder implements IMeshBuilder {
         }
 
         geometry.attributes.position.array = new Float32Array(positions);
-        geometry.attributes.position.needsUpdate = true;
+        (geometry.attributes.position as any).needsUpdate = true;
 
-        geometry.attributes.color.array = new Float32Array(colors);
-        geometry.attributes.color.needsUpdate = true;
+        geometry.attributes.vertColor.array = new Float32Array(colors);
+        (geometry.attributes.vertColor as any).needsUpdate = true;
 
         geometry.attributes.normal.array = new Float32Array(normals);
-        geometry.attributes.normal.needsUpdate = true;
+        (geometry.attributes.normal as any).needsUpdate = true;
 
         geometry.attributes.uv.array = new Float32Array(uvs);
-        geometry.attributes.uv.needsUpdate = true;
+        (geometry.attributes.uv as any).needsUpdate = true;
 
         geometry.attributes._flags.array = new Float32Array(_flags);
-        geometry.attributes._flags.needsUpdate = true;
-    },
+        (geometry.attributes._flags as any).needsUpdate = true;
+    }
 
-    copyFace : function(faceIdx) {
-        const geom = this.mesh.geometry,
+    public copyFace(faceIdx: number): any {
+        const geom = this._mesh.geometry as BufferGeometry,
               index = geom.index.array,
               newFace = {
                 v1: [geom.attributes.position.array[index[faceIdx*3+0]*3+0], geom.attributes.position.array[index[faceIdx*3+0]*3+1], geom.attributes.position.array[index[faceIdx*3+0]*3+2]],
                 v2: [geom.attributes.position.array[index[faceIdx*3+1]*3+0], geom.attributes.position.array[index[faceIdx*3+1]*3+1], geom.attributes.position.array[index[faceIdx*3+1]*3+2]],
                 v3: [geom.attributes.position.array[index[faceIdx*3+2]*3+0], geom.attributes.position.array[index[faceIdx*3+2]*3+1], geom.attributes.position.array[index[faceIdx*3+2]*3+2]],
 
-                c1: [geom.attributes.color.array[index[faceIdx*3+0]*3+0], geom.attributes.color.array[index[faceIdx*3+0]*3+1], geom.attributes.color.array[index[faceIdx*3+0]*3+2]],
-                c2: [geom.attributes.color.array[index[faceIdx*3+1]*3+0], geom.attributes.color.array[index[faceIdx*3+1]*3+1], geom.attributes.color.array[index[faceIdx*3+1]*3+2]],
-                c3: [geom.attributes.color.array[index[faceIdx*3+2]*3+0], geom.attributes.color.array[index[faceIdx*3+2]*3+1], geom.attributes.color.array[index[faceIdx*3+2]*3+2]],
+                c1: [geom.attributes.vertColor.array[index[faceIdx*3+0]*3+0], geom.attributes.vertColor.array[index[faceIdx*3+0]*3+1], geom.attributes.vertColor.array[index[faceIdx*3+0]*3+2]],
+                c2: [geom.attributes.vertColor.array[index[faceIdx*3+1]*3+0], geom.attributes.vertColor.array[index[faceIdx*3+1]*3+1], geom.attributes.vertColor.array[index[faceIdx*3+1]*3+2]],
+                c3: [geom.attributes.vertColor.array[index[faceIdx*3+2]*3+0], geom.attributes.vertColor.array[index[faceIdx*3+2]*3+1], geom.attributes.vertColor.array[index[faceIdx*3+2]*3+2]],
 
                 n1: [geom.attributes.normal.array[index[faceIdx*3+0]*3+0], geom.attributes.normal.array[index[faceIdx*3+0]*3+1], geom.attributes.normal.array[index[faceIdx*3+0]*3+2]],
                 n2: [geom.attributes.normal.array[index[faceIdx*3+1]*3+0], geom.attributes.normal.array[index[faceIdx*3+1]*3+1], geom.attributes.normal.array[index[faceIdx*3+1]*3+2]],
@@ -104,10 +104,10 @@ export default class MeshBuilder implements IMeshBuilder {
             };
         
         return newFace;
-    },
+    }
 
-    removeFaces : function(remove) {
-        let geom = this.mesh.geometry,
+    public removeFaces(remove: Set<number>): void {
+        let geom = this._mesh.geometry as BufferGeometry,
             indices = [],
             index = geom.index.array;
 
@@ -133,20 +133,24 @@ export default class MeshBuilder implements IMeshBuilder {
         }
 
         geom.setIndex(indices);
-    },
+    }
 
-    replaceSkinIndices : function(remap) {
-        const skinIndices = this.mesh.geometry.attributes.skinIndex.array;
+    public replaceSkinIndices(remap: any) {
+        let skinIndices = (this._mesh.geometry as BufferGeometry).attributes.skinIndex.array,
+            indices: Array<number> = [];
         for (let i = 0; i < skinIndices.length; ++i) {
             const v = remap[skinIndices[i]];
             if (v !== undefined) {
-                skinIndices[i] = v;
+                indices[i] = v;
+            } else {
+                indices[i] = skinIndices[i];
             }
         }
-    },
+        (this._mesh.geometry as BufferGeometry).attributes.skinIndex.array = new Float32Array(indices);
+    }
 
-    copyFacesWithSkinIndex : function(skinidx, newskinidx) {
-        const geometry = this.mesh.geometry,
+    public copyFacesWithSkinIndex(skinidx: number, newskinidx: number): void {
+        const geometry = this._mesh.geometry as BufferGeometry,
               index = Array.from(geometry.index.array),
               positions = Array.from(geometry.attributes.position.array),
               normals = Array.from(geometry.attributes.normal.array),
@@ -198,25 +202,25 @@ export default class MeshBuilder implements IMeshBuilder {
         geometry.groups[0].count = geometry.index.count; // assume there is a single group
 
         geometry.attributes.position.array = new Float32Array(positions);
-        geometry.attributes.position.needsUpdate = true;
+        (geometry.attributes.position as any).needsUpdate = true;
 
         geometry.attributes.normal.array = new Float32Array(normals);
-        geometry.attributes.normal.needsUpdate = true;
+        (geometry.attributes.normal as any).needsUpdate = true;
 
         geometry.attributes.skinIndex.array = new Float32Array(skinIndices);
-        geometry.attributes.skinIndex.needsUpdate = true;
+        (geometry.attributes.skinIndex as any).needsUpdate = true;
 
         geometry.attributes.skinWeight.array = new Float32Array(skinWeights);
-        geometry.attributes.skinWeight.needsUpdate = true;
+        (geometry.attributes.skinWeight as any).needsUpdate = true;
 
         geometry.attributes.uv.array = new Float32Array(uvs);
-        geometry.attributes.uv.needsUpdate = true;
+        (geometry.attributes.uv as any).needsUpdate = true;
 
         geometry.attributes._flags.array = new Float32Array(_flags);
-        geometry.attributes._flags.needsUpdate = true;
-    },*/
+        (geometry.attributes._flags as any).needsUpdate = true;
+    }
 
-    public setIndex(index: skinIndices): void {
+    public setIndex(index: indexList): void {
         const geometry = this._mesh.geometry as BufferGeometry;
 
         geometry.setIndex(index);
@@ -239,7 +243,7 @@ export default class MeshBuilder implements IMeshBuilder {
         for (let i = 0; i < index.count/3; ++i) {
             const skinIndex = sindices[index.array[i*3+0]*4+0];
             
-            let lst: skinIndices = this._skinIndices[skinIndex];
+            let lst: indexList = this._skinIndices[skinIndex];
             if (!lst) {
                 lst = [];
                 this._skinIndices[skinIndex] = lst;

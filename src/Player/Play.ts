@@ -9,7 +9,6 @@ import { baseFrameRate, ObjectID } from "../Constants";
 import { RawLevel } from "../Loading/LevelLoader";
 import { AnimationManager } from "../Animation/AnimationManager";
 import { BehaviourManager } from "../Behaviour/BehaviourManager";
-import { ShaderManager } from "../ShaderManager";
 import { ObjectManager } from "./ObjectManager";
 import { MaterialManager } from "./MaterialManager";
 import { TRLevel } from "./TRLevel";
@@ -114,12 +113,12 @@ export default class Play {
 
         ObjectID.Lara  = this.gameData.confMgr.number('lara > id', true, 0);
 
-		var isCutScene = this.gameData.confMgr.param('', false, true).attr('type') == 'cutscene';
-        var cutsceneIndex = this.gameData.sceneData.rversion == 'TR4' && Browser.QueryString.cutscene != undefined ? parseInt(Browser.QueryString.cutscene) : -1;
+		const isCutScene = this.gameData.confMgr.param('', false, true).attr('type') == 'cutscene',
+              cutsceneIndex = this.gameData.sceneData.rversion == 'TR4' && Browser.QueryString.cutscene != undefined ? parseInt(Browser.QueryString.cutscene) : -1;
 
         this.gameData.isCutscene = isCutScene || cutsceneIndex > 0;
 
-		var tintColor = this.gameData.confMgr.color('globaltintcolor', true);
+		const tintColor = this.gameData.confMgr.color('globaltintcolor', true);
 
 		if (tintColor != null) {
 			this.gameData.globalTintColor = [tintColor.r, tintColor.g, tintColor.b];
@@ -130,12 +129,12 @@ export default class Play {
 		}
 
 		if (Browser.QueryString.pos) {
-			var vals = Browser.QueryString.pos.split(',');
+			const vals = Browser.QueryString.pos.split(',');
 			this.gameData.camera.setPosition([parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2])]);
 		}
 
 		if (Browser.QueryString.rot) {
-			var vals = Browser.QueryString.rot.split(',');
+			const vals = Browser.QueryString.rot.split(',');
 			this.gameData.camera.setQuaternion([parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3])]);
 		}
 

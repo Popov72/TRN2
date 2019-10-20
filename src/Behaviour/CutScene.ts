@@ -2,7 +2,6 @@ const noSound = true;
 
 import { ICamera } from "../Proxy/ICamera";
 import { IMesh } from "../Proxy/IMesh";
-import { IScene } from "../Proxy/IScene";
 import { Position, Quaternion } from "../Proxy/INode";
 import IGameData from "../Player/IGameData";
 import { Behaviour, BehaviourRetCode } from "./Behaviour";
@@ -13,11 +12,13 @@ import { AnimationManager } from "../Animation/AnimationManager";
 import { ObjectID } from "../Constants";
 import { MaterialManager } from "../Player/MaterialManager";
 import { TRLevel } from "../Player/TRLevel";
-import { ShaderManager } from "../ShaderManager";
 import Misc from "../Utils/Misc";
 import TrackInstance from "../Animation/TrackInstance";
 import { baseFrameRate } from "../Constants";
 import { BasicControl } from "./BasicControl";
+import { Lara } from "./Lara";
+import CutSceneHelper from "./CutSceneHelper";
+import CutSceneTR4 from "./CutSceneTR4";
 
 declare var glMatrix: any;
 
@@ -41,13 +42,12 @@ export class CutScene extends Behaviour {
     private bhvMgr: BehaviourManager;
     private matMgr: MaterialManager;
     private trlvl: TRLevel;
-    private shdMgr: ShaderManager;
-    private scene: IScene;
     private camera: ICamera;
     private cutscene: CutSceneData;
     private cutSceneEnded: boolean;
     private objects: { [name:string]: IMesh };
     private bhvCtrl: BasicControl;
+    private helper: CutSceneHelper;
 
     constructor(nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) {
         super(nbhv, gameData, objectid, objecttype);
@@ -59,14 +59,13 @@ export class CutScene extends Behaviour {
         this.objMgr = gameData.objMgr;
         this.matMgr = gameData.matMgr;
         this.trlvl = gameData.trlvl;
-        this.shdMgr = gameData.shdMgr;
-        this.scene = gameData.sceneRender;
         this.sceneData = gameData.sceneData;
         this.camera = gameData.camera;
         this.cutscene = this.sceneData.cutScene;
         this.cutSceneEnded = false;
         this.objects = {};
         this.bhvCtrl = <any>null;
+        this.helper = new CutSceneHelper(gameData);
 
         this.cutscene = {
             "index"     : 0,
@@ -84,8 +83,10 @@ export class CutScene extends Behaviour {
 
         this.matMgr.useAdditionalLights = useAddLights;
 
+        this.cutscene.index = index;
+
         // set cutscene origin
-        const lara = (this.objMgr.objectList['moveable'][ObjectID.Lara] as Array<IMesh>)[0];
+        const lara = (this.bhvMgr.getBehaviour("Lara") as Array<Lara>)[0].getObject();//(this.objMgr.objectList['moveable'][ObjectID.Lara] as Array<IMesh>)[0];
 
         this.cutscene.frames = this.trlvl.trlevel.cinematicFrames;
         this.cutscene.position = lara.position;
@@ -130,9 +131,9 @@ export class CutScene extends Behaviour {
         let promiseSound: Promise<any> = Promise.resolve(null);
 
         if (index > 0) {
-            //!promiseSound = this.makeTR4Cutscene(parseInt(index));
+            promiseSound = new CutSceneTR4(this.gameData, this.cutscene, this.helper, lara).makeTR4Cutscene(parseInt(index));
         } else {
-            //!this.prepareLevel(this.confMgr.trversion, this.confMgr.levelName, 0, null);
+            this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, 0, []);
             promiseSound = Misc.loadSoundAsync(this.sceneData.soundPath + this.sceneData.levelShortFileNameNoExt.toUpperCase());
         }
 

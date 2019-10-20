@@ -1,16 +1,45 @@
-Object.assign( TRN.Behaviours.CutScene.prototype, {
+import Engine from "../Proxy/Engine";
+import { IMesh } from "../Proxy/IMesh";
+import { IScene } from "../Proxy/IScene";
 
-    prepareLevel : function(trVersion, levelName, csIndex, actorMoveables) {
+import IGameData from "../Player/IGameData";
+import { ObjectManager } from "../Player/ObjectManager";
+import { BehaviourManager } from "../Behaviour/BehaviourManager";
+import { ShaderManager } from "../ShaderManager";
+import { LAYER, MASK } from "../Player/Layer";
+import { Commands } from "../Animation/Commands";
+
+declare var glMatrix: any;
+
+export default class CutSceneHelper {
+
+    private sceneData:  any;
+    private gameData:   IGameData;
+    private objMgr:     ObjectManager;
+    private bhvMgr:     BehaviourManager;
+    private shdMgr:     ShaderManager;
+    private scene:      IScene;
+
+    constructor(gameData: IGameData) {
+        this.gameData = gameData;
+        this.sceneData = gameData.sceneData;
+        this.bhvMgr = gameData.bhvMgr;
+        this.objMgr = gameData.objMgr;
+        this.shdMgr = gameData.shdMgr;
+        this.scene = gameData.sceneRender;
+    }
+
+    public prepareLevel(trVersion: string, levelName: string, csIndex: number, actorMoveables: Array<any>): void {
         if (trVersion == 'TR2') {
             if (levelName == 'cut3.tr2') {
                 // bad guys are not at the right location
-                const black = this.objMgr.objectList['moveable']['98'][0],
-                      red = this.objMgr.objectList['moveable']['97'][0];
+                const black = (this.objMgr.objectList['moveable'][98] as Array<IMesh>)[0],
+                      red = (this.objMgr.objectList['moveable'][97] as Array<IMesh>)[0];
 
-                black.quaternion.set(0, 1, 0, 0); // 180 deg rotation
-                black.position.set(16900, -5632, -7680);
+                black.setQuaternion([0, 1, 0, 0]); // 180 deg rotation
+                black.setPosition([16900, -5632, -7680]);
 
-                red.position.set(20000, -5632, -10700);
+                red.setPosition([20000, -5632, -10700]);
             }
         }
 
@@ -24,17 +53,17 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                 
                 const meshShovel = this.objMgr.createMoveable(417, data.roomIndex, undefined, true, data.skeleton);
 
-                data.layer.setMesh(TRN.Layer.LAYER.MESHSWAP, meshShovel, 0);
+                data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
                 track1.setCommands([
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [24,  TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(TRN.Layer.LAYER.MESHSWAP, TRN.Layer.MASK.ARM_L3)] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeOut(1.0)] }
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [24,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeOut(1.0)] }
                 ], 0);
 
                 track2.setCommands([
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [27,  TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeIn(1.0)] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(TRN.Layer.LAYER.MESHSWAP, TRN.Layer.MASK.ARM_L3)] }
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [27,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeIn(1.0)] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
 
                 break;
@@ -48,12 +77,12 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                 
                 const meshShovel = this.objMgr.createMoveable(417, data.roomIndex, undefined, true, data.skeleton);
 
-                data.layer.setMesh(TRN.Layer.LAYER.MESHSWAP, meshShovel, 0);
+                data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
                 track1.setCommands([
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(TRN.Layer.LAYER.MESHSWAP, TRN.Layer.MASK.ARM_L3)] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(TRN.Layer.LAYER.MESHSWAP, TRN.Layer.MASK.ARM_L3)] }
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
 
                 break;
@@ -65,10 +94,10 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
                 track1.setCommands([
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
                 ], 0);
 
                 break;
@@ -85,7 +114,7 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                     const data = this.sceneData.objects[obj.name];
 
                     if (data && rooms.has(data.roomIndex) || actorMoveables.indexOf(obj) >= 0) {
-                        const materials = obj.material;
+                        const materials = obj.materials;
                         for (let m = 0; m < materials.length; ++m) {
                             const material = materials[m];
 
@@ -93,6 +122,7 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                             material.uniforms.volFogCenter = { "type": "f3", "value": [52500.0, 3140.0, -49460.0] };
                             material.uniforms.volFogRadius = { "type": "f",  "value": 6000 };
                             material.uniforms.volFogColor =  { "type": "f3", "value": [0.1, 0.75, 0.3] };
+
                         }
                     }
                 });
@@ -102,15 +132,15 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
 
             case 10: {
                 // Scroll that Lara is reading is not well positionned at start - move and rotate it
-                const oscroll = this.objMgr.objectList['staticmesh']['20'][2],
+                const oscroll = (this.objMgr.objectList['staticmesh'][20] as Array<IMesh>)[2],
                       q = glMatrix.quat.create();
 
                 glMatrix.quat.setAxisAngle(q, [0,1,0], glMatrix.glMatrix.toRadian(60));
 
-                oscroll.quaternion.set(q[0], q[1], q[2], q[3]);
-                oscroll.position.x += 850;
+                oscroll.setQuaternion(q);
+                oscroll.setPosition([oscroll.position[0] + 850, oscroll.position[1], oscroll.position[2]]);
 
-                oscroll.updateMatrix();
+                oscroll.matrixAutoUpdate = false;
                 break;
             }
 
@@ -141,11 +171,11 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                 
                 const meshPole = this.objMgr.createMoveable(417, data.roomIndex, undefined, true, data.skeleton);
 
-                data.layer.setMesh(TRN.Layer.LAYER.MESHSWAP, meshPole, 0);
+                data.layer.setMesh(LAYER.MESHSWAP, meshPole, 0);
 
                 track1.setCommands([
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(TRN.Layer.LAYER.MESHSWAP, TRN.Layer.MASK.ARM_R3)] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [560, TRN.Animation.Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(TRN.Layer.LAYER.MESHSWAP, TRN.Layer.MASK.ARM_R3)] }
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [560, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] }
                 ], 0);
 
                 break;
@@ -157,31 +187,31 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
                 track1.setCommands([
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:TRN.Animation.Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, TRN.Animation.Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
                 ], 0);
 
                 break;
             }
         }
-    },
+    }
 
-    fadeOut : function(duration) {
-        this.bhvMgr.addBehaviour('Fade', { "colorStart": [1, 1, 1], "colorEnd": [0, 0, 0], "duration": duration });
-        //jQuery(this.gameData.container).fadeout(duration);
-    },
+    public fadeOut(duration: number): void {
+        //this.bhvMgr.addBehaviour('Fade', { "colorStart": [1, 1, 1], "colorEnd": [0, 0, 0], "duration": duration });
+        jQuery(this.gameData.container).fadeOut(duration*1000);
+    }
 
-    fadeIn : function(duration) {
-        this.bhvMgr.addBehaviour('Fade', { "colorStart": [0, 0, 0], "colorEnd": [1, 1, 1], "duration": duration });
-        //jQuery(this.gameData.container).fadein(duration);
-    },
+    public fadeIn(duration: number): void {
+        //this.bhvMgr.addBehaviour('Fade', { "colorStart": [0, 0, 0], "colorEnd": [1, 1, 1], "duration": duration });
+        jQuery(this.gameData.container).fadeIn(duration*1000);
+    }
 
     // Between cutscene 1 and 2, a hole should appear in the ground to reveal hidden entrance to pyramid
-    cs1MakeHole : function() {
+    public cs1MakeHole(): void {
         // First room
-        let oroom = this.objMgr.objectList['room']['81'],
+        let oroom = this.objMgr.objectList['room'][81] as IMesh,
             data = this.sceneData.objects['room81'];
 
         if (data.__done) {
@@ -190,7 +220,7 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
 
         data.__done = true;
 
-        let mshBld = new TRN.MeshBuilder(oroom);
+        let mshBld = Engine.makeMeshBuilder(oroom);
 
         let newFaces = [ 
             mshBld.copyFace(118),
@@ -226,9 +256,9 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
         mshBld.createFaces(newFaces, 1);
 
         // Second room
-        oroom = this.objMgr.objectList['room']['80'];
+        oroom = this.objMgr.objectList['room'][80] as IMesh;
 
-        mshBld = new TRN.MeshBuilder(oroom);
+        mshBld = Engine.makeMeshBuilder(oroom);
 
         newFaces = [ 
             mshBld.copyFace(126),
@@ -264,4 +294,4 @@ Object.assign( TRN.Behaviours.CutScene.prototype, {
         mshBld.createFaces(newFaces, 2);
     }
 
-});
+}

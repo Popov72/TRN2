@@ -1,5 +1,5 @@
 import { IMesh } from "../Proxy/IMesh";
-import { IMeshBuilder, skinIndices } from "../Proxy/IMeshBuilder";
+import { IMeshBuilder, indexList } from "../Proxy/IMeshBuilder";
 import IGameData from "../Player/IGameData";
 import { MaterialManager } from "./MaterialManager";
 import Engine from "../Proxy/Engine";
@@ -97,26 +97,28 @@ export class Layer {
     }
 
     public setMesh(layerIndex: number, mesh: IMesh, mask?: number): void {
+        return this.setMeshBuilder(layerIndex, Engine.makeMeshBuilder(mesh), mask);
+    }
+
+    public setMeshBuilder(layerIndex: number, meshb: IMeshBuilder, mask?: number): void {
         if (mask === undefined) {
             mask = MASK.ALL;
         }
 
-        const mb = Engine.makeMeshBuilder(mesh);
+        this.layers.set(layerIndex, { "meshb": meshb, "mask": mask });
 
-        this.layers.set(layerIndex, { "meshb": mb, "mask": mask });
-
-        mb.makeSkinIndicesList();
+        meshb.makeSkinIndicesList();
 
         if (layerIndex !== LAYER.MAIN) {
             const mainMesh = this.layers.get(LAYER.MAIN)!.meshb.mesh;
             
-            this._setSkeleton(mesh, this.sceneData.objects[mainMesh.name].skeleton);
-            this.setRoom(this.sceneData.objects[mainMesh.name].roomIndex, mesh);
+            this._setSkeleton(meshb.mesh, this.sceneData.objects[mainMesh.name].skeleton);
+            this.setRoom(this.sceneData.objects[mainMesh.name].roomIndex, meshb.mesh);
         }
 
-        this.setMask(mb, mask);
+        this.setMask(meshb, mask);
 
-        mesh.visible = true;
+        meshb.mesh.visible = true;
     }
 
     public updateMask(layerIndex: number, mask: number): void {
@@ -133,7 +135,7 @@ export class Layer {
 
     public setMask(meshb: IMeshBuilder, mask: number): void {
         let idx = 0,
-            indices: skinIndices = [],
+            indices: indexList = [],
             skinIndices = meshb.skinIndicesList,
             numMaxBones = skinIndices.length;
 
