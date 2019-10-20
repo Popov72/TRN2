@@ -13,6 +13,8 @@ export default class Material implements IMaterial {
 
     private _material:  ShaderMaterial;
 
+    private static count: number = 0;
+
     constructor(mat: ShaderMaterial) {
         this._material = mat;
         this.userData = mat.metadata.userData;
@@ -34,25 +36,25 @@ export default class Material implements IMaterial {
     get vertexShader(): string {
         const mat = this._material;
 
-        return (mat as any)._shaderPath.vertex;
+        return (mat as any)._shaderPath.vertex;  //! todo better
     }
 
     set vertexShader(vs: string) {
         const mat = this._material;
 
-        (mat as any)._shaderPath.vertex = vs;
+        (mat as any)._shaderPath.vertex = vs;  //! todo better
     }
 
     get fragmentShader(): string {
         const mat = this._material;
 
-        return (mat as any)._shaderPath.fragment;
+        return (mat as any)._shaderPath.fragment;  //! todo better
     }
 
     set fragmentShader(fs: string) {
         const mat = this._material;
 
-        (mat as any)._shaderPath.fragment = fs;
+        (mat as any)._shaderPath.fragment = fs;  //! todo better
     }
 
     public uniformsUpdated(names?: Array<string>): void {
@@ -100,19 +102,17 @@ export default class Material implements IMaterial {
                 this._material.setArray3(uname, uval.value);
                 break;
             case 'm4v':
-                /*if (this._material.getEffect() === null) {
-                    this._material.isReady();
-                }
-                this._material.getEffect()!.setMatrices(uname, uval.value);*/
-                (this._material as any).setMatrices(uname, uval.value);
+                (this._material as any).setMatrices(uname, uval.value); //! todo better
                 break;
         }
     }
 
     public clone(): Material {
-        const shd = this._material.clone(this._material.name);
+        const shd = this._material.clone(this._material.name + '_copy' + (Material.count++));
 
-        shd.alphaMode = this._material.alphaMode;
+        (shd as any)._shaderPath = Object.assign({}, (shd as any)._shaderPath); //! todo better
+
+        shd.alphaMode = this._material.alphaMode; //! todo: remove when using updated babylon
 
         shd.metadata = {
             "userData": this.userData,
