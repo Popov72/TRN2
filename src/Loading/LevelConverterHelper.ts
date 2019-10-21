@@ -79,29 +79,11 @@ export default class LevelConverterHelper {
             },
             "vertexShader": "",
             "fragmentShader": "",
-            "vertexColors": false,
             "userData": {}
         };
 
         let vertexShaderName = objType,
             fragmentShaderName = "standard";
-
-        switch(objType) {
-            case 'moveable':
-                mat.vertexColors = false;
-                break;
-            case 'sprite':
-                mat.vertexColors = false;
-                break;
-            case 'sky':
-                mat.vertexColors = false;
-                fragmentShaderName = "sky";
-                break;
-            case 'skydome':
-                fragmentShaderName = "skydome";
-                mat.vertexColors = false;
-                break;
-        }
 
         mat.vertexShader = this.shaderMgr.getVertexShader(vertexShaderName);
         mat.fragmentShader = this.shaderMgr.getFragmentShader(fragmentShaderName);
