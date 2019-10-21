@@ -1,4 +1,5 @@
 import {
+    Engine,
     ShaderMaterial,
     Vector3, 
     Vector4
@@ -31,6 +32,15 @@ export default class Material implements IMaterial {
 
     set depthWrite(dw: boolean) {
         this._material.disableDepthWrite = !dw;
+    }
+
+    get transparent(): boolean {
+        return this._material.options.needAlphaBlending;
+    }
+
+    set transparent(t: boolean) {
+        this._material.options.needAlphaBlending = t;
+        this._material.alphaMode = Engine.ALPHA_SCREENMODE;
     }
 
     get vertexShader(): string {

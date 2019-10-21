@@ -1,4 +1,5 @@
 import {
+    AdditiveBlending, OneFactor, OneMinusSrcColorFactor, NoBlending,
     ShaderMaterial
 } from "three";
 
@@ -28,7 +29,22 @@ export default class Material implements IMaterial {
     set depthWrite(d: boolean) {
         this._material.depthWrite = d;
     }
-    
+
+    get transparent(): boolean {
+        return this._material.transparent;
+    }
+
+    set transparent(t: boolean) {
+        this._material.transparent = t;
+        if (t) {
+            this._material.blending = AdditiveBlending;
+            this._material.blendSrc = OneFactor;
+            this._material.blendDst = OneMinusSrcColorFactor;
+        } else {
+            this._material.blending = NoBlending;
+        }
+    }
+
     get vertexShader(): string {
         return this._material.vertexShader;
     }

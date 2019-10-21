@@ -4,6 +4,7 @@ export interface IMaterial {
     uniforms: any,
 
     depthWrite: boolean;
+    transparent: boolean;
     
     vertexShader: string;
     fragmentShader: string;
