@@ -82,7 +82,7 @@ export default class LevelConverter {
 			        if (minU > u) minU = u; if (minV > v) minV = v;
 			    }
 
-			    anmcoords.push({ minU:(minU+0.5)/this.sc.data.trlevel.atlas.width, minV:(minV+0.5)/this.sc.data.trlevel.atlas.height, texture:"texture" + tile});
+			    anmcoords.push({ minU:(minU+0.5)/this.sc.data.trlevel.atlas.width, minV:(minV+0.5)/this.sc.data.trlevel.atlas.height, texture:"" + tile});
 			}
 
 			animatedTextures.push({

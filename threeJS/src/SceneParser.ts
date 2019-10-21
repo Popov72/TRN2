@@ -34,6 +34,8 @@ import {
     Texture
 } from 'three';
 
+import { TextureList } from "../../src/Proxy/IScene";
+
 import Camera from "./Camera";
 import Mesh from "./Mesh";
 import Node from "./Node";
@@ -371,8 +373,15 @@ export default class SceneParser extends Loader {
 
 			case 'Scene':
 
+                const textureList: TextureList = [];
+
+                for (const name in textures) {
+                    const idx = name.substring("texture".length);
+                    textureList[parseInt(idx)] = textures[name];
+                }
+
                 object = new TScene();
-                tobject = new Scene(object, textures);
+                tobject = new Scene(object, textureList);
 
 				break;
 
