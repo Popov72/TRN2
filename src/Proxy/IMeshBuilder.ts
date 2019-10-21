@@ -22,4 +22,6 @@ export interface IMeshBuilder {
 
     copyFacesWithSkinIndex(skinidx: number, newskinidx: number): void;
 
+    createMesh(name: string, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh;
+
 }

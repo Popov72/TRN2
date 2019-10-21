@@ -3,14 +3,19 @@ import {
     Geometry,
     IndicesArray,
     Mesh as BMesh,
+    MultiMaterial,
+    ShaderMaterial,
     SubMesh,
     VertexBuffer
 } from "babylonjs";
 
+import Engine from "../../src/Proxy/Engine";
 import { IMesh } from "../../src/Proxy/IMesh";
 import { IMeshBuilder, indexList } from "../../src/Proxy/IMeshBuilder";
 
 import Mesh from "./Mesh";
+import Scene from "./Scene";
+import { ShaderManager } from "./ShaderManager";
 
 export default class MeshBuilder implements IMeshBuilder {
     
@@ -18,9 +23,9 @@ export default class MeshBuilder implements IMeshBuilder {
     protected _tmesh:       Mesh;
     protected _skinIndices: Array<indexList>;
 
-    constructor(mesh: Mesh) {
-        this._tmesh = mesh;
-        this._mesh = mesh.object as BMesh;
+    constructor(mesh?: Mesh) {
+        this._tmesh = mesh as any;
+        this._mesh = mesh ? mesh.object as BMesh : <any>null;
         this._skinIndices = [];
     }
 
@@ -285,6 +290,77 @@ export default class MeshBuilder implements IMeshBuilder {
         }
 
         return ar;
+    }
+
+    public createMesh(name: string, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh {
+        const geom = new Geometry(`Geometry of ${name}`, (Engine.activeScene as Scene).object),
+              attributes = ['position'];
+
+        geom.setVerticesData("position", new Float32Array(vertices), false, 3);
+
+        if (uvs !== undefined) {
+            geom.setVerticesData("uv", new Float32Array(uvs), false, 2);
+            attributes.push('uv');
+        }
+
+        if (colors !== undefined) {
+            geom.setVerticesData("vertColor", new Float32Array(colors), false, 3);
+            attributes.push('vertColor');
+        }
+
+        const aindices = indices.slice();
+
+        for (let i = 0; i < aindices.length; i += 3) {
+            const i0 = aindices[i];
+            aindices[i] = aindices[i + 2];
+            aindices[i + 2] = i0;
+        }
+        
+        geom.setIndices(aindices);
+
+        let uniformsUsed = new Set<string>();
+
+        (Engine.getShaderMgr() as ShaderManager).getVertexUniforms(vshader)!.forEach((u) => uniformsUsed.add(u));
+        (Engine.getShaderMgr() as ShaderManager).getFragmentUniforms(fshader)!.forEach((u) => uniformsUsed.add(u));
+
+        let samplers = ["map", "mapBump"];
+
+        if (uniforms) {
+            for (const uname in uniforms) {
+                uniformsUsed.add(uname);
+            }
+        }
+
+        const shd = new ShaderMaterial(`Shader of ${name}`, (Engine.activeScene as Scene).object, {
+            "vertex":   vshader, 
+            "fragment": fshader, 
+        }, {
+            attributes: attributes,
+            samplers: samplers,
+            uniforms: Array.from(uniformsUsed)
+        });
+
+        shd.metadata = {
+            "uniforms": uniforms || {},
+            "userData": {}
+        };
+
+        const multimat = new MultiMaterial(`Material of ${name}`, (Engine.activeScene as Scene).object);
+
+        multimat.subMaterials.push(shd);
+
+        this._mesh = new BMesh(name, null);
+        this._mesh.subMeshes = [];
+        this._mesh.material = multimat;
+
+        geom.applyToMesh(this._mesh);
+
+        const tmesh = new Mesh(this._mesh),
+              materials = tmesh.materials;
+
+        materials.forEach((m) => m.uniformsUpdated());
+
+        return tmesh;
     }
 
 }

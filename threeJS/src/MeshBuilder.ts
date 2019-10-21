@@ -1,6 +1,8 @@
 import { 
+    Float32BufferAttribute,
     BufferGeometry,
-    Mesh as TMesh
+    Mesh as TMesh,
+    RawShaderMaterial
 } from "three";
 
 import { IMesh } from "../../src/Proxy/IMesh";
@@ -14,9 +16,9 @@ export default class MeshBuilder implements IMeshBuilder {
     protected _tmesh:       Mesh;
     protected _skinIndices: Array<indexList>;
 
-    constructor(mesh: Mesh) {
-        this._tmesh = mesh;
-        this._mesh = mesh.object as TMesh;
+    constructor(mesh?: Mesh) {
+        this._tmesh = mesh as any;
+        this._mesh = mesh ? mesh.object as TMesh : <any>null;
         this._skinIndices = [];
     }
 
@@ -251,6 +253,33 @@ export default class MeshBuilder implements IMeshBuilder {
 
             lst.push(index.array[i*3+0], index.array[i*3+1], index.array[i*3+2]);
         }
+    }
+
+    public createMesh(name: string, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh {
+        const geom = new BufferGeometry();
+
+        geom.setIndex(indices);
+        geom.addAttribute('position', new Float32BufferAttribute(vertices, 3));
+        if (uvs) {
+            geom.addAttribute('uv', new Float32BufferAttribute(uvs, 2));
+        }
+        if (colors) {
+            geom.addAttribute('vertColor', new Float32BufferAttribute(colors, 3));
+        }
+
+        geom.addGroup(0, indices.length, 0);
+
+        let material = new RawShaderMaterial({
+            "fragmentShader": fshader,
+            "vertexShader": vshader,
+            "uniforms": uniforms || {}
+        });
+
+        this._mesh = new TMesh(geom, [material]);
+
+        this._mesh.name = name;
+
+        return new Mesh(this._mesh);
     }
 
 }
