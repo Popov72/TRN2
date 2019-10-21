@@ -14,6 +14,8 @@ declare var glMatrix: any;
 
 glMatrix.glMatrix.setMatrixArrayType(Array);
 
+const shdMgr = new ShaderManager();
+
 Engine.registerFunctions( {
     "makeNode":         () => new Node(),
 
@@ -31,5 +33,5 @@ Engine.registerFunctions( {
         return new Renderer(container);
     },
 
-    "getShaderMgr":     new ShaderManager(),
+    "getShaderMgr":     shdMgr,
 });

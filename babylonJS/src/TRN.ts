@@ -19,7 +19,8 @@ declare var glMatrix: any;
 glMatrix.glMatrix.setMatrixArrayType(Array);
 
 const canvas = document.createElement("canvas"),
-      engine = new BEngine(canvas, true);
+      engine = new BEngine(canvas, true),
+      shdMgr = new ShaderManager();
 
 Engine.registerFunctions( {
     "makeNode":         () => new Node(),
@@ -38,5 +39,5 @@ Engine.registerFunctions( {
         return new Renderer(container, engine, canvas);
     },
 
-    "getShaderMgr":     new ShaderManager(),
+    "getShaderMgr":     shdMgr,
 });
