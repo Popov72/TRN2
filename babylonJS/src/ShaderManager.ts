@@ -7,8 +7,12 @@ import Shader from "./Shader";
 
 export class ShaderManager extends ShaderManagerBase {
 
+    protected _uniforms: Map<string, Set<string>>;
+
     constructor() {
         super();
+
+        this._uniforms = new Map();
     }
 
 	public getShader(ptype: shaderType, name: string) {
@@ -23,9 +27,26 @@ export class ShaderManager extends ShaderManagerBase {
 		return this.getShader(shaderType.fragment, name);
 	}
 
+    public getUniforms(name: string): Set<string> | undefined {
+        return this._uniforms.get(name);
+    }
+
+    public getVertexUniforms(name: string): Set<string> | undefined {
+        return this.getUniforms(name + '.vs');
+    }
+
+    public getFragmentUniforms(name: string): Set<string> | undefined {
+        return this.getUniforms(name + '.fs');
+    }
+
 	protected _getFile2(fname: string, ptype: string): string {
         const code = this._loadFile(fname + (ptype == shaderType.vertex ? '.vs' : '.fs')),
               uniformsUsed = new Set<string>();
+
+        if (code === "") {
+            throw `Can't load shader "${fname}"!`
+        }
+        this._uniforms.set(fname + (ptype == shaderType.vertex ? '.vs' : '.fs'), uniformsUsed);
 
         return Shader.getShader(ptype == 'vertex' ? 'Vertex' : 'Fragment', fname, code, uniformsUsed);
 	}
