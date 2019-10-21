@@ -1,3 +1,4 @@
+import Engine from "../Proxy/Engine";
 import IGameData from "../Player/IGameData";
 import { IMesh } from "../Proxy/IMesh";
 import { IScene } from "../Proxy/IScene";
@@ -146,11 +147,9 @@ export class TRLevel {
 			const m = this.movObjID2Index.get(item.objectID);
 			if (m == null) {
                 const obj = this.objMgr.createSprite(-item.objectID, roomIndex, this.convertLighting(lighting), true);
-                //console.log('spriteseq', item.objectID, this.convertLighting(lighting))
                 if (obj != null) {
                     obj.setPosition([item.x, -item.y, -item.z]);
                     obj.matrixAutoUpdate = true;
-                    //obj.updateMatrix();
                 }
 			} else {
                 let obj: IMesh | null = this.objMgr.createMoveable(item.objectID, roomIndex, lighting != -1 ? this.convertIntensity(lighting) : undefined);
@@ -168,7 +167,6 @@ export class TRLevel {
                         if (obj != null) {
                             obj.setPosition([item.x, -item.y, -item.z]);
                             obj.matrixAutoUpdate = true;
-                            //obj.updateMatrix();
                         }
                     }
                 }
@@ -184,43 +182,38 @@ export class TRLevel {
             // create portals
             const portals = data.portals, meshPortals: Array<IMesh> = [];
             data.meshPortals = meshPortals;
-            /*for (let p = 0; p < portals.length; ++p) {
-                const portal = portals[p], geom = new THREE.Geometry();
-                geom.vertices.push(
-                    new THREE.Vector3(portal.vertices[0].x, portal.vertices[0].y, portal.vertices[0].z),
-                    new THREE.Vector3(portal.vertices[1].x, portal.vertices[1].y, portal.vertices[1].z),
-                    new THREE.Vector3(portal.vertices[2].x, portal.vertices[2].y, portal.vertices[2].z),
-                    new THREE.Vector3(portal.vertices[3].x, portal.vertices[3].y, portal.vertices[3].z)
-                );
-                geom.colors.push(
-                    new THREE.Color(0xff0000),
-                    new THREE.Color(0x00ff00),
-                    new THREE.Color(0x0000ff),
-                    new THREE.Color(0xffffff)
-                );
-                geom.faces.push(new THREE.Face3(0, 1, 2, undefined, [geom.colors[0], geom.colors[1], geom.colors[2]]));
-                geom.faces.push(new THREE.Face3(0, 2, 3, undefined, [geom.colors[0], geom.colors[2], geom.colors[3]]));
-                var mesh = new THREE.Mesh(geom, new THREE.ShaderMaterial( {
-                    uniforms: {
-                    },
-                    vertexShader: this.shdMgr.getVertexShader('portal'),
-                    fragmentShader: this.shdMgr.getFragmentShader('portal'),
-                    depthTest: true,
-                    depthWrite: false,
-                    fog: false,
-                    vertexColors: THREE.VertexColors,
-                    transparent: true
-                }));
-                mesh.name = 'room' + m + '_portal' + p;
-                mesh.position.x = mesh.position.y = mesh.position.z = 0;
-                mesh.updateMatrix();
+            for (let p = 0; p < portals.length; ++p) {
+                const portal = portals[p];
+                const vertices = [
+                    portal.vertices[0].x, portal.vertices[0].y, portal.vertices[0].z,
+                    portal.vertices[1].x, portal.vertices[1].y, portal.vertices[1].z,
+                    portal.vertices[2].x, portal.vertices[2].y, portal.vertices[2].z,
+                    portal.vertices[3].x, portal.vertices[3].y, portal.vertices[3].z
+                ];
+
+                const colors = [
+                    1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1,
+                    1, 1, 1
+                ]
+
+                const faces = [
+                    0, 1, 2,
+                    0, 2, 3
+                ];
+
+                const meshb = Engine.makeMeshBuilder(),
+                      mesh = meshb.createMesh('room' + m + '_portal' + p, this.shdMgr.getVertexShader('portal'), this.shdMgr.getFragmentShader('portal'), undefined, vertices, faces, undefined, colors);
+
+                mesh.materials.forEach((m) => (m.transparent = true, m.depthWrite = false));
+                mesh.setPosition([0, 0, 0]);
                 mesh.matrixAutoUpdate = false;
                 mesh.visible = false;
-				mesh.geometry.computeBoundingBox();
-				mesh.geometry.computeBoundingSphere();
                 meshPortals.push(mesh);
+
                 this.sceneRender.add(mesh);
-            }*/
+            }
 
 			// static meshes in the room
 			for (let s = 0; s < room.staticMeshes.length; ++s) {
@@ -246,7 +239,6 @@ export class TRLevel {
                     obj.setPosition([x, y, z]);
                     obj.setQuaternion(q);
                     obj.matrixAutoUpdate = false;
-                    //obj.updateMatrix();
                 }
             }
             
@@ -263,7 +255,6 @@ export class TRLevel {
                     obj.visible = !data.isAlternateRoom;
                     obj.setPosition([rvertex.vertex.x + info.x, -rvertex.vertex.y, -rvertex.vertex.z - info.z]);
                     obj.matrixAutoUpdate = true;
-                    //obj.updateMatrix();
                 }
 			}
         }
