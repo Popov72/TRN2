@@ -200,6 +200,7 @@ export default class SceneParser {
                                 uval.width = texture.getSize().width;
                                 uval.height = texture.getSize().height;
                             });
+                            uval.value = this.textureMap[uval.value];
                             break;
                         case 'i':
                             shd.setInt(uname, uval.value);

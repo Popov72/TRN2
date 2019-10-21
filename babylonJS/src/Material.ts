@@ -75,6 +75,9 @@ export default class Material implements IMaterial {
 
     protected _setUniformValue(uname: string, uval: any): void {
         switch(uval.type) {
+            case 't':
+                this._material.setTexture(uname, uval.value);
+                break;
             case 'i':
                 this._material.setInt(uname, uval.value);
                 break;
