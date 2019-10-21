@@ -80,6 +80,8 @@ export default class Play {
 		this.gameData.sceneRender = scene;
         this.gameData.sceneBackground = this.renderer.createScene();
 
+        Engine.activeScene = scene;
+        
         const camera = this.gameData.sceneRender.getCamera();
 
         if (camera !== undefined) {

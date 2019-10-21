@@ -16,6 +16,7 @@ export interface funcPointers {
 export default class Engine {
  
     private static pointers: funcPointers;
+    private static _activeScene: IScene;
 
     public static registerFunctions(pointers: funcPointers): void {
         Engine.pointers = pointers;
@@ -39,5 +40,13 @@ export default class Engine {
 
     public static getShaderMgr(): ShaderManager {
         return Engine.pointers.getShaderMgr;
+    }
+
+    public static get activeScene(): IScene {
+        return Engine._activeScene;
+    }
+
+    public static set activeScene(as: IScene) {
+        Engine._activeScene = as;
     }
 }
