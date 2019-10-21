@@ -24,7 +24,7 @@ const canvas = document.createElement("canvas"),
 Engine.registerFunctions( {
     "makeNode":         () => new Node(),
 
-    "makeMeshBuilder":  (mesh: IMesh) => new MeshBuilder(mesh as Mesh),
+    "makeMeshBuilder":  (mesh?: IMesh) => new MeshBuilder(mesh as Mesh),
 
     "parseScene":       (sceneJSON: any) => {
         const sceneParser = new SceneParser(engine);

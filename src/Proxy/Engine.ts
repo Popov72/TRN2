@@ -7,7 +7,7 @@ import { IScene } from "./IScene";
 
 export interface funcPointers {
     "makeNode":         () => INode,
-    "makeMeshBuilder":  (mesh: IMesh) => IMeshBuilder,
+    "makeMeshBuilder":  (mesh?: IMesh) => IMeshBuilder,
     "parseScene":       (sceneJSON: any) => Promise<IScene>,
     "createRenderer":   (container: Element) => IRenderer,
     "getShaderMgr":     ShaderManager,
@@ -25,7 +25,7 @@ export default class Engine {
         return Engine.pointers.makeNode();
     }
 
-    public static makeMeshBuilder(mesh: IMesh): IMeshBuilder {
+    public static makeMeshBuilder(mesh?: IMesh): IMeshBuilder {
         return Engine.pointers.makeMeshBuilder(mesh);
     }
 

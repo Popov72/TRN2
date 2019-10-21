@@ -17,7 +17,7 @@ glMatrix.glMatrix.setMatrixArrayType(Array);
 Engine.registerFunctions( {
     "makeNode":         () => new Node(),
 
-    "makeMeshBuilder":  (mesh: IMesh) => new MeshBuilder(mesh as Mesh),
+    "makeMeshBuilder":  (mesh?: IMesh) => new MeshBuilder(mesh as Mesh),
 
     "parseScene":       (sceneJSON: any) => {
         const sceneParser = new SceneParser();
