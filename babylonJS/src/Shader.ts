@@ -75,8 +75,8 @@ export default class Shader {
         let ssname = this.shaderMap.get(code);
 
         if (ssname === undefined) {
-            ssname = `TRN_${name}`;
-            this.shaderMap.set(code, `TRN_${name}`);
+            ssname = `${name}`;
+            this.shaderMap.set(code, ssname);
             Effect.ShadersStore[`${ssname}${shaderType}Shader`] = code;
         }
 

@@ -58,7 +58,7 @@ export default class LevelConverterHelper {
 	}
 
 	public createMaterial(objType: string): any {
-        const matName = 'TR_' + objType;
+        const matName = objType;
 
         const mat = {
             "type": "RawShaderMaterial",

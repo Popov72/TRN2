@@ -12,7 +12,7 @@ export class ShaderManager extends ShaderManagerBase {
     }
 
 	public getShader(ptype: shaderType, name: string) {
-		return this._getFile2(name + (ptype == shaderType.vertex ? '.vs' : '.fs'), ptype);
+		return this._getFile2(name, ptype);
 	}
 
 	public getVertexShader(name: string) {
@@ -24,7 +24,7 @@ export class ShaderManager extends ShaderManagerBase {
 	}
 
 	protected _getFile2(fname: string, ptype: string): string {
-        const code = this._loadFile(fname),
+        const code = this._loadFile(fname + (ptype == shaderType.vertex ? '.vs' : '.fs')),
               uniformsUsed = new Set<string>();
 
         return Shader.getShader(ptype == 'vertex' ? 'Vertex' : 'Fragment', fname, code, uniformsUsed);
