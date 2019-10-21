@@ -95,13 +95,15 @@ export default class Shader {
                 continue;
             }
 
-            const token = Shader.parseShaderTokens(tokenizer);
+            const [token, remapped] = Shader.parseShaderTokens(tokenizer);
             if (token == null) {
                 console.log(code);
                 throw `Can't parse shader because the token "${tokenizer.currentIdentifier}" is used in the original shader and can't be mapped!`;
             }
 
-            uniformsUsed.add(token);
+            if (remapped) {
+                uniformsUsed.add(token);
+            }
 
             newcode += token;
         }
@@ -109,16 +111,16 @@ export default class Shader {
         return newcode;
     }
 
-    protected static parseShaderTokens(tokenizer: Tokenizer): string | null {
+    protected static parseShaderTokens(tokenizer: Tokenizer): [string | null, boolean] {
         for (let i = 0; i < tokenSource.length; ++i) {
             const tokenSrc = tokenSource[i];
     
             if (tokenizer.currentIdentifier === tokenSrc) {
-                return tokenDest[i];
+                return [tokenDest[i], true];
             }
         }
     
-        return tokenizer.currentIdentifier;
+        return [tokenizer.currentIdentifier, false];
     };
 
 }
