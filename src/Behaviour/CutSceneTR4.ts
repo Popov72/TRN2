@@ -9,7 +9,7 @@ import Misc from "../Utils/Misc";
 import { ObjectID } from "../Constants";
 import CutSceneHelper from "./CutSceneHelper";
 import { Quaternion } from "../Proxy/INode";
-import { BehaviourManager } from "./BehaviourManager";
+import { CutSceneData } from "./CutScene";
 
 declare var glMatrix: any;
 
@@ -17,17 +17,15 @@ export default class CutSceneTR4 {
 
     private sceneData:  any;
     private objMgr:     ObjectManager;
-    private bhvMgr:     BehaviourManager;
     private scene:      IScene;
     private confMgr:    ConfigManager;
     private cutscene:   any;
     private helper:     CutSceneHelper;
     private lara:       IMesh;
 
-    constructor(gameData: IGameData, cutscene: any, helper: CutSceneHelper, lara: IMesh) {
+    constructor(gameData: IGameData, cutscene: CutSceneData, helper: CutSceneHelper, lara: IMesh) {
         this.sceneData = gameData.sceneData;
         this.objMgr = gameData.objMgr;
-        this.bhvMgr = gameData.bhvMgr;
         this.confMgr = gameData.confMgr;
         this.scene = gameData.sceneRender;
         this.cutscene = cutscene;
@@ -67,7 +65,7 @@ export default class CutSceneTR4 {
         return promiseSound;
     }
 
-    public makeCutsceneData(cutscenes: Array<any>): void {
+    protected makeCutsceneData(cutscenes: Array<any>): void {
         const ocs = this.cutscene,
               cutscene = cutscenes[0];
 
@@ -142,7 +140,7 @@ export default class CutSceneTR4 {
         this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, cutscene.index, actorMoveables);
     }
 
-    public makeAnimationForActor(cutscene: any, actor: any, animName: string) {
+    protected makeAnimationForActor(cutscene: any, actor: any, animName: string) {
 
         function makeQuaternion(angleX: number, angleY: number, angleZ: number): Quaternion {
 
@@ -266,7 +264,7 @@ export default class CutSceneTR4 {
         return animation;
     }
 
-    public makeAnimationForCamera(cutscene: any): Array<any> {
+    protected makeAnimationForCamera(cutscene: any): Array<any> {
         // create camera frames
         const frames = [], 
               ocam = cutscene.camera, 

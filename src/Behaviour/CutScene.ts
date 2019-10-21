@@ -22,7 +22,7 @@ import CutSceneTR4 from "./CutSceneTR4";
 
 declare var glMatrix: any;
 
-interface CutSceneData {
+export interface CutSceneData {
     "index"         : number,
     "curFrame"      : number,
     "frames"        : any,
