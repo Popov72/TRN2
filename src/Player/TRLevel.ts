@@ -6,12 +6,13 @@ import { ObjectManager } from "./ObjectManager";
 import { ConfigManager } from "../ConfigManager";
 import { ShaderManager } from "../ShaderManager";
 import { Position } from "../Proxy/INode";
+import { RawLevel } from "../Loading/LevelLoader";
 
 declare var glMatrix: any;
 
 export class TRLevel {
 
-    public trlevel: any;
+    public trlevel: RawLevel;
 
     private movObjID2Index: Map<number, number>;
     private sceneRender: IScene;
@@ -26,6 +27,7 @@ export class TRLevel {
         this.objMgr = <any>null;
         this.confMgr = <any>null;
         this.shdMgr = <any>null;
+        this.trlevel = <any>null;
     }
 
     public initialize(gameData: IGameData): void {
