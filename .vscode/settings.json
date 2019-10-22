@@ -1,0 +1,30 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    // Configure glob patterns for excluding files and folders.
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/.vs": true,
+        "**/node_modules": true,
+        "**/temp": true,
+        "**/.temp": true,
+        "src/**/*.js.map": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        }
+    },
+    "files.associations": {
+        "*.fx": "glsl"
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/.vs": true,
+        "**/.temp": true,
+        "**/*.map": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        }
+    }
+}
