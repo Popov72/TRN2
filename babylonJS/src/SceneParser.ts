@@ -30,6 +30,7 @@ export default class SceneParser {
         [name: string] : Texture
     };
     private shdMgr: ShaderManager;
+    private _numTextureLoadedNotifications: number;
 
     private scene: BScene;
     private tscene: Scene;
@@ -37,7 +38,7 @@ export default class SceneParser {
     constructor(engine: Engine, shdMgr: ShaderManager) {
         this.engine = engine;
         this.shdMgr = shdMgr;
-        
+
         this.scene = new BScene(engine);
         this.scene.useRightHandedSystem = true;
         this.scene.autoClear = false;
@@ -45,9 +46,10 @@ export default class SceneParser {
         this.textures = [];
         this.tscene = new Scene(this.scene, this.textures);
         this.textureMap = {};
+        this._numTextureLoadedNotifications = 0;
     }
 
-	public parse(json: any, onLoad: any): void {
+    public parse(json: any, onLoad: any): void {
         this.json = json;
 
         this.createScene();
@@ -56,8 +58,16 @@ export default class SceneParser {
 
         this.scene.getBoundingBoxRenderer().showBackLines = false;
 
-        onLoad(this.tscene);
-	}
+        // wait all textures are loaded before going on
+        // we need to have the width/height properties of the texture uniforms to be set before going on, because
+        // we need them later on (when cloning materials - those properties must have valid values and not be undefined)
+        const idTimer = setInterval(() => {
+            if (this._numTextureLoadedNotifications == 0) {
+                clearInterval(idTimer);
+                onLoad(this.tscene);
+            }
+        }, 0);
+    }
 
     private createScene(): void {
         this.createTextures();
@@ -66,7 +76,7 @@ export default class SceneParser {
         for (let o = 0; o < objects.length; ++o) {
             const object = objects[o];
 
-            switch(object.type) {
+            switch (object.type) {
                 case "PerspectiveCamera":
                     this.createCamera(object);
                     break;
@@ -146,7 +156,7 @@ export default class SceneParser {
 
         let attributes = ["position", "uv", "normal"];
 
-        ['vertColor', '_flags', 'skinIndex', 'skinWeight'].forEach( (attrName) => {
+        ['vertColor', '_flags', 'skinIndex', 'skinWeight'].forEach((attrName) => {
             if (attr[attrName]) {
                 const buffer = new Buffer(this.engine, Array.from(attr[attrName].array), false, attr[attrName].itemSize);
                 mesh.setVerticesBuffer(buffer.createVertexBuffer(attrName, 0, attr[attrName].itemSize));
@@ -167,7 +177,7 @@ export default class SceneParser {
 
                 this.shdMgr.getVertexUniforms(material.vertexShader)!.forEach((u) => uniformsUsed.add(u));
                 this.shdMgr.getFragmentUniforms(material.fragmentShader)!.forEach((u) => uniformsUsed.add(u));
-            
+
                 let uniforms = Array.from<string>(uniformsUsed);
                 let samplers = ["map", "mapBump"];
 
@@ -176,8 +186,8 @@ export default class SceneParser {
                 }
 
                 const shd = new ShaderMaterial(material.uuid, this.scene, {
-                    "vertex":   vertexTag, 
-                    "fragment": fragmentTag, 
+                    "vertex":   vertexTag,
+                    "fragment": fragmentTag,
                 }, {
                     attributes: attributes,
                     samplers: samplers,
@@ -187,7 +197,20 @@ export default class SceneParser {
 
                 for (const uname in material.uniforms) {
                     const uval = material.uniforms[uname];
-                    switch(uval.type) {
+                    switch (uval.type) {
+                        case 't':
+                            shd.setTexture(uname, this.textureMap[uval.value]);
+                            this._numTextureLoadedNotifications++;
+                            this.textureMap[uval.value].onLoadObservable.add((texture: Texture) => {
+                                uval.width = texture.getSize().width;
+                                uval.height = texture.getSize().height;
+                                this._numTextureLoadedNotifications--;
+                            });
+                            uval.value = this.textureMap[uval.value];
+                            break;
+                        case 'i':
+                            shd.setInt(uname, uval.value);
+                            break;
                         case 'f':
                             shd.setFloat(uname, uval.value);
                             break;
@@ -196,17 +219,6 @@ export default class SceneParser {
                             break;
                         case 'f4':
                             shd.setVector4(uname, new Vector4((uval.value as Array<number>)[0], (uval.value as Array<number>)[1], (uval.value as Array<number>)[2], (uval.value as Array<number>)[3]));
-                            break;
-                        case 't':
-                            shd.setTexture(uname, this.textureMap[uval.value]);
-                            this.textureMap[uval.value].onLoadObservable.add( (texture: Texture) => {
-                                uval.width = texture.getSize().width;
-                                uval.height = texture.getSize().height;
-                            });
-                            uval.value = this.textureMap[uval.value];
-                            break;
-                        case 'i':
-                            shd.setInt(uname, uval.value);
                             break;
                     }
                 }
@@ -223,7 +235,7 @@ export default class SceneParser {
 
                 multimat.subMaterials.push(shd);
 
-                SubMesh.AddToMesh(multimat.subMaterials.length-1, 0, totalVertices, groups[m].start, groups[m].count, mesh);
+                SubMesh.AddToMesh(multimat.subMaterials.length - 1, 0, totalVertices, groups[m].start, groups[m].count, mesh);
             }
 
             mesh.material = multimat;
@@ -236,7 +248,7 @@ export default class SceneParser {
         for (let i = 0; i < this.json.images.length; ++i) {
             const image = this.json.images[i];
 
-            if (image.uuid == id) return image;
+            if (image.uuid == id) { return image; }
         }
     }
 
@@ -244,7 +256,7 @@ export default class SceneParser {
         for (let g = 0; g < this.json.geometries.length; ++g) {
             const geometry = this.json.geometries[g];
 
-            if (geometry.uuid == id) return geometry;
+            if (geometry.uuid == id) { return geometry; }
         }
     }
 
@@ -252,7 +264,7 @@ export default class SceneParser {
         for (let g = 0; g < this.json.materials.length; ++g) {
             const material = this.json.materials[g];
 
-            if (material.uuid == id) return material;
+            if (material.uuid == id) { return material; }
         }
     }
 
