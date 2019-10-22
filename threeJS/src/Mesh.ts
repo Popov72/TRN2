@@ -1,9 +1,9 @@
-import { 
+import {
     Box3 as TBox3,
     Box3Helper,
-    Mesh as TMesh, 
-    Object3D, 
-    ShaderMaterial, 
+    Mesh as TMesh,
+    Object3D,
+    ShaderMaterial,
     Vector3
 } from "three";
 
@@ -89,6 +89,5 @@ export default class Mesh extends Node implements IMesh {
 
         return new Box3();
     }
-
 
 }

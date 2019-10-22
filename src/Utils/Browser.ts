@@ -1,57 +1,57 @@
-if(!("pointerLockElement" in document)) {
+if (!("pointerLockElement" in document)) {
     const getter = (function() {
         // These are the functions that match the spec, and should be preferred
-        if("webkitPointerLockElement" in document) {
+        if ("webkitPointerLockElement" in document) {
             return function() { return (document as any).webkitPointerLockElement; };
         }
-        if("mozPointerLockElement" in document) {
+        if ("mozPointerLockElement" in document) {
             return function() { return (document as any).mozPointerLockElement; };
         }
-        
+
         return function() { return null; }; // not supported
     })();
-    
+
     Object.defineProperty(document, "pointerLockElement", {
         enumerable: true, configurable: false, writable: false,
         get: getter
     });
 }
 
-if(!("fullscreenElement" in document)) {
+if (!("fullscreenElement" in document)) {
     const getter = (function() {
-        if("webkitFullscreenElement" in document) {
+        if ("webkitFullscreenElement" in document) {
             return function() { return (document as any).webkitFullscreenElement; };
         }
-        if("mozFullScreenElement" in document) {
+        if ("mozFullScreenElement" in document) {
             return function() { return (document as any).mozFullScreenElement; };
         }
-        
+
         return function() { return null; }; // not supported
     })();
-    
+
     Object.defineProperty(document, "fullscreenElement", {
         enumerable: true, configurable: false, writable: false,
         get: getter
     });
 }
 
-if(!document.exitPointerLock) {
+if (!document.exitPointerLock) {
     document.exitPointerLock = (function() {
         return  (document as any).webkitExitPointerLock ||
                 (document as any).mozExitPointerLock ||
-                function(){
-                    if((navigator as any).pointer) {
+                function() {
+                    if ((navigator as any).pointer) {
                         (navigator as any).pointer.unlock();
                     }
                 };
     })();
 }
 
-if(!document.exitFullscreen) {
+if (!document.exitFullscreen) {
     document.exitFullscreen = (function() {
         return  (document as any).webkitCancelFullScreen ||
                 (document as any).mozCancelFullScreen ||
-                function(){};
+                function() {};
     })();
 }
 
@@ -60,23 +60,23 @@ export default class Browser {
     public static _qs: any = null;
 
     public static AudioContext =
-		typeof(AudioContext) != 'undefined' ? new AudioContext() : 
-		typeof((window as any).webkitAudioContext) != 'undefined' ? new (window as any).webkitAudioContext() : 
-		typeof((window as any).mozAudioContext) != 'undefined' ? new (window as any).mozAudioContext() : null;
+        typeof(AudioContext) != 'undefined' ? new AudioContext() :
+        typeof((window as any).webkitAudioContext) != 'undefined' ? new (window as any).webkitAudioContext() :
+        typeof((window as any).mozAudioContext) != 'undefined' ? new (window as any).mozAudioContext() : null;
 
     public static bindRequestPointerLock(domElement: Element): void {
-    	domElement.requestPointerLock = 
-    		domElement.requestPointerLock    ||
-    		(domElement as any).mozRequestPointerLock ||
-    		(domElement as any).webkitRequestPointerLock;
+        domElement.requestPointerLock =
+            domElement.requestPointerLock    ||
+            (domElement as any).mozRequestPointerLock ||
+            (domElement as any).webkitRequestPointerLock;
     }
 
     public static bindRequestFullscreen(domElement: Element): void {
-    	domElement.requestFullscreen = 
-    		domElement.requestFullscreen    ||
-    		(domElement as any).mozRequestFullScreen ||
-    		(domElement as any).webkitRequestFullscreen ||
-    		(domElement as any).webkitRequestFullScreen;
+        domElement.requestFullscreen =
+            domElement.requestFullscreen    ||
+            (domElement as any).mozRequestFullScreen ||
+            (domElement as any).webkitRequestFullscreen ||
+            (domElement as any).webkitRequestFullScreen;
     }
 
     static get QueryString(): any {
@@ -87,7 +87,7 @@ export default class Browser {
               query = window.location.search.substring(1),
               vars = query.split("&");
 
-        for (let i=0; i < vars.length; i++) {
+        for (let i = 0; i < vars.length; i++) {
             const pair = vars[i].split("=");
 
             // If first entry with this name
@@ -107,4 +107,4 @@ export default class Browser {
 
         return Browser._qs;
     }
-};
+}

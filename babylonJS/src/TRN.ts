@@ -1,4 +1,4 @@
-import { 
+import {
     Engine as BEngine
 } from "babylonjs";
 
@@ -22,7 +22,7 @@ const canvas = document.createElement("canvas"),
       engine = new BEngine(canvas, true),
       shdMgr = new ShaderManager();
 
-Engine.registerFunctions( {
+Engine.registerFunctions({
     "makeNode":         () => new Node(),
 
     "makeMeshBuilder":  (mesh?: IMesh) => new MeshBuilder(mesh as Mesh),

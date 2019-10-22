@@ -17,7 +17,7 @@ export class Zbias extends Behaviour {
 
         if (lstObjs && params) {
             const factor = params.factor, unit = params.unit;
-            lstObjs.forEach( (obj) => {
+            lstObjs.forEach((obj) => {
                 if (isMesh(obj)) {
                     const materials = obj.materials;
                     for (let m = 0; m < materials.length; ++m) {
@@ -33,6 +33,6 @@ export class Zbias extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Zbias.name, 
+BehaviourManager.registerFactory(Zbias.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Zbias(nbhv, gameData, objectid, objecttype)
 );

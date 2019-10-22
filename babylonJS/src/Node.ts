@@ -1,4 +1,4 @@
-import { 
+import {
     Quaternion as BQuaternion,
     TransformNode
 } from "babylonjs";
@@ -21,7 +21,7 @@ export default class Node implements INode {
     get object(): TransformNode {
         return this._node;
     }
-    
+
     public get position(): Position {
         return [this._node.position.x, this._node.position.y, this._node.position.z];
     }
@@ -44,12 +44,12 @@ export default class Node implements INode {
     }
 
     public remove(child: Node): void {
-		const index = this._children.indexOf(child);
+        const index = this._children.indexOf(child);
 
         if (index !== - 1) {
             this._children.splice(index, 1);
             child.object.parent = null;
-		}
+        }
     }
 
     public updateMatrixWorld(): void {

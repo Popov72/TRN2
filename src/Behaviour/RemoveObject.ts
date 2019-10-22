@@ -19,7 +19,7 @@ export class RemoveObject extends Behaviour {
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
         if (lstObjs) {
-            lstObjs.forEach( (obj) => {
+            lstObjs.forEach((obj) => {
                 this.objMgr.removeObjectFromScene(obj as IMesh);
             });
         }
@@ -29,6 +29,6 @@ export class RemoveObject extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(RemoveObject.name, 
+BehaviourManager.registerFactory(RemoveObject.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new RemoveObject(nbhv, gameData, objectid, objecttype)
 );

@@ -17,7 +17,7 @@ export class AnimatedTexture extends Behaviour {
 
     constructor(nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) {
         super(nbhv, gameData, objectid, objecttype);
-        
+
         this.animatedTextures = gameData.sceneData.animatedTextures;
         this.textures = gameData.sceneData.textures;
         this.matList = <any>null;
@@ -28,10 +28,10 @@ export class AnimatedTexture extends Behaviour {
             return [BehaviourRetCode.dontKeepBehaviour, null];
         }
 
-		// initialize the animated textures
+        // initialize the animated textures
         for (let i = 0; i < this.animatedTextures.length; ++i) {
             const animTexture = this.animatedTextures[i];
-            animTexture.progressor = new Sequence(animTexture.animcoords.length, 1.0/animTexture.animspeed);
+            animTexture.progressor = new Sequence(animTexture.animcoords.length, 1.0 / animTexture.animspeed);
         }
 
         // collect the materials we will have to update each frame
@@ -41,7 +41,7 @@ export class AnimatedTexture extends Behaviour {
             const obj = lstObjs[i] as IMesh;
 
             const materials = obj.materials;
-            
+
             for (let m = 0; m < materials.length; ++m) {
                 const material = materials[m],
                       userData = material.userData;
@@ -64,10 +64,10 @@ export class AnimatedTexture extends Behaviour {
     }
 
     public frameStarted(curTime: number, delta: number) {
-		for (let i = 0; i < this.animatedTextures.length; ++i) {
-			const animTexture = this.animatedTextures[i];
-			animTexture.progressor.update(delta);
-		}
+        for (let i = 0; i < this.animatedTextures.length; ++i) {
+            const animTexture = this.animatedTextures[i];
+            animTexture.progressor.update(delta);
+        }
     }
 
     public frameEnded(curTime: number, delta: number) {
@@ -87,6 +87,6 @@ export class AnimatedTexture extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(AnimatedTexture.name, 
+BehaviourManager.registerFactory(AnimatedTexture.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new AnimatedTexture(nbhv, gameData, objectid, objecttype)
 );

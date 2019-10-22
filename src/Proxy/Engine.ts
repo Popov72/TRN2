@@ -6,15 +6,15 @@ import { IRenderer } from "./IRenderer";
 import { IScene } from "./IScene";
 
 export interface funcPointers {
-    "makeNode":         () => INode,
-    "makeMeshBuilder":  (mesh?: IMesh) => IMeshBuilder,
-    "parseScene":       (sceneJSON: any) => Promise<IScene>,
-    "createRenderer":   (container: Element) => IRenderer,
-    "getShaderMgr":     ShaderManager,
-};
+    "makeNode":         () => INode;
+    "makeMeshBuilder":  (mesh?: IMesh) => IMeshBuilder;
+    "parseScene":       (sceneJSON: any) => Promise<IScene>;
+    "createRenderer":   (container: Element) => IRenderer;
+    "getShaderMgr":     ShaderManager;
+}
 
 export default class Engine {
- 
+
     private static pointers: funcPointers;
     private static _activeScene: IScene;
 

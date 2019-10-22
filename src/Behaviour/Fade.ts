@@ -32,7 +32,7 @@ export class Fade extends Behaviour {
         this.colorEnd = this.nbhv.colorEnd;
         this.duration = parseFloat(this.nbhv.duration);
         this.startTime = -1;
-        
+
         this.setColor(this.colorStart);
 
         return [BehaviourRetCode.keepBehaviour, null];
@@ -59,29 +59,29 @@ export class Fade extends Behaviour {
     }
 
     protected setColor(color: Position): void {
-		this.sceneRender.traverse( (obj) => {
+        this.sceneRender.traverse((obj) => {
             if (!obj.visible || !isMesh(obj)) {
                 return;
             }
 
             const materials = obj.materials;
-            
-			if (!materials || !materials.length) {
+
+            if (!materials || !materials.length) {
                 return;
             }
 
-			for (let i = 0; i < materials.length; ++i) {
-				const material = materials[i];
+            for (let i = 0; i < materials.length; ++i) {
+                const material = materials[i];
 
                 material.uniforms.tintColor.value = color;
-                
+
                 material.uniformsUpdated(["tintColor"]);
-			}
+            }
         });
     }
 
 }
 
-BehaviourManager.registerFactory(Fade.name, 
+BehaviourManager.registerFactory(Fade.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Fade(nbhv, gameData, objectid, objecttype)
 );

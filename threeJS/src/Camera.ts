@@ -17,7 +17,7 @@ export default class Camera extends Node implements ICamera {
     get object(): PerspectiveCamera {
         return this._camera;
     }
-    
+
     get aspect(): number {
         return this._camera.aspect;
     }

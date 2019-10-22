@@ -4,8 +4,8 @@ export default class Sequence {
     protected tileDisplayDuration: number;
     protected currentDisplayTime: number;
     protected currentTile: number;
-    
-    constructor(numTiles: number, tileDispDuration: number) {	
+
+    constructor(numTiles: number, tileDispDuration: number) {
         this.numberOfTiles = numTiles;
         this.tileDisplayDuration = tileDispDuration;
 
@@ -16,13 +16,14 @@ export default class Sequence {
         this.currentTile = 0;
     }
 
-	public update(milliSec: number) {
-		this.currentDisplayTime += milliSec;
-		while (this.currentDisplayTime > this.tileDisplayDuration) {
-			this.currentDisplayTime -= this.tileDisplayDuration;
-			this.currentTile++;
-			if (this.currentTile == this.numberOfTiles)
-				this.currentTile = 0;
-		}
-	}
+    public update(milliSec: number) {
+        this.currentDisplayTime += milliSec;
+        while (this.currentDisplayTime > this.tileDisplayDuration) {
+            this.currentDisplayTime -= this.tileDisplayDuration;
+            this.currentTile++;
+            if (this.currentTile == this.numberOfTiles) {
+                this.currentTile = 0;
+            }
+        }
+    }
 }

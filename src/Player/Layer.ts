@@ -11,7 +11,7 @@ export enum LAYER {
     HOLSTER_EMPTY   = 2,
     HOLSTER_FULL    = 3,
     MESHSWAP        = 4,
-};
+}
 
 export enum BONE {
     HIPS    = 0,
@@ -29,7 +29,7 @@ export enum BONE {
     ARM_L2  = 12,
     ARM_L3  = 13,
     HEAD    =  14,
-};
+}
 
 export enum MASK {
     HIPS    =  1 << BONE.HIPS,
@@ -58,7 +58,7 @@ export enum MASK {
     LOWER   =   HIPS   | LEG_L  | LEG_R,
 
     ALL     =   0xFFFFFFFF,
-};
+}
 
 interface ALayer {
     meshb: IMeshBuilder;
@@ -76,7 +76,7 @@ export class Layer {
         this.matMgr = gameData.matMgr;
 
         this.layers = new Map();
-        
+
         this.setMesh(LAYER.MAIN, mainMesh);
     }
 
@@ -111,7 +111,7 @@ export class Layer {
 
         if (layerIndex !== LAYER.MAIN) {
             const mainMesh = this.layers.get(LAYER.MAIN)!.meshb.mesh;
-            
+
             this._setSkeleton(meshb.mesh, this.sceneData.objects[mainMesh.name].skeleton);
             this.setRoom(this.sceneData.objects[mainMesh.name].roomIndex, meshb.mesh);
         }
@@ -198,9 +198,9 @@ export class Layer {
     protected _setSkeleton(mesh: IMesh, skeleton: Skeleton) {
         for (let m = 0; m < mesh.materials.length; ++m) {
             const material = mesh.materials[m];
-            
-            material.uniforms.boneMatrices.value = skeleton.boneMatrices
-            
+
+            material.uniforms.boneMatrices.value = skeleton.boneMatrices;
+
             material.uniformsUpdated(["boneMatrices"]);
         }
 

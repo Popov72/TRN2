@@ -4,7 +4,6 @@ import { IScene } from "../Proxy/IScene";
 
 import IGameData from "../Player/IGameData";
 import { ObjectManager } from "../Player/ObjectManager";
-import { BehaviourManager } from "../Behaviour/BehaviourManager";
 import { ShaderManager } from "../ShaderManager";
 import { LAYER, MASK } from "../Player/Layer";
 import { Commands } from "../Animation/Commands";
@@ -16,14 +15,12 @@ export default class CutSceneHelper {
     private sceneData:  any;
     private gameData:   IGameData;
     private objMgr:     ObjectManager;
-    private bhvMgr:     BehaviourManager;
     private shdMgr:     ShaderManager;
     private scene:      IScene;
 
     constructor(gameData: IGameData) {
         this.gameData = gameData;
         this.sceneData = gameData.sceneData;
-        this.bhvMgr = gameData.bhvMgr;
         this.objMgr = gameData.objMgr;
         this.shdMgr = gameData.shdMgr;
         this.scene = gameData.sceneRender;
@@ -43,27 +40,27 @@ export default class CutSceneHelper {
             }
         }
 
-        switch(csIndex) {
+        switch (csIndex) {
             case 1: {
                 // Handle the shovel / Make a hole in the ground / Add a fade-in/out between animation #1 and #2 (so that we don't see the hole pop...)
                 const lara = actorMoveables[0],
                       data = this.sceneData.objects[lara.name],
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex],
                       track2 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex + 1];
-                
+
                 const meshShovel = this.objMgr.createMoveable(417, data.roomIndex, undefined, true, data.skeleton);
 
                 data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
                 track1.setCommands([
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [24,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeOut(1.0)] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [24,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeOut(1.0)] }
                 ], 0);
 
                 track2.setCommands([
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [27,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeIn(1.0)] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [27,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeIn(1.0)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
 
                 break;
@@ -74,15 +71,15 @@ export default class CutSceneHelper {
                 const lara = actorMoveables[0],
                       data = this.sceneData.objects[lara.name],
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
-                
+
                 const meshShovel = this.objMgr.createMoveable(417, data.roomIndex, undefined, true, data.skeleton);
 
                 data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
                 track1.setCommands([
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
 
                 break;
@@ -94,10 +91,10 @@ export default class CutSceneHelper {
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
                 track1.setCommands([
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
                 ], 0);
 
                 break;
@@ -110,7 +107,7 @@ export default class CutSceneHelper {
                 const rooms  = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 110, 111, 112, 113, 114, 115, 116, 117, 122, 123]),
                       shader = this.shdMgr.getFragmentShader("volumetric_fog");
 
-                this.scene.traverse( (obj) => {
+                this.scene.traverse((obj) => {
                     const data = this.sceneData.objects[obj.name];
 
                     if (data && rooms.has(data.roomIndex) || actorMoveables.indexOf(obj) >= 0) {
@@ -135,7 +132,7 @@ export default class CutSceneHelper {
                 const oscroll = (this.objMgr.objectList['staticmesh'][20] as Array<IMesh>)[2],
                       q = glMatrix.quat.create();
 
-                glMatrix.quat.setAxisAngle(q, [0,1,0], glMatrix.glMatrix.toRadian(60));
+                glMatrix.quat.setAxisAngle(q, [0, 1, 0], glMatrix.glMatrix.toRadian(60));
 
                 oscroll.setQuaternion(q);
                 oscroll.setPosition([oscroll.position[0] + 850, oscroll.position[1], oscroll.position[2]]);
@@ -153,10 +150,10 @@ export default class CutSceneHelper {
                         uniforms.push({ a:material.uniforms.tintColor.value, i:0 });
                     }
                 }
-                this.bhvMgr.addBehaviour('FadeUniformColor', 
-                    { 
-                        "colorStart":   [1,1,1], 
-                        "colorEnd":     [3.5,3.5,3.5], 
+                this.bhvMgr.addBehaviour('FadeUniformColor',
+                    {
+                        "colorStart":   [1,1,1],
+                        "colorEnd":     [3.5,3.5,3.5],
                         "duration":     3.0,
                         "uniforms":     uniforms
                     });*/
@@ -168,14 +165,14 @@ export default class CutSceneHelper {
                 const lara = actorMoveables[0],
                       data = this.sceneData.objects[lara.name],
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
-                
+
                 const meshPole = this.objMgr.createMoveable(417, data.roomIndex, undefined, true, data.skeleton);
 
                 data.layer.setMesh(LAYER.MESHSWAP, meshPole, 0);
 
                 track1.setCommands([
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [560, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [560, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] }
                 ], 0);
 
                 break;
@@ -187,10 +184,10 @@ export default class CutSceneHelper {
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
                 track1.setCommands([
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd:Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
                 ], 0);
 
                 break;
@@ -200,12 +197,12 @@ export default class CutSceneHelper {
 
     public fadeOut(duration: number): void {
         //this.bhvMgr.addBehaviour('Fade', { "colorStart": [1, 1, 1], "colorEnd": [0, 0, 0], "duration": duration });
-        jQuery(this.gameData.container).fadeOut(duration*1000);
+        jQuery(this.gameData.container).fadeOut(duration * 1000);
     }
 
     public fadeIn(duration: number): void {
         //this.bhvMgr.addBehaviour('Fade', { "colorStart": [0, 0, 0], "colorEnd": [1, 1, 1], "duration": duration });
-        jQuery(this.gameData.container).fadeIn(duration*1000);
+        jQuery(this.gameData.container).fadeIn(duration * 1000);
     }
 
     // Between cutscene 1 and 2, a hole should appear in the ground to reveal hidden entrance to pyramid
@@ -222,7 +219,7 @@ export default class CutSceneHelper {
 
         let mshBld = Engine.makeMeshBuilder(oroom);
 
-        let newFaces = [ 
+        let newFaces = [
             mshBld.copyFace(118),
             mshBld.copyFace(120),
             mshBld.copyFace(120),
@@ -249,8 +246,8 @@ export default class CutSceneHelper {
         newFaces[3].v2[0] = newFaces[3].v3[0];
         newFaces[3].v2[2] = newFaces[3].v3[2];
 
-        mshBld.removeFaces(new Set([ 
-            49,116,117,118,119,120,
+        mshBld.removeFaces(new Set([
+            49, 116, 117, 118, 119, 120,
         ]));
 
         mshBld.createFaces(newFaces, 1);
@@ -260,7 +257,7 @@ export default class CutSceneHelper {
 
         mshBld = Engine.makeMeshBuilder(oroom);
 
-        newFaces = [ 
+        newFaces = [
             mshBld.copyFace(126),
             mshBld.copyFace(126),
             mshBld.copyFace(128),
@@ -269,8 +266,8 @@ export default class CutSceneHelper {
             mshBld.copyFace(63)
         ];
 
-        mshBld.removeFaces(new Set([ 
-            63,126,127,128,129,134
+        mshBld.removeFaces(new Set([
+            63, 126, 127, 128, 129, 134
         ]));
 
         newFaces[0].v1[0] = newFaces[0].v3[0];

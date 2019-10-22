@@ -71,7 +71,7 @@ export default class Shader {
 
     public static getShader(shaderType: string, name: string, code: string, uniformsUsed: Set<string>): string {
         code = Shader.parseShader(code, uniformsUsed);
-        
+
         let ssname = this.shaderMap.get(code);
 
         if (ssname === undefined) {
@@ -114,13 +114,13 @@ export default class Shader {
     protected static parseShaderTokens(tokenizer: Tokenizer): [string | null, boolean] {
         for (let i = 0; i < tokenSource.length; ++i) {
             const tokenSrc = tokenSource[i];
-    
+
             if (tokenizer.currentIdentifier === tokenSrc) {
                 return [tokenDest[i], true];
             }
         }
-    
+
         return [tokenizer.currentIdentifier, false];
-    };
+    }
 
 }

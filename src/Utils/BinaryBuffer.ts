@@ -21,13 +21,13 @@ export default class BinaryBuffer {
             if (++this.loadCount == this.urlList.length) {
                 resolve(this.bufferList);
             }
-        }
+        };
 
         request.onreadystatechange = () => {
-            if (request.readyState != 4) return;
+            if (request.readyState != 4) { return; }
 
             if (request.status != 200) {
-    	   		console.log('Could not read a binary file. ', request.status, request.statusText);
+                   console.log('Could not read a binary file. ', request.status, request.statusText);
                 if (++this.loadCount == this.urlList.length) {
                     resolve(this.bufferList);
                 }
@@ -37,13 +37,13 @@ export default class BinaryBuffer {
                     resolve(this.bufferList);
                 }
             }
-        }
+        };
 
-    	request.send();
+        request.send();
     }
 
     public load(): Promise<Array<any>> {
-        return new Promise(( resolve, reject ) => {
+        return new Promise((resolve, reject) => {
             for (let i = 0; i < this.urlList.length; ++i) {
                 this._loadBuffer(this.urlList[i], i, resolve);
             }

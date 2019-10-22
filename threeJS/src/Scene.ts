@@ -1,5 +1,5 @@
-import { 
-    Scene as TScene 
+import {
+    Scene as TScene
 } from "three";
 
 import { IScene, TextureList } from "../../src/Proxy/IScene";
@@ -29,7 +29,7 @@ export default class Scene extends Node implements IScene {
         return this._camera;
     }
 
-    public traverse( callback: (obj: Mesh) => void ): void {
+    public traverse(callback: (obj: Mesh) => void): void {
         super.traverse(callback as ((obj: Node) => void));
     }
 

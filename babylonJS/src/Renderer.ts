@@ -30,7 +30,7 @@ export default class Renderer implements IRenderer {
     get engine(): Engine {
         return this._engine;
     }
-    
+
     public setSize(width: number, height: number): void {
         const scale = this._engine.getHardwareScalingLevel();
         this._engine.setSize(width / scale, height / scale);
@@ -51,14 +51,14 @@ export default class Renderer implements IRenderer {
         scene.object.activeCamera = camera.object;
         scene.object.render(false, true);
     }
- 
+
     public getPerfData(scenes: Array<Scene>): PerfData {
         let numDrawCalls = 0, numObjects = 0, numGeometries = 0, numFaces = 0, numTextures = 0, numParticles = 0, numPrograms = 0;
 
-        scenes.forEach( (scene) => {
+        scenes.forEach((scene) => {
             numObjects += scene.object.getActiveMeshes().length;
             numGeometries += scene.object.getGeometries().length;
-            numFaces += scene.object.getActiveIndices()/3;
+            numFaces += scene.object.getActiveIndices() / 3;
             numTextures += scene.object.textures.length;
             numParticles += scene.object.getActiveParticles();
         });
@@ -74,7 +74,7 @@ export default class Renderer implements IRenderer {
             "numGeometries": numGeometries,
             "numParticles": numParticles,
             "numPrograms": numPrograms,
-        }
+        };
     }
-    
+
 }

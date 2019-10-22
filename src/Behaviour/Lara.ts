@@ -53,24 +53,24 @@ export class Lara extends Behaviour {
             let laraQuat = this.lara.quaternion;
             if (laraAngle != undefined) {
                 const q = glMatrix.quat.create();
-                glMatrix.quat.setAxisAngle(q, [0,1,0], glMatrix.glMatrix.toRadian(parseFloat(laraAngle)));
+                glMatrix.quat.setAxisAngle(q, [0, 1, 0], glMatrix.glMatrix.toRadian(parseFloat(laraAngle)));
                 laraQuat = q;
             }
 
             const camPos = this.lara.position;
 
-			const ofstDir = parseFloat(this.nbhv.dirdist),
-			      ofstUp  = parseFloat(this.nbhv.updist);
+            const ofstDir = parseFloat(this.nbhv.dirdist),
+                  ofstUp  = parseFloat(this.nbhv.updist);
 
-			const v3 = [0, ofstUp, ofstDir],
-			      q  = laraQuat.slice();
+            const v3 = [0, ofstUp, ofstDir],
+                  q  = laraQuat.slice();
 
-			glMatrix.vec3.transformQuat(v3, v3, q);
+            glMatrix.vec3.transformQuat(v3, v3, q);
 
-			camPos[0] += v3[0];
-			camPos[1] += v3[1];
+            camPos[0] += v3[0];
+            camPos[1] += v3[1];
             camPos[2] += v3[2];
-            
+
             this.gameData.camera.setPosition(camPos);
             this.gameData.camera.setQuaternion(laraQuat);
 
@@ -103,7 +103,7 @@ export class Lara extends Behaviour {
             // for some reason, holster meshes are made of 17 bones and not 15 as Lara mesh...
             // so, modify the skin indices so that left and right holsters match the right bones in Lara mesh
             const meshb = Engine.makeMeshBuilder(mvbHolsterEmpty);
-            meshb.replaceSkinIndices({4:BONE.LEG_L1, 8:BONE.LEG_R1});
+            meshb.replaceSkinIndices({4: BONE.LEG_L1, 8: BONE.LEG_R1});
             layer.setMeshBuilder(LAYER.HOLSTER_EMPTY, meshb, 0);
         }
 
@@ -113,7 +113,7 @@ export class Lara extends Behaviour {
         const mvbHolsterFull = this.objMgr.createMoveable(ObjectID.HolsterFull, -1, undefined, true, dataLara.skeleton);
         if (mvbHolsterFull) {
             const meshb = Engine.makeMeshBuilder(mvbHolsterFull);
-            meshb.replaceSkinIndices({4:BONE.LEG_L1, 8:BONE.LEG_R1});
+            meshb.replaceSkinIndices({4: BONE.LEG_L1, 8: BONE.LEG_R1});
             layer.setMeshBuilder(LAYER.HOLSTER_FULL, meshb, 0);
         }
 
@@ -125,9 +125,9 @@ export class Lara extends Behaviour {
               ];
 
         for (let i = 0; i < meshSwapIds.length; ++i) {
-            ObjectID['meshswap' + (i+1)] = meshSwapIds[i];
-            if (ObjectID['meshswap' + (i+1)] > 0) {
-                const mvb = this.objMgr.createMoveable(ObjectID['meshswap' + (i+1)], -1, undefined, true, dataLara.skeleton);
+            ObjectID['meshswap' + (i + 1)] = meshSwapIds[i];
+            if (ObjectID['meshswap' + (i + 1)] > 0) {
+                const mvb = this.objMgr.createMoveable(ObjectID['meshswap' + (i + 1)], -1, undefined, true, dataLara.skeleton);
                 if (mvb) {
                     mvb.visible = false;
                 }
@@ -156,6 +156,6 @@ export class Lara extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Lara.name, 
+BehaviourManager.registerFactory(Lara.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Lara(nbhv, gameData, objectid, objecttype)
 );

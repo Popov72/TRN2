@@ -1,9 +1,9 @@
-import { 
+import {
     AbstractMesh,
     BoundingInfo,
     MultiMaterial,
     ShaderMaterial,
-    Vector3, 
+    Vector3,
     Quaternion as BQuaternion
 } from "babylonjs";
 
@@ -38,9 +38,9 @@ export default class Mesh implements IMesh {
     }
 
     get object(): AbstractMesh {
-        return this._mesh
+        return this._mesh;
     }
-    
+
     get materials(): Array<Material> {
         return this._materials;
     }

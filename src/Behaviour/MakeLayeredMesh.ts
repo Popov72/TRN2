@@ -19,7 +19,7 @@ export class MakeLayeredMesh extends Behaviour {
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
         if (lstObjs != null) {
-            lstObjs.forEach( (obj) => {
+            lstObjs.forEach((obj) => {
                 const mesh = obj as IMesh,
                       data = this.sceneData.objects[mesh.name],
                       layer = new Layer(mesh, this.gameData);
@@ -33,6 +33,6 @@ export class MakeLayeredMesh extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(MakeLayeredMesh.name, 
+BehaviourManager.registerFactory(MakeLayeredMesh.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new MakeLayeredMesh(nbhv, gameData, objectid, objecttype)
 );

@@ -18,7 +18,7 @@ import Scene from "./Scene";
 import { ShaderManager } from "./ShaderManager";
 
 export default class MeshBuilder implements IMeshBuilder {
-    
+
     protected _mesh:        BMesh;
     protected _tmesh:       Mesh;
     protected _skinIndices: Array<indexList>;
@@ -71,9 +71,9 @@ export default class MeshBuilder implements IMeshBuilder {
         let index = geometry.getIndices(false) as IndicesArray,
             arSkinIndex = this.getArrayFromDataArray(vbSkinIndex);
 
-        for (let i = 0; i < index!.length/3; ++i) {
+        for (let i = 0; i < index!.length / 3; ++i) {
             const skinIndex = arSkinIndex[index[i * 3 + 0 ] * 4 + 0];
-            
+
             let lst: indexList = this._skinIndices[skinIndex];
             if (!lst) {
                 lst = [];
@@ -94,7 +94,7 @@ export default class MeshBuilder implements IMeshBuilder {
               _flags = this.getArrayFromDataArray(geometry.getVertexBuffer("_flags")!);
 
         let addIndex = [],
-            ofstIdx = positions.length/3;
+            ofstIdx = positions.length / 3;
 
         for (let f = 0; f < faces.length; ++f, ofstIdx += 3) {
             const face = faces[f];
@@ -144,27 +144,27 @@ export default class MeshBuilder implements IMeshBuilder {
               _flags = this.getArrayFromDataArray(geometry.getVertexBuffer("_flags")!);
 
         const newFace = {
-                v3: [positions[index[faceIdx*3+0]*3+0], positions[index[faceIdx*3+0]*3+1], positions[index[faceIdx*3+0]*3+2]],
-                v2: [positions[index[faceIdx*3+1]*3+0], positions[index[faceIdx*3+1]*3+1], positions[index[faceIdx*3+1]*3+2]],
-                v1: [positions[index[faceIdx*3+2]*3+0], positions[index[faceIdx*3+2]*3+1], positions[index[faceIdx*3+2]*3+2]],
+                v3: [positions[index[faceIdx * 3 + 0] * 3 + 0], positions[index[faceIdx * 3 + 0] * 3 + 1], positions[index[faceIdx * 3 + 0] * 3 + 2]],
+                v2: [positions[index[faceIdx * 3 + 1] * 3 + 0], positions[index[faceIdx * 3 + 1] * 3 + 1], positions[index[faceIdx * 3 + 1] * 3 + 2]],
+                v1: [positions[index[faceIdx * 3 + 2] * 3 + 0], positions[index[faceIdx * 3 + 2] * 3 + 1], positions[index[faceIdx * 3 + 2] * 3 + 2]],
 
-                c3: [colors[index[faceIdx*3+0]*3+0], colors[index[faceIdx*3+0]*3+1], colors[index[faceIdx*3+0]*3+2]],
-                c2: [colors[index[faceIdx*3+1]*3+0], colors[index[faceIdx*3+1]*3+1], colors[index[faceIdx*3+1]*3+2]],
-                c1: [colors[index[faceIdx*3+2]*3+0], colors[index[faceIdx*3+2]*3+1], colors[index[faceIdx*3+2]*3+2]],
+                c3: [colors[index[faceIdx * 3 + 0] * 3 + 0], colors[index[faceIdx * 3 + 0] * 3 + 1], colors[index[faceIdx * 3 + 0] * 3 + 2]],
+                c2: [colors[index[faceIdx * 3 + 1] * 3 + 0], colors[index[faceIdx * 3 + 1] * 3 + 1], colors[index[faceIdx * 3 + 1] * 3 + 2]],
+                c1: [colors[index[faceIdx * 3 + 2] * 3 + 0], colors[index[faceIdx * 3 + 2] * 3 + 1], colors[index[faceIdx * 3 + 2] * 3 + 2]],
 
-                n3: [normals[index[faceIdx*3+0]*3+0], normals[index[faceIdx*3+0]*3+1], normals[index[faceIdx*3+0]*3+2]],
-                n2: [normals[index[faceIdx*3+1]*3+0], normals[index[faceIdx*3+1]*3+1], normals[index[faceIdx*3+1]*3+2]],
-                n1: [normals[index[faceIdx*3+2]*3+0], normals[index[faceIdx*3+2]*3+1], normals[index[faceIdx*3+2]*3+2]],
+                n3: [normals[index[faceIdx * 3 + 0] * 3 + 0], normals[index[faceIdx * 3 + 0] * 3 + 1], normals[index[faceIdx * 3 + 0] * 3 + 2]],
+                n2: [normals[index[faceIdx * 3 + 1] * 3 + 0], normals[index[faceIdx * 3 + 1] * 3 + 1], normals[index[faceIdx * 3 + 1] * 3 + 2]],
+                n1: [normals[index[faceIdx * 3 + 2] * 3 + 0], normals[index[faceIdx * 3 + 2] * 3 + 1], normals[index[faceIdx * 3 + 2] * 3 + 2]],
 
-                uv3: [uvs[index[faceIdx*3+0]*2+0], uvs[index[faceIdx*3+0]*2+1]],
-                uv2: [uvs[index[faceIdx*3+1]*2+0], uvs[index[faceIdx*3+1]*2+1]],
-                uv1: [uvs[index[faceIdx*3+2]*2+0], uvs[index[faceIdx*3+2]*2+1]],
+                uv3: [uvs[index[faceIdx * 3 + 0] * 2 + 0], uvs[index[faceIdx * 3 + 0] * 2 + 1]],
+                uv2: [uvs[index[faceIdx * 3 + 1] * 2 + 0], uvs[index[faceIdx * 3 + 1] * 2 + 1]],
+                uv1: [uvs[index[faceIdx * 3 + 2] * 2 + 0], uvs[index[faceIdx * 3 + 2] * 2 + 1]],
 
-                f3: [_flags[index[faceIdx*3+0]*4+0], _flags[index[faceIdx*3+0]*4+1], _flags[index[faceIdx*3+0]*4+2], _flags[index[faceIdx*3+0]*4+3]],
-                f2: [_flags[index[faceIdx*3+1]*4+0], _flags[index[faceIdx*3+1]*4+1], _flags[index[faceIdx*3+1]*4+2], _flags[index[faceIdx*3+1]*4+3]],
-                f1: [_flags[index[faceIdx*3+2]*4+0], _flags[index[faceIdx*3+2]*4+1], _flags[index[faceIdx*3+2]*4+2], _flags[index[faceIdx*3+2]*4+3]]
+                f3: [_flags[index[faceIdx * 3 + 0] * 4 + 0], _flags[index[faceIdx * 3 + 0] * 4 + 1], _flags[index[faceIdx * 3 + 0] * 4 + 2], _flags[index[faceIdx * 3 + 0] * 4 + 3]],
+                f2: [_flags[index[faceIdx * 3 + 1] * 4 + 0], _flags[index[faceIdx * 3 + 1] * 4 + 1], _flags[index[faceIdx * 3 + 1] * 4 + 2], _flags[index[faceIdx * 3 + 1] * 4 + 3]],
+                f1: [_flags[index[faceIdx * 3 + 2] * 4 + 0], _flags[index[faceIdx * 3 + 2] * 4 + 1], _flags[index[faceIdx * 3 + 2] * 4 + 2], _flags[index[faceIdx * 3 + 2] * 4 + 3]]
             };
-        
+
         return newFace;
     }
 
@@ -173,14 +173,14 @@ export default class MeshBuilder implements IMeshBuilder {
             indices = [],
             index = Array.from(geom.getIndices(false) as IndicesArray);
 
-        let ofstGroups = this._mesh.subMeshes.map( () => 0 );
-        for (let i = 0; i < index.length/3; ++i) {
+        let ofstGroups = this._mesh.subMeshes.map(() => 0);
+        for (let i = 0; i < index.length / 3; ++i) {
             if (!remove.has(i)) {
                 indices.push(index[i * 3 + 0], index[i * 3 + 1], index[i * 3 + 2]);
             } else {
                 for (let g = 0; g < this._mesh.subMeshes.length; ++g) {
                     const group = this._mesh.subMeshes[g];
-                    if (i*3 >= group.indexStart && i*3 < group.indexStart + group.indexCount) {
+                    if (i * 3 >= group.indexStart && i * 3 < group.indexStart + group.indexCount) {
                         ofstGroups[g] += 3;
                         break;
                     }
@@ -215,8 +215,8 @@ export default class MeshBuilder implements IMeshBuilder {
                 indices[i] = skinIndices[i];
             }
         }
-        
-        this._mesh.setVerticesData("skinIndex", indices, false, vbSkinIndex.byteStride/4);
+
+        this._mesh.setVerticesData("skinIndex", indices, false, vbSkinIndex.byteStride / 4);
     }
 
     public copyFacesWithSkinIndex(skinidx: number, newskinidx: number): void {
@@ -228,14 +228,14 @@ export default class MeshBuilder implements IMeshBuilder {
               skinWeights = this.getArrayFromDataArray(geometry.getVertexBuffer("skinWeight")!),
               uvs = this.getArrayFromDataArray(geometry.getVertexBuffer("uv")!),
               _flags = this.getArrayFromDataArray(geometry.getVertexBuffer("_flags")!);
-        
+
         const addIndex = [];
 
-        for (let i = 0; i < index.length/3; ++i) {
+        for (let i = 0; i < index.length / 3; ++i) {
             const posIdx1 = index[i * 3 + 0], posIdx2 = index[i * 3 + 1], posIdx3 = index[i * 3 + 2];
             if (skinIndices[posIdx1 * 4 + 0] == skinidx && skinIndices[posIdx1 * 4 + 1] == skinidx) {
                 // we assume that the 2 other vertices of the face have also skinidx has skin index
-                const nposIdx = positions.length/3;
+                const nposIdx = positions.length / 3;
 
                 addIndex.push(nposIdx, nposIdx + 1, nposIdx + 2);
 
@@ -315,7 +315,7 @@ export default class MeshBuilder implements IMeshBuilder {
             aindices[i] = aindices[i + 2];
             aindices[i + 2] = i0;
         }
-        
+
         geom.setIndices(aindices);
 
         let uniformsUsed = new Set<string>();
@@ -332,8 +332,8 @@ export default class MeshBuilder implements IMeshBuilder {
         }
 
         const shd = new ShaderMaterial(`Shader of ${name}`, (Engine.activeScene as Scene).object, {
-            "vertex":   vshader, 
-            "fragment": fshader, 
+            "vertex":   vshader,
+            "fragment": fshader,
         }, {
             attributes: attributes,
             samplers: samplers,

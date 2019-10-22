@@ -33,7 +33,7 @@ export default class Track {
 
             for (let d = 0; d < dataJSON.length; ++d) {
                 key.addData(
-                    [dataJSON[d].position.x, dataJSON[d].position.y, dataJSON[d].position.z], 
+                    [dataJSON[d].position.x, dataJSON[d].position.y, dataJSON[d].position.z],
                     [dataJSON[d].quaternion.x, dataJSON[d].quaternion.y, dataJSON[d].quaternion.z, dataJSON[d].quaternion.w]
                 );
             }
@@ -45,7 +45,7 @@ export default class Track {
     }
 
     constructor(public numKeys: number, public numFrames: number, public frameRate: number, public animFPS: number, public id?: string) {
-        
+
         this.nextTrack = 0;
         this.nextTrackFrame = 0;
         this.remainingFrames = numFrames - Math.floor((numFrames - 1) / frameRate) * frameRate;
@@ -64,7 +64,7 @@ export default class Track {
     get commands(): Array<any> {
         return this._commands;
     }
-    
+
     public addKey(key: Key): void {
         this.keys.push(key);
 

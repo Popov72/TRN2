@@ -2,8 +2,8 @@ import { Position, Quaternion } from "../Proxy/INode";
 import { Box3 } from "../Utils/Box3";
 
 interface KeyData {
-    "position":     Position,
-    "quaternion":   Quaternion,
+    "position":     Position;
+    "quaternion":   Quaternion;
 }
 
 export default class Key {

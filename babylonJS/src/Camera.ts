@@ -1,4 +1,4 @@
-import { 
+import {
     Quaternion as BQuaternion,
     TargetCamera,
     Vector3
@@ -8,7 +8,7 @@ import { Behaviour } from "../../src/Behaviour/Behaviour";
 import { ICamera } from "../../src/Proxy/ICamera";
 import { Position, Quaternion } from "../../src/Proxy/INode";
 
-const rotY180 = BQuaternion.RotationAxis(new Vector3(0,1,0), Math.PI); // x <=> -x
+const rotY180 = BQuaternion.RotationAxis(new Vector3(0, 1, 0), Math.PI); // x <=> -x
 const cstConvert = Math.PI / 180.0;
 
 export default class Camera implements ICamera {
@@ -25,7 +25,7 @@ export default class Camera implements ICamera {
     get object(): TargetCamera {
         return this._camera;
     }
-    
+
     public get position(): Position {
         return [this._camera.position.x, this._camera.position.y, this._camera.position.z];
     }

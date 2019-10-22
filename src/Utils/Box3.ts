@@ -4,7 +4,7 @@ export class Box3 {
 
     protected _min: Position;
     protected _max: Position;
-    
+
     constructor(min?: Position, max?: Position) {
         if (min !== undefined) {
             this._min = min;

@@ -9,7 +9,7 @@ export class ScrollTexture extends Behaviour {
 
     public name: string = ScrollTexture.name;
 
-    protected lstObjs: Array<IMesh>;    
+    protected lstObjs: Array<IMesh>;
 
     constructor(nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) {
         super(nbhv, gameData, objectid, objecttype);
@@ -31,11 +31,11 @@ export class ScrollTexture extends Behaviour {
         for (let i = 0; i < this.lstObjs.length; ++i) {
             const obj = this.lstObjs[i],
                   materials = obj.materials;
-            
+
             for (let m = 0; m < materials.length; ++m) {
                 let material = materials[m],
-                    pgr = (curTime * 1000.0) / (5 * material.uniforms.map.height), 
-                    h = (moveableScrollAnimTileHeight / 2.0 ) / material.uniforms.map.height;
+                    pgr = (curTime * 1000.0) / (5 * material.uniforms.map.height),
+                    h = (moveableScrollAnimTileHeight / 2.0) / material.uniforms.map.height;
 
                 pgr = pgr - h * Math.floor(pgr / h);
 
@@ -48,6 +48,6 @@ export class ScrollTexture extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(ScrollTexture.name, 
+BehaviourManager.registerFactory(ScrollTexture.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new ScrollTexture(nbhv, gameData, objectid, objecttype)
 );

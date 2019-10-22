@@ -1,4 +1,4 @@
-import { 
+import {
     Float32BufferAttribute,
     BufferGeometry,
     Mesh as TMesh,
@@ -11,7 +11,7 @@ import { IMeshBuilder, indexList } from "../../src/Proxy/IMeshBuilder";
 import Mesh from "./Mesh";
 
 export default class MeshBuilder implements IMeshBuilder {
-    
+
     protected _mesh:        TMesh;
     protected _tmesh:       Mesh;
     protected _skinIndices: Array<indexList>;
@@ -40,7 +40,7 @@ export default class MeshBuilder implements IMeshBuilder {
               _flags = Array.from(geometry.attributes._flags.array);
 
         let addIndex = [],
-            ofstIdx = positions.length/3;
+            ofstIdx = positions.length / 3;
 
         for (let f = 0; f < faces.length; ++f, ofstIdx += 3) {
             const face = faces[f];
@@ -84,27 +84,27 @@ export default class MeshBuilder implements IMeshBuilder {
         const geom = this._mesh.geometry as BufferGeometry,
               index = geom.index.array,
               newFace = {
-                v1: [geom.attributes.position.array[index[faceIdx*3+0]*3+0], geom.attributes.position.array[index[faceIdx*3+0]*3+1], geom.attributes.position.array[index[faceIdx*3+0]*3+2]],
-                v2: [geom.attributes.position.array[index[faceIdx*3+1]*3+0], geom.attributes.position.array[index[faceIdx*3+1]*3+1], geom.attributes.position.array[index[faceIdx*3+1]*3+2]],
-                v3: [geom.attributes.position.array[index[faceIdx*3+2]*3+0], geom.attributes.position.array[index[faceIdx*3+2]*3+1], geom.attributes.position.array[index[faceIdx*3+2]*3+2]],
+                v1: [geom.attributes.position.array[index[faceIdx * 3 + 0] * 3 + 0], geom.attributes.position.array[index[faceIdx * 3 + 0] * 3 + 1], geom.attributes.position.array[index[faceIdx * 3 + 0] * 3 + 2]],
+                v2: [geom.attributes.position.array[index[faceIdx * 3 + 1] * 3 + 0], geom.attributes.position.array[index[faceIdx * 3 + 1] * 3 + 1], geom.attributes.position.array[index[faceIdx * 3 + 1] * 3 + 2]],
+                v3: [geom.attributes.position.array[index[faceIdx * 3 + 2] * 3 + 0], geom.attributes.position.array[index[faceIdx * 3 + 2] * 3 + 1], geom.attributes.position.array[index[faceIdx * 3 + 2] * 3 + 2]],
 
-                c1: [geom.attributes.vertColor.array[index[faceIdx*3+0]*3+0], geom.attributes.vertColor.array[index[faceIdx*3+0]*3+1], geom.attributes.vertColor.array[index[faceIdx*3+0]*3+2]],
-                c2: [geom.attributes.vertColor.array[index[faceIdx*3+1]*3+0], geom.attributes.vertColor.array[index[faceIdx*3+1]*3+1], geom.attributes.vertColor.array[index[faceIdx*3+1]*3+2]],
-                c3: [geom.attributes.vertColor.array[index[faceIdx*3+2]*3+0], geom.attributes.vertColor.array[index[faceIdx*3+2]*3+1], geom.attributes.vertColor.array[index[faceIdx*3+2]*3+2]],
+                c1: [geom.attributes.vertColor.array[index[faceIdx * 3 + 0] * 3 + 0], geom.attributes.vertColor.array[index[faceIdx * 3 + 0] * 3 + 1], geom.attributes.vertColor.array[index[faceIdx * 3 + 0] * 3 + 2]],
+                c2: [geom.attributes.vertColor.array[index[faceIdx * 3 + 1] * 3 + 0], geom.attributes.vertColor.array[index[faceIdx * 3 + 1] * 3 + 1], geom.attributes.vertColor.array[index[faceIdx * 3 + 1] * 3 + 2]],
+                c3: [geom.attributes.vertColor.array[index[faceIdx * 3 + 2] * 3 + 0], geom.attributes.vertColor.array[index[faceIdx * 3 + 2] * 3 + 1], geom.attributes.vertColor.array[index[faceIdx * 3 + 2] * 3 + 2]],
 
-                n1: [geom.attributes.normal.array[index[faceIdx*3+0]*3+0], geom.attributes.normal.array[index[faceIdx*3+0]*3+1], geom.attributes.normal.array[index[faceIdx*3+0]*3+2]],
-                n2: [geom.attributes.normal.array[index[faceIdx*3+1]*3+0], geom.attributes.normal.array[index[faceIdx*3+1]*3+1], geom.attributes.normal.array[index[faceIdx*3+1]*3+2]],
-                n3: [geom.attributes.normal.array[index[faceIdx*3+2]*3+0], geom.attributes.normal.array[index[faceIdx*3+2]*3+1], geom.attributes.normal.array[index[faceIdx*3+2]*3+2]],
+                n1: [geom.attributes.normal.array[index[faceIdx * 3 + 0] * 3 + 0], geom.attributes.normal.array[index[faceIdx * 3 + 0] * 3 + 1], geom.attributes.normal.array[index[faceIdx * 3 + 0] * 3 + 2]],
+                n2: [geom.attributes.normal.array[index[faceIdx * 3 + 1] * 3 + 0], geom.attributes.normal.array[index[faceIdx * 3 + 1] * 3 + 1], geom.attributes.normal.array[index[faceIdx * 3 + 1] * 3 + 2]],
+                n3: [geom.attributes.normal.array[index[faceIdx * 3 + 2] * 3 + 0], geom.attributes.normal.array[index[faceIdx * 3 + 2] * 3 + 1], geom.attributes.normal.array[index[faceIdx * 3 + 2] * 3 + 2]],
 
-                uv1: [geom.attributes.uv.array[index[faceIdx*3+0]*2+0], geom.attributes.uv.array[index[faceIdx*3+0]*2+1]],
-                uv2: [geom.attributes.uv.array[index[faceIdx*3+1]*2+0], geom.attributes.uv.array[index[faceIdx*3+1]*2+1]],
-                uv3: [geom.attributes.uv.array[index[faceIdx*3+2]*2+0], geom.attributes.uv.array[index[faceIdx*3+2]*2+1]],
+                uv1: [geom.attributes.uv.array[index[faceIdx * 3 + 0] * 2 + 0], geom.attributes.uv.array[index[faceIdx * 3 + 0] * 2 + 1]],
+                uv2: [geom.attributes.uv.array[index[faceIdx * 3 + 1] * 2 + 0], geom.attributes.uv.array[index[faceIdx * 3 + 1] * 2 + 1]],
+                uv3: [geom.attributes.uv.array[index[faceIdx * 3 + 2] * 2 + 0], geom.attributes.uv.array[index[faceIdx * 3 + 2] * 2 + 1]],
 
-                f1: [geom.attributes._flags.array[index[faceIdx*3+0]*4+0], geom.attributes._flags.array[index[faceIdx*3+0]*4+1], geom.attributes._flags.array[index[faceIdx*3+0]*4+2], geom.attributes._flags.array[index[faceIdx*3+0]*4+3]],
-                f2: [geom.attributes._flags.array[index[faceIdx*3+1]*4+0], geom.attributes._flags.array[index[faceIdx*3+1]*4+1], geom.attributes._flags.array[index[faceIdx*3+1]*4+2], geom.attributes._flags.array[index[faceIdx*3+1]*4+3]],
-                f3: [geom.attributes._flags.array[index[faceIdx*3+2]*4+0], geom.attributes._flags.array[index[faceIdx*3+2]*4+1], geom.attributes._flags.array[index[faceIdx*3+2]*4+2], geom.attributes._flags.array[index[faceIdx*3+2]*4+3]]
+                f1: [geom.attributes._flags.array[index[faceIdx * 3 + 0] * 4 + 0], geom.attributes._flags.array[index[faceIdx * 3 + 0] * 4 + 1], geom.attributes._flags.array[index[faceIdx * 3 + 0] * 4 + 2], geom.attributes._flags.array[index[faceIdx * 3 + 0] * 4 + 3]],
+                f2: [geom.attributes._flags.array[index[faceIdx * 3 + 1] * 4 + 0], geom.attributes._flags.array[index[faceIdx * 3 + 1] * 4 + 1], geom.attributes._flags.array[index[faceIdx * 3 + 1] * 4 + 2], geom.attributes._flags.array[index[faceIdx * 3 + 1] * 4 + 3]],
+                f3: [geom.attributes._flags.array[index[faceIdx * 3 + 2] * 4 + 0], geom.attributes._flags.array[index[faceIdx * 3 + 2] * 4 + 1], geom.attributes._flags.array[index[faceIdx * 3 + 2] * 4 + 2], geom.attributes._flags.array[index[faceIdx * 3 + 2] * 4 + 3]]
             };
-        
+
         return newFace;
     }
 
@@ -113,14 +113,14 @@ export default class MeshBuilder implements IMeshBuilder {
             indices = [],
             index = geom.index.array;
 
-        let ofstGroups = geom.groups.map( () => 0 );
-        for (let i = 0; i < index.length/3; ++i) {
+        let ofstGroups = geom.groups.map(() => 0);
+        for (let i = 0; i < index.length / 3; ++i) {
             if (!remove.has(i)) {
                 indices.push(index[i * 3 + 0], index[i * 3 + 1], index[i * 3 + 2]);
             } else {
                 for (let g = 0; g < geom.groups.length; ++g) {
                     const group = geom.groups[g];
-                    if (i*3 >= group.start && i*3 < group.start + group.count) {
+                    if (i * 3 >= group.start && i * 3 < group.start + group.count) {
                         ofstGroups[g] += 3;
                         break;
                     }
@@ -160,14 +160,14 @@ export default class MeshBuilder implements IMeshBuilder {
               skinWeights = Array.from(geometry.attributes.skinWeight.array),
               uvs = Array.from(geometry.attributes.uv.array),
               _flags = Array.from(geometry.attributes._flags.array);
-        
+
         const addIndex = [];
 
-        for (let i = 0; i < index.length/3; ++i) {
+        for (let i = 0; i < index.length / 3; ++i) {
             const posIdx1 = index[i * 3 + 0], posIdx2 = index[i * 3 + 1], posIdx3 = index[i * 3 + 2];
             if (skinIndices[posIdx1 * 4 + 0] == skinidx && skinIndices[posIdx1 * 4 + 1] == skinidx) {
                 // we assume that the 2 other vertices of the face have also skinidx has skin index
-                const nposIdx = positions.length/3;
+                const nposIdx = positions.length / 3;
 
                 addIndex.push(nposIdx, nposIdx + 1, nposIdx + 2);
 
@@ -242,16 +242,16 @@ export default class MeshBuilder implements IMeshBuilder {
         const sindices = geometry.attributes.skinIndex.array,
               index = geometry.index;
 
-        for (let i = 0; i < index.count/3; ++i) {
-            const skinIndex = sindices[index.array[i*3+0]*4+0];
-            
+        for (let i = 0; i < index.count / 3; ++i) {
+            const skinIndex = sindices[index.array[i * 3 + 0] * 4 + 0];
+
             let lst: indexList = this._skinIndices[skinIndex];
             if (!lst) {
                 lst = [];
                 this._skinIndices[skinIndex] = lst;
             }
 
-            lst.push(index.array[i*3+0], index.array[i*3+1], index.array[i*3+2]);
+            lst.push(index.array[i * 3 + 0], index.array[i * 3 + 1], index.array[i * 3 + 2]);
         }
     }
 

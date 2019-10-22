@@ -2,7 +2,7 @@ import { ICamera } from "../Proxy/ICamera";
 import { IMaterial } from "../Proxy/IMaterial";
 import { IMesh } from "../Proxy/IMesh";
 import { IScene } from "../Proxy/IScene";
-import { Position} from "../Proxy/INode";
+import { Position } from "../Proxy/INode";
 
 import { AnimationManager } from "../Animation/AnimationManager";
 import { BehaviourManager } from "../Behaviour/BehaviourManager";
@@ -11,17 +11,17 @@ import { MaterialManager } from "./MaterialManager";
 import Skeleton from "../Player/Skeleton";
 
 export interface MeshList {
-    [id:number]: IMesh | Array<IMesh>,
+    [id: number]: IMesh | Array<IMesh>;
 }
 
 interface Meshes {
-    [name: string]: MeshList,
+    [name: string]: MeshList;
 }
 
 export class ObjectManager {
 
     public objectList: Meshes;
-    
+
     private count: number;
     private gameData: IGameData;
     private sceneRender: IScene;
@@ -42,7 +42,7 @@ export class ObjectManager {
         this.camera = <any>null;
     }
 
-    public initialize(gameData: IGameData):void {
+    public initialize(gameData: IGameData): void {
         this.gameData = gameData;
         this.sceneRender = gameData.sceneRender;
         this.sceneData = gameData.sceneData;
@@ -50,7 +50,7 @@ export class ObjectManager {
         this.bhvMgr = gameData.bhvMgr;
         this.anmMgr = gameData.anmMgr;
         this.camera = gameData.camera;
-    
+
         this.buildLists();
     }
 
@@ -63,12 +63,12 @@ export class ObjectManager {
             "spriteseq":    {}
         };
 
-        this.sceneRender.traverse( (obj: IMesh) => {
+        this.sceneRender.traverse((obj: IMesh) => {
             const data = this.sceneData.objects[obj.name];
 
-            if (!data) return;
+            if (!data) { return; }
 
-            const id: number = data.objectid, 
+            const id: number = data.objectid,
                   type: string = data.type;
 
             let objs: MeshList = this.objectList[type];
@@ -89,7 +89,7 @@ export class ObjectManager {
                 }
                 objsForId.push(obj);
             }
-        } );
+        });
     }
 
     public createSprite(spriteID: number, roomIndex: number, color: Array<number>, addToScene: boolean = true): IMesh | null {
@@ -110,7 +110,7 @@ export class ObjectManager {
 
         for (let m = 0; m < obj.materials.length; ++m) {
             const material = obj.materials[m];
-            
+
             newMaterial[m] = material.clone();
             newMaterial[m].uniforms.lighting.value = color;
             newMaterial[m].uniforms.map.value = material.uniforms.map.value;
@@ -162,7 +162,7 @@ export class ObjectManager {
 
         for (let m = 0; m < obj.materials.length; ++m) {
             const material = obj.materials[m];
-            
+
             newMaterial[m] = material.clone();
             newMaterial[m].uniforms.lighting.value = color;
             newMaterial[m].uniforms.map.value = material.uniforms.map.value;
@@ -216,11 +216,11 @@ export class ObjectManager {
 
         for (let m = 0; m < obj.materials.length; ++m) {
             const material = obj.materials[m];
-            
+
             newMaterial[m] = material.clone();
             newMaterial[m].uniforms.map.value = material.uniforms.map.value;
             newMaterial[m].uniforms.mapBump.value = material.uniforms.mapBump.value;
-            newMaterial[m].uniforms.boneMatrices = { "type":"m4v", "value":null };
+            newMaterial[m].uniforms.boneMatrices = { "type": "m4v", "value": null };
             if (skeleton) {
                 newMaterial[m].uniforms.boneMatrices.value = skeleton.boneMatrices;
             }
@@ -300,7 +300,7 @@ export class ObjectManager {
             for (let i = 0; i < lstObjs.length; ++i) {
                 const obj = lstObjs[i],
                       materials = obj.materials;
-            
+
                 for (let m = 0; m < materials.length; ++m) {
                     const material = materials[m],
                           userData = material.userData;
@@ -318,13 +318,13 @@ export class ObjectManager {
                 }
             }
         }
-        
+
         return objs;
     }
 
     public collectObjectsWithAnimatedTextures(): Array<IMesh> {
         let objs = this._collectObjectsWithAnimatedTextures(this.objectList['room']);
-        
+
         objs = objs.concat(this._collectObjectsWithAnimatedTextures(this.objectList['sprite']));
 
         objs = objs.concat(this._collectObjectsWithAnimatedTextures(this.objectList['spriteseq']));
@@ -332,12 +332,12 @@ export class ObjectManager {
         return objs;
     }
 
-	public updateObjects(curTime: number): void {
-		this.gameData.curRoom = -1;
+    public updateObjects(curTime: number): void {
+        this.gameData.curRoom = -1;
 
         const camPos = this.camera.position;
 
-		this.sceneRender.traverse( (obj) => {
+        this.sceneRender.traverse((obj) => {
             const data = this.sceneData.objects[obj.name];
 
             if (!data) {
@@ -345,46 +345,46 @@ export class ObjectManager {
             }
 
             // Test camera room membership
-			if (data.type == 'room') {
-				if (obj.containsPoint(this.gameData.camera.position) && !data.isAlternateRoom) {
+            if (data.type == 'room') {
+                if (obj.containsPoint(this.gameData.camera.position) && !data.isAlternateRoom) {
                 //if (!data.isAlternateRoom && this.gameData.trlvl.isPointInRoom(this.gameData.camera.position, data.roomIndex)) {
-					this.gameData.curRoom = data.roomIndex;
-				}
-			}
+                    this.gameData.curRoom = data.roomIndex;
+                }
+            }
 
             // Set the visibility for the object
-			if (this.gameData.singleRoomMode) {
-				obj.visible = data.roomIndex == this.gameData.curRoom && !data.isAlternateRoom;
-			} else {
-				obj.visible = data.visible;
-			}
+            if (this.gameData.singleRoomMode) {
+                obj.visible = data.roomIndex == this.gameData.curRoom && !data.isAlternateRoom;
+            } else {
+                obj.visible = data.visible;
+            }
 
-			if (data.boxHelper) {
+            if (data.boxHelper) {
                 data.boxHelper.visible = obj.visible;
             }
 
             // Update material uniforms
             const materials = obj.materials,
                   room = this.sceneData.objects['room' + data.roomIndex];
-            
-			if (room < 0) {
+
+            if (room < 0) {
                 return;
             }
 
-			for (let i = 0; i < materials.length; ++i) {
-				const material = materials[i];
+            for (let i = 0; i < materials.length; ++i) {
+                const material = materials[i];
 
-				if (this.gameData.globalTintColor != null) {
-					material.uniforms.tintColor.value = this.gameData.globalTintColor;
+                if (this.gameData.globalTintColor != null) {
+                    material.uniforms.tintColor.value = this.gameData.globalTintColor;
                 }
-                
-				material.uniforms.curTime.value = curTime;
-				material.uniforms.rnd.value = this.gameData.quantumRnd;
+
+                material.uniforms.curTime.value = curTime;
+                material.uniforms.rnd.value = this.gameData.quantumRnd;
                 material.uniforms.flickerColor.value = room && room.flickering ? this.gameData.flickerColor : this.gameData.unitVec3;
                 material.uniforms.camPosition.value = camPos;
-                
+
                 material.uniformsUpdated(["tintColor", "curTime", "rnd", "flickerColor", "camPosition"]);
-			}
+            }
         });
     }
 
@@ -401,5 +401,5 @@ export class ObjectManager {
         }
         return -1;
     }
-    
+
 }

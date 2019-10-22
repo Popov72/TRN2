@@ -21,7 +21,7 @@ export class SetAnimation extends Behaviour {
         const anim = parseInt(this.nbhv.anim);
 
         if (lstObjs !== null && lstObjs.length) {
-            lstObjs.forEach( (obj) => isMesh(obj) ? this.anmMgr.setAnimation(obj, anim, false) : null );
+            lstObjs.forEach((obj) => isMesh(obj) ? this.anmMgr.setAnimation(obj, anim, false) : null);
         }
 
         return [BehaviourRetCode.dontKeepBehaviour, null];
@@ -29,6 +29,6 @@ export class SetAnimation extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(SetAnimation.name, 
+BehaviourManager.registerFactory(SetAnimation.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new SetAnimation(nbhv, gameData, objectid, objecttype)
 );

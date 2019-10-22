@@ -23,12 +23,12 @@ import CutSceneTR4 from "./CutSceneTR4";
 declare var glMatrix: any;
 
 export interface CutSceneData {
-    "index"         : number,
-    "curFrame"      : number,
-    "frames"        : any,
-    "position"      : Position,
-    "quaternion"    : Quaternion,
-    "sound"         : any,
+    "index"         : number;
+    "curFrame"      : number;
+    "frames"        : any;
+    "position"      : Position;
+    "quaternion"    : Quaternion;
+    "sound"         : any;
 }
 
 export class CutScene extends Behaviour {
@@ -45,7 +45,7 @@ export class CutScene extends Behaviour {
     private camera: ICamera;
     private cutscene: CutSceneData;
     private cutSceneEnded: boolean;
-    private objects: { [name:string]: IMesh };
+    private objects: { [name: string]: IMesh };
     private bhvCtrl: BasicControl;
     private helper: CutSceneHelper;
 
@@ -78,7 +78,7 @@ export class CutScene extends Behaviour {
     }
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
-        const useAddLights = this.nbhv.useadditionallights === 'true' || this.nbhv.useadditionallights === true, 
+        const useAddLights = this.nbhv.useadditionallights === 'true' || this.nbhv.useadditionallights === true,
               index = this.nbhv.index || 0;
 
         this.matMgr.useAdditionalLights = useAddLights;
@@ -86,7 +86,7 @@ export class CutScene extends Behaviour {
         this.cutscene.index = index;
 
         // set cutscene origin
-        const lara = (this.bhvMgr.getBehaviour("Lara") as Array<Lara>)[0].getObject();//(this.objMgr.objectList['moveable'][ObjectID.Lara] as Array<IMesh>)[0];
+        const lara = (this.bhvMgr.getBehaviour("Lara") as Array<Lara>)[0].getObject(); //(this.objMgr.objectList['moveable'][ObjectID.Lara] as Array<IMesh>)[0];
 
         this.cutscene.frames = this.trlvl.trlevel.cinematicFrames;
         this.cutscene.position = lara.position;
@@ -94,12 +94,12 @@ export class CutScene extends Behaviour {
         let laraQuat = lara.quaternion,
             laraAngle = this.confMgr.float('behaviour[name="Lara"] > angle');
 
-		if (laraAngle != -Infinity) {
-			const q = glMatrix.quat.create();
-            glMatrix.quat.setAxisAngle(q, [0,1,0], glMatrix.glMatrix.toRadian(laraAngle));
+        if (laraAngle != -Infinity) {
+            const q = glMatrix.quat.create();
+            glMatrix.quat.setAxisAngle(q, [0, 1, 0], glMatrix.glMatrix.toRadian(laraAngle));
             laraQuat = q;
         }
-        
+
         this.cutscene.quaternion = laraQuat;
 
         // update position/quaternion for some specific items when we play a cut scene
@@ -110,12 +110,12 @@ export class CutScene extends Behaviour {
               moveables = this.objMgr.objectList['moveable'];
 
         if (ids) {
-            ids.split(",").forEach( (id) => oids.add(parseInt(id)));
+            ids.split(",").forEach((id) => oids.add(parseInt(id)));
         }
         for (let objID in moveables) {
             const lstObj = moveables[objID] as Array<IMesh>;
-            
-            lstObj.forEach( (obj) => {
+
+            lstObj.forEach((obj) => {
                 const data = this.sceneData.objects[obj.name];
 
                 if (data.objectid >= min && data.objectid <= max || oids.has(data.objectid)) {
@@ -140,7 +140,7 @@ export class CutScene extends Behaviour {
         this.makeObjectList();
         this.registerAnimations();
 
-        return [BehaviourRetCode.keepBehaviour, [promiseSound.then( (ret: any) => {
+        return [BehaviourRetCode.keepBehaviour, [promiseSound.then((ret: any) => {
             if (ret != null) {
                 if (ret.code < 0) {
                     console.log('Error decoding sound data for cutscene.');
@@ -161,7 +161,7 @@ export class CutScene extends Behaviour {
                 const obj = lstObj[i],
                       data = this.sceneData.objects[obj.name];
 
-                if (data.dummy || !data.has_anims || !data.visible) continue;
+                if (data.dummy || !data.has_anims || !data.visible) { continue; }
 
                 this.objects[obj.name] = obj;
             }
@@ -171,16 +171,16 @@ export class CutScene extends Behaviour {
     // register all animations we will need in the cut scene
     protected registerAnimations(): void {
         for (let objID in this.objects) {
-            const obj = this.objects[objID], 
+            const obj = this.objects[objID],
                   data = this.sceneData.objects[obj.name],
                   registered: any = {},
                   allTrackInstances: any = {};
-            
+
             let anmIndex = data.animationStartIndex;
 
             while (true) {
-                if (registered[anmIndex]) break;
-                
+                if (registered[anmIndex]) { break; }
+
                 registered[anmIndex] = true;
 
                 const track = this.sceneData.animTracks[anmIndex],
@@ -209,8 +209,8 @@ export class CutScene extends Behaviour {
     }
 
     public onBeforeRenderLoop(): void {
-		if (this.cutscene.sound != null && !noSound) {
-			Misc.startSound(this.cutscene.sound);
+        if (this.cutscene.sound != null && !noSound) {
+            Misc.startSound(this.cutscene.sound);
         }
 
         this.gameData.panel.hide();
@@ -223,26 +223,26 @@ export class CutScene extends Behaviour {
             return;
         }
 
-		this.cutscene.curFrame += baseFrameRate * delta;
+        this.cutscene.curFrame += baseFrameRate * delta;
 
         // Update camera
-		const t = this.cutscene.curFrame - Math.floor(this.cutscene.curFrame),
-		      cfrmA = Math.min(Math.floor(this.cutscene.curFrame), this.cutscene.frames.length-2),
-		      cfrmB = Math.min(cfrmA+1, this.cutscene.frames.length-1);
+        const t = this.cutscene.curFrame - Math.floor(this.cutscene.curFrame),
+              cfrmA = Math.min(Math.floor(this.cutscene.curFrame), this.cutscene.frames.length - 2),
+              cfrmB = Math.min(cfrmA + 1, this.cutscene.frames.length - 1);
 
-		if (cfrmA < this.cutscene.frames.length-2) {
-			if (!this.bhvCtrl.captureMouse) {
-				const frm1 = this.cutscene.frames[cfrmA],
-				      frm2 = this.cutscene.frames[cfrmB],
-                      maxDelta = 512.0 * 512.0, 
-                      fovMult = 60.0 / 16384.0, 
+        if (cfrmA < this.cutscene.frames.length - 2) {
+            if (!this.bhvCtrl.captureMouse) {
+                const frm1 = this.cutscene.frames[cfrmA],
+                      frm2 = this.cutscene.frames[cfrmB],
+                      maxDelta = 512.0 * 512.0,
+                      fovMult = 60.0 / 16384.0,
                       rollMult = -90.0 / 16384.0;
 
                 const eyePos:   Position = [frm1.posX, -frm1.posY, -frm1.posZ],
                       eyePos2:  Position = [frm2.posX, -frm2.posY, -frm2.posZ],
                       lkat:     Position = [frm1.targetX, -frm1.targetY, -frm1.targetZ],
                       lkat2:    Position = [frm2.targetX, -frm2.targetY, -frm2.targetZ];
-                
+
                 const odp = [0, 0, 0],
                       odt = [0, 0, 0];
 
@@ -253,7 +253,7 @@ export class CutScene extends Behaviour {
                       dt = glMatrix.vec3.squaredLength(odt);
 
                 let fov = frm1.fov * fovMult,
-				    roll = frm1.roll * rollMult;
+                    roll = frm1.roll * rollMult;
 
                 if (dp <= maxDelta && dt <= maxDelta) {
                     glMatrix.vec3.lerp(eyePos, eyePos, eyePos2, t);
@@ -262,7 +262,7 @@ export class CutScene extends Behaviour {
                     roll = Misc.lerp(frm1.roll * rollMult, frm2.roll * rollMult, t);
                 }
 
-				const q = this.cutscene.quaternion.slice();
+                const q = this.cutscene.quaternion.slice();
 
                 glMatrix.vec3.transformQuat(lkat, lkat, q);
                 glMatrix.vec3.transformQuat(eyePos, eyePos, q);
@@ -273,18 +273,18 @@ export class CutScene extends Behaviour {
                 this.camera.setPosition([this.camera.position[0] + this.cutscene.position[0], this.camera.position[1] + this.cutscene.position[1], this.camera.position[2] + this.cutscene.position[2]]);
 
                 const qcam = this.camera.quaternion;
-                
-                glMatrix.quat.setAxisAngle(q, [0,1,0], glMatrix.glMatrix.toRadian(roll));
-                glMatrix.quat.mul(qcam, q, qcam);
-                
-				this.camera.setQuaternion(qcam);
-				this.camera.updateProjectionMatrix();
-			}
 
-		} else {
+                glMatrix.quat.setAxisAngle(q, [0, 1, 0], glMatrix.glMatrix.toRadian(roll));
+                glMatrix.quat.mul(qcam, q, qcam);
+
+                this.camera.setQuaternion(qcam);
+                this.camera.updateProjectionMatrix();
+            }
+
+        } else {
             this.cutSceneEnded = true;
             this.anmMgr.pause(true);
-		}
+        }
     }
 
     public frameEnded(curTime: number, delta: number): void {
@@ -294,7 +294,7 @@ export class CutScene extends Behaviour {
         }
 
         for (let objID in this.objects) {
-            const obj = this.objects[objID], 
+            const obj = this.objects[objID],
                   data = this.sceneData.objects[obj.name];
 
             const pos = obj.position;
@@ -307,7 +307,7 @@ export class CutScene extends Behaviour {
             const roomObj = this.objMgr.getRoomByPos(pos);
 
             if (roomObj >= 0 && roomObj != data.roomIndex) {
-                const dataCurRoom = this.sceneData.objects['room' + data.roomIndex], 
+                const dataCurRoom = this.sceneData.objects['room' + data.roomIndex],
                         curRoomLights = this.matMgr.useAdditionalLights ? dataCurRoom.lightsExt : dataCurRoom.lights,
                         curLIdx = this.matMgr.getFirstDirectionalLight(curRoomLights);
                 const dataNewRoom = this.sceneData.objects['room' + roomObj],
@@ -326,12 +326,12 @@ export class CutScene extends Behaviour {
                     const uniforms = [];
                     for (let i = 0; i < obj.materials.length; ++i) {
                         const material = obj.materials[i];
-                        uniforms.push({ a:material.uniforms.directionalLight_color.value, i:0 });
+                        uniforms.push({ a: material.uniforms.directionalLight_color.value, i: 0 });
                     }
-                    this.bhvMgr.addBehaviour('FadeUniformColor', 
-                        { 
-                            "colorStart":   curRoomLights[curLIdx].color, 
-                            "colorEnd":     newRoomLights[newLIdx].color, 
+                    this.bhvMgr.addBehaviour('FadeUniformColor',
+                        {
+                            "colorStart":   curRoomLights[curLIdx].color,
+                            "colorEnd":     newRoomLights[newLIdx].color,
                             "duration":     1.0,
                             "uniforms":     uniforms
                         }
@@ -342,6 +342,6 @@ export class CutScene extends Behaviour {
     }
 }
 
-BehaviourManager.registerFactory(CutScene.name, 
+BehaviourManager.registerFactory(CutScene.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new CutScene(nbhv, gameData, objectid, objecttype)
 );

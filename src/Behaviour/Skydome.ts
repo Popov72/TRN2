@@ -36,10 +36,10 @@ export class Skydome extends Behaviour {
 
         this.objSky.renderOrder = 0;
         this.objSky.matrixAutoUpdate = true;
-        
+
         this.gameData.sceneBackground.add(this.objSky);
 
-        const skyColor = [this.nbhv.color.r/255.0, this.nbhv.color.g/255.0, this.nbhv.color.b/255.0],
+        const skyColor = [this.nbhv.color.r / 255.0, this.nbhv.color.g / 255.0, this.nbhv.color.b / 255.0],
               material = this.objSky.materials[0];
 
         material.depthWrite = false;
@@ -56,7 +56,7 @@ export class Skydome extends Behaviour {
         const material = this.objSky.materials[0];
 
         let pgr = curTime / 50.0;
-        
+
         material.uniforms.offsetRepeat.value[0] = pgr - Math.floor(pgr);
 
         material.uniformsUpdated(["offsetRepeat"]);
@@ -67,13 +67,13 @@ export class Skydome extends Behaviour {
             /*curvature*/ 10.0,
             /*tiling*/ 3,
             /*distance*/ 2000.0,
-            /*orientation*/ [0,0,0,1],
-            /*xsegments*/ 16, 
+            /*orientation*/ [0, 0, 0, 1],
+            /*xsegments*/ 16,
             /*ysegments*/ 16,
             /*ySegmentsToKeep*/ 8
         );
 
-        const skyTexture = this.gameData.sceneData.textures[this.gameData.sceneData.textures.length-1];
+        const skyTexture = this.gameData.sceneData.textures[this.gameData.sceneData.textures.length - 1];
 
         (skyTexture as any).wrapS = (skyTexture as any).wrapT = 1000; // for threejs
         (skyTexture as any).wrapU = (skyTexture as any).wrapV = 1; // for babylon - don't want to abstract that...
@@ -99,6 +99,6 @@ export class Skydome extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Skydome.name, 
+BehaviourManager.registerFactory(Skydome.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Skydome(nbhv, gameData, objectid, objecttype)
 );

@@ -1,6 +1,6 @@
-import { 
-    Scene as TScene, 
-    WebGLRenderer 
+import {
+    Scene as TScene,
+    WebGLRenderer
 } from "three";
 
 import { IRenderer, PerfData } from "../../src/Proxy/IRenderer";
@@ -36,11 +36,11 @@ export default class Renderer implements IRenderer {
     public render(scene: Scene, camera: Camera): void {
         this._renderer.render(scene.object as TScene, camera.object);
     }
-    
+
     public getPerfData(scenes: Array<Scene>): PerfData {
         let numDrawCalls = 0, numObjects = 0, numGeometries = 0, numFaces = 0, numTextures = 0, numPrograms = 0;
 
-        scenes.forEach( (scene) => {
+        scenes.forEach((scene) => {
             numObjects += scene.object.children.length;
         });
 
@@ -58,7 +58,7 @@ export default class Renderer implements IRenderer {
             "numGeometries": numGeometries,
             "numParticles": -1,
             "numPrograms": numPrograms,
-        }
+        };
     }
 
 }

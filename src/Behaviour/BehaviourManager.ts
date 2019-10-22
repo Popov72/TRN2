@@ -30,7 +30,6 @@ export class BehaviourManager {
         this.gameData = <any>null;
     }
 
-
     public initialize(gameData: IGameData): void {
         this.gameData = gameData;
 
@@ -40,10 +39,10 @@ export class BehaviourManager {
 
     public removeBehaviours(obj: any): void {
         if (obj.__behaviours) {
-            obj.__behaviours.forEach( (bhv: Behaviour) => this.removeBehaviour(bhv) );
+            obj.__behaviours.forEach((bhv: Behaviour) => this.removeBehaviour(bhv));
 
             delete obj.__behaviours;
-        };
+        }
     }
 
     public removeBehaviour(bhv: Behaviour): void {
@@ -87,7 +86,7 @@ export class BehaviourManager {
         return this.behavioursByName.get(name);
     }
 
-    public addBehaviour(name: string, params?: any, objectid?: number, objecttype?: string, _lstObjs?:Array<IMesh>): Array<Promise<void>> | null {
+    public addBehaviour(name: string, params?: any, objectid?: number, objecttype?: string, _lstObjs?: Array<IMesh>): Array<Promise<void>> | null {
         let lstObjs: Array<IMesh | ICamera> | null = null;
 
         if (_lstObjs !== undefined) {
@@ -123,7 +122,7 @@ export class BehaviourManager {
             this.behaviours.push(obhv);
 
             if (lstObjs) {
-                lstObjs.forEach( (obj) => {
+                lstObjs.forEach((obj) => {
                     let lbhv = obj.behaviours;
                     if (!lbhv) {
                         lbhv = [];
@@ -152,7 +151,7 @@ export class BehaviourManager {
             allPromises = this.loadBehavioursSub(behaviours);
 
         behaviours = jQuery(this.confMgr.param('behaviour', false, true));
-        
+
         allPromises = allPromises.concat(this.loadBehavioursSub(behaviours));
 
         return allPromises;
@@ -162,24 +161,24 @@ export class BehaviourManager {
         let promises: Array<Promise<void>> = [];
 
         for (let bhv = 0; bhv < behaviours.length; ++bhv) {
-            let nbhv = behaviours[bhv], 
-                name = nbhv.getAttribute("name"), 
+            let nbhv = behaviours[bhv],
+                name = nbhv.getAttribute("name"),
                 cutsceneOnly = nbhv.getAttribute("cutsceneonly");
-    
-            if (nbhv.__consumed || BehaviourManager.factories.get(name) === undefined) continue;
-            if (cutsceneOnly && cutsceneOnly == "true" && !this.gameData.isCutscene) continue;
-    
+
+            if (nbhv.__consumed || BehaviourManager.factories.get(name) === undefined) { continue; }
+            if (cutsceneOnly && cutsceneOnly == "true" && !this.gameData.isCutscene) { continue; }
+
             // get the type and id of the object to apply the behaviour to
-            let objectid = nbhv.getAttribute('objectid'), 
+            let objectid = nbhv.getAttribute('objectid'),
                 objecttype = nbhv.getAttribute('objecttype') || "moveable";
-            
+
             if (objectid == "" || objectid == null) {
-                if (!nbhv.parentNode) continue;
-    
+                if (!nbhv.parentNode) { continue; }
+
                 objectid = nbhv.parentNode.getAttribute("id");
                 objecttype = objectid ? nbhv.parentNode.nodeName : null;
             }
-    
+
             // get overriden data from the level (if any)
             // look first for a <behaviour> tag with the same objectid and objecttype as the current one
             let bhvLevel = objectid ? jQuery(this.confMgr.param('behaviour[name="' + name + '"][objectid="' + objectid + '"]', false, true)) : null;
@@ -198,16 +197,16 @@ export class BehaviourManager {
                     }
                 }
             }
-    
+
             // merge the data found in the level section (if any)
             nbhv = Utils.domNodeToJSon(nbhv);
-    
+
             if (bhvLevel && bhvLevel.length > 0) {
                 bhvLevel[0].__consumed = true;
                 bhvLevel = Utils.domNodeToJSon(bhvLevel[0]);
                 Object.assign(nbhv, bhvLevel);
             }
-    
+
             // create the behaviour
             promises = promises.concat(this.addBehaviour(name, nbhv, objectid === null ? undefined : objectid, objecttype === null ? undefined : objecttype) || []);
         }

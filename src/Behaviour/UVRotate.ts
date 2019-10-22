@@ -29,7 +29,7 @@ export class UVRotate extends Behaviour {
         for (let i = 0; i < lstObjs.length; ++i) {
             const obj = lstObjs[i] as IMesh,
                   materials = obj.materials;
-            
+
             for (let m = 0; m < materials.length; ++m) {
                 const material = materials[m],
                       userData = material.userData;
@@ -55,13 +55,13 @@ export class UVRotate extends Behaviour {
                 userData = material.userData,
                 animTexture = this.animatedTextures[userData.animatedTexture.idxAnimatedTexture],
                 coords = animTexture.animcoords[0],
-                pgr = (curTime * 1000.0) / (5 * material.uniforms.map.height), 
+                pgr = (curTime * 1000.0) / (5 * material.uniforms.map.height),
                 h = (uvRotateTileHeight / 2.0) / material.uniforms.map.height;
 
             pgr = pgr - h * Math.floor(pgr / h);
 
             material.uniforms.offsetRepeat.value[0] = coords.minU - userData.animatedTexture.minU;
-            material.uniforms.offsetRepeat.value[1] = coords.minV - userData.animatedTexture.minV*0.5 + h - pgr;
+            material.uniforms.offsetRepeat.value[1] = coords.minV - userData.animatedTexture.minV * 0.5 + h - pgr;
             material.uniforms.offsetRepeat.value[3] = 0.5;
 
             material.uniformsUpdated(["offsetRepeat"]);
@@ -70,6 +70,6 @@ export class UVRotate extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(UVRotate.name, 
+BehaviourManager.registerFactory(UVRotate.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new UVRotate(nbhv, gameData, objectid, objecttype)
 );

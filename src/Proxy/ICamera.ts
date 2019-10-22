@@ -5,7 +5,7 @@ import { Position, Quaternion } from "./INode";
 export interface ICamera {
 
     behaviours: Array<Behaviour>;
-    
+
     aspect: number;
     fov: number;
 

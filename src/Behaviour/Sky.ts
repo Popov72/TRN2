@@ -19,8 +19,8 @@ export class Sky extends Behaviour {
     }
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
-        const id = this.nbhv.id, 
-              hide = this.nbhv.hide == 'true', 
+        const id = this.nbhv.id,
+              hide = this.nbhv.hide == 'true',
               noanim = this.nbhv.noanim == 'true';
 
         if (hide) {
@@ -65,6 +65,6 @@ export class Sky extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Sky.name, 
+BehaviourManager.registerFactory(Sky.name,
     (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Sky(nbhv, gameData, objectid, objecttype)
 );

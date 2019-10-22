@@ -11,36 +11,36 @@ import Play from "./Player/Play";
 const showTiles = false;
 
 function setContainerDimensions() {
-	if (!showTiles) {
-		jQuery('#container').width(window.innerWidth);
-		jQuery('#container').height(window.innerHeight);
-	}
+    if (!showTiles) {
+        jQuery('#container').width(window.innerWidth);
+        jQuery('#container').height(window.innerHeight);
+    }
 }
 
 jQuery(window).on('resize', setContainerDimensions);
 jQuery(window).on('load', setContainerDimensions);
 
 jQuery(document).on('keydown', function(event) {
-	//console.log(event.which)
-	switch(event.which) {
-		case 72: // H
-			jQuery("#help").css('display', jQuery('#help').css('display') == 'block' ? 'none' : 'block');
-			break;
-		case 13: // Enter
-			jQuery("#panel").css('display', jQuery('#panel').css('display') == 'block' ? 'none' : 'block');
-			jQuery("#stats").css('display', jQuery('#stats').css('display') == 'block' ? 'none' : 'block');
-			break;
-		case 36: // Home
-            let qgame = Browser.QueryString.trgame, 
+    //console.log(event.which)
+    switch (event.which) {
+        case 72: // H
+            jQuery("#help").css('display', jQuery('#help').css('display') == 'block' ? 'none' : 'block');
+            break;
+        case 13: // Enter
+            jQuery("#panel").css('display', jQuery('#panel').css('display') == 'block' ? 'none' : 'block');
+            jQuery("#stats").css('display', jQuery('#stats').css('display') == 'block' ? 'none' : 'block');
+            break;
+        case 36: // Home
+            let qgame = Browser.QueryString.trgame,
                 prm = '';
-			
-			if (qgame) {
-				prm = '?trgame=' + qgame;
+
+            if (qgame) {
+                prm = '?trgame=' + qgame;
             }
-            
+
             document.location.href = 'index.html' + prm;
-			break;
-	}
+            break;
+    }
 });
 
 function loadAndPlayLevel(level: string | any) {
@@ -49,24 +49,24 @@ function loadAndPlayLevel(level: string | any) {
     progressbar.show();
 
     window.setTimeout(() => {
-        MasterLoader.loadLevel(level).then( (res) => {
+        MasterLoader.loadLevel(level).then((res) => {
             if (!showTiles) {
                 const play = new Play(document.getElementById('container') as Element);
                 (window as any).play = play;
-                fetch('/resources/template/help.html').then( (response) => {
-                    response.text().then( (html) => {
+                fetch('/resources/template/help.html').then((response) => {
+                    response.text().then((html) => {
                         jQuery(html).appendTo(document.body);
                     });
                 });
                 if (Browser.QueryString.autostart == '1') {
                     play.initialize(res[0], res[1]).then(() => {
                         progressbar.hide();
-                        play.play()
+                        play.play();
                     });
                 } else {
                     play.initialize(res[0], res[1]).then(() => {
-                        progressbar.showStart(function() { 
-                            progressbar.hide(); 
+                        progressbar.showStart(function() {
+                            progressbar.hide();
                             play.play();
                         });
                     });
@@ -80,11 +80,11 @@ function loadAndPlayLevel(level: string | any) {
 
 function handleFileSelect(evt: Event) {
 
-	function readFile(idx: number) {
-		const f = files[idx-1];
-		const freader = new FileReader();
-		freader.onload = ( (theFile) => {
-			return function(e: any) {
+    function readFile(idx: number) {
+        const f = files[idx - 1];
+        const freader = new FileReader();
+        freader.onload = ((theFile) => {
+            return function(e: any) {
                 jQuery('#files').css('display', 'none');
 
                 loadAndPlayLevel({
@@ -92,14 +92,14 @@ function handleFileSelect(evt: Event) {
                     "name":         theFile.name,
                     "showTiles":    showTiles,
                 });
-			};
-		})(f);
-		freader.readAsArrayBuffer(f);
-	}
+            };
+        })(f);
+        freader.readAsArrayBuffer(f);
+    }
 
-	let files = (evt.target! as any).files as Array<any>;
-	
-	readFile(1);
+    let files = (evt.target! as any).files as Array<any>;
+
+    readFile(1);
 }
 
 if (Browser.QueryString.level) {

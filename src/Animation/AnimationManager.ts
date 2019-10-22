@@ -25,13 +25,13 @@ export class AnimationManager {
         this.trversion = <any>null;
     }
 
-    public initialize (gameData: IGameData): void {
+    public initialize(gameData: IGameData): void {
         this.gameData = gameData;
         this.sceneData = gameData.sceneData;
         this.matMgr = gameData.matMgr;
         this.objMgr = gameData.objMgr;
         this.trversion = gameData.confMgr.trversion;
-    
+
         this.makeTracks();
     }
 
@@ -60,7 +60,7 @@ export class AnimationManager {
         if (trackInstance) {
             trackInstance.setNextTrackInstance(trackInstance, track.nextTrackFrame);
 
-            trackInstance.runForward(desynchro ? Math.random()*track.getLength() : 0);
+            trackInstance.runForward(desynchro ? Math.random() * track.getLength() : 0);
             trackInstance.interpolate();
 
             data.trackInstance = trackInstance;
@@ -71,16 +71,16 @@ export class AnimationManager {
         return trackInstance;
     }
 
-	public animateObjects(delta: number): void {
+    public animateObjects(delta: number): void {
         if (this.paused) {
             return;
         }
 
         const animatables = this.objMgr.objectList['moveable'];
 
-		for (const objID in animatables) {
+        for (const objID in animatables) {
             const lstObj = animatables[objID] as Array<IMesh>;
-            
+
             for (let i = 0; i < lstObj.length; ++i) {
                 const obj = lstObj[i],
                       data = this.sceneData.objects[obj.name];
@@ -90,8 +90,8 @@ export class AnimationManager {
                         // it's the end of the current track and we are in a cut scene => we link to the next track
                         let trackInstance = data.trackInstance;
 
-                        const nextTrackFrame = trackInstance.track.nextTrackFrame + trackInstance.param.curFrame - trackInstance.track.numFrames;//trackInstance.param.interpFactor;
-                        
+                        const nextTrackFrame = trackInstance.track.nextTrackFrame + trackInstance.param.curFrame - trackInstance.track.numFrames; //trackInstance.param.interpFactor;
+
                         trackInstance = data.allTrackInstances[trackInstance.track.nextTrack];
                         data.trackInstance = trackInstance;
 
@@ -105,7 +105,7 @@ export class AnimationManager {
                         this.processAnimCommands(data.prevTrackInstance, data.prevTrackInstanceFrame, 1e10, obj);
                         this.processAnimCommands(data.trackInstance, 0, data.trackInstance.param.curFrame, obj);
                     } else {
-                        const frm1 = data.prevTrackInstanceFrame, 
+                        const frm1 = data.prevTrackInstanceFrame,
                               frm2 = data.trackInstance.param.curFrame;
 
                         if (frm1 > frm2) {
@@ -134,39 +134,39 @@ export class AnimationManager {
                     }
                 }
             }
-		}
-	}
+        }
+    }
 
-	public processAnimCommands(trackInstance: TrackInstance, prevFrame: number, curFrame: number, obj: IMesh): void {
-		const commands = trackInstance.track.commands;
+    public processAnimCommands(trackInstance: TrackInstance, prevFrame: number, curFrame: number, obj: IMesh): void {
+        const commands = trackInstance.track.commands;
 
-		for (let i = 0; i < commands.length; ++i) {
-			const command = commands[i];
+        for (let i = 0; i < commands.length; ++i) {
+            const command = commands[i];
 
-			switch (command.cmd) {
+            switch (command.cmd) {
 
-				case Commands.ANIMCMD_MISCACTIONONFRAME: {
+                case Commands.ANIMCMD_MISCACTIONONFRAME: {
 
-					const frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1];
-					if (frame < prevFrame || frame >= curFrame) { continue; }
+                    const frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1];
+                    if (frame < prevFrame || frame >= curFrame) { continue; }
 
-					//console.log(action,'done for frame',frame,obj.name)
+                    //console.log(action,'done for frame',frame,obj.name)
 
-					switch (action) {
+                    switch (action) {
 
-						case Commands.Misc.ANIMCMD_MISC_COLORFLASH: {
-							this.gameData.globalTintColor[0] = this.gameData.globalTintColor[1] = this.gameData.globalTintColor[2] = (this.gameData.globalTintColor[0] < 0.5 ? 1.0 : 0.1);
-							break;
-						}
+                        case Commands.Misc.ANIMCMD_MISC_COLORFLASH: {
+                            this.gameData.globalTintColor[0] = this.gameData.globalTintColor[1] = this.gameData.globalTintColor[2] = (this.gameData.globalTintColor[0] < 0.5 ? 1.0 : 0.1);
+                            break;
+                        }
 
-						case Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
+                        case Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
                             const layer = this.sceneData.objects[obj.name].layer;
 
                             if (this.trversion == 'TR4') {
                                 layer.updateMask(LAYER.HOLSTER_EMPTY, MASK.LEG_L1);
                                 layer.updateMask(LAYER.HOLSTER_FULL,  MASK.LEG_L1);
                                 layer.updateMask(LAYER.WEAPON,        MASK.ARM_L3);
-                    
+
                             } else {
                                 layer.updateMask(LAYER.WEAPON, MASK.LEG_L1 | MASK.ARM_L3);
                                 layer.updateMask(LAYER.MAIN,   MASK.LEG_L1 | MASK.ARM_L3);
@@ -174,10 +174,10 @@ export class AnimationManager {
 
                             layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
 
-							break;
-						}
+                            break;
+                        }
 
-						case Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN: {
+                        case Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN: {
                             const layer = this.sceneData.objects[obj.name].layer;
 
                             if (this.trversion == 'TR4') {
@@ -191,17 +191,17 @@ export class AnimationManager {
 
                             layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
 
-							break;
-						}
+                            break;
+                        }
 
-						case Commands.Misc.ANIMCMD_MISC_MESHSWAP1:
-						case Commands.Misc.ANIMCMD_MISC_MESHSWAP2:
-						case Commands.Misc.ANIMCMD_MISC_MESHSWAP3: {
+                        case Commands.Misc.ANIMCMD_MISC_MESHSWAP1:
+                        case Commands.Misc.ANIMCMD_MISC_MESHSWAP2:
+                        case Commands.Misc.ANIMCMD_MISC_MESHSWAP3: {
                             const idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
-                            
-							const oswap = this.objMgr.objectList['moveable'][ObjectID['meshswap' + idx]];
 
-							if (oswap && Array.isArray(oswap)) {
+                            const oswap = this.objMgr.objectList['moveable'][ObjectID['meshswap' + idx]];
+
+                            if (oswap && Array.isArray(oswap)) {
                                 const layer = this.sceneData.objects[obj.name].layer;
 
                                 if (layer.isEmpty(LAYER.MESHSWAP) || layer.getMesh(LAYER.MESHSWAP) != oswap[0]) {
@@ -210,35 +210,35 @@ export class AnimationManager {
 
                                 layer.updateMask(LAYER.MESHSWAP,  MASK.ALL);
                                 layer.updateMask(LAYER.MAIN,      MASK.ALL);
-    
+
                                 layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
-							} else {
-								console.log('Could not apply anim command meshswap (' , action, '): object meshswap' + idx + ' not found.');
+                            } else {
+                                console.log('Could not apply anim command meshswap (' , action, '): object meshswap' + idx + ' not found.');
                             }
-                            
-							break;
-						}
 
-						case Commands.Misc.ANIMCMD_MISC_HIDEOBJECT: {
-							obj.visible = false;
-							break;
-						}
-
-						case Commands.Misc.ANIMCMD_MISC_SHOWOBJECT: {
-							obj.visible = true;
-							break;
+                            break;
                         }
-                        
+
+                        case Commands.Misc.ANIMCMD_MISC_HIDEOBJECT: {
+                            obj.visible = false;
+                            break;
+                        }
+
+                        case Commands.Misc.ANIMCMD_MISC_SHOWOBJECT: {
+                            obj.visible = true;
+                            break;
+                        }
+
                         case Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION: {
                             //console.log('custom function at frame #', curFrame, ' (' + frame + ')');
                             command.params[2]();
                             break;
                         }
-					}
+                    }
 
-					break;
-				}
-			}
-		}
-	}
+                    break;
+                }
+            }
+        }
+    }
 }

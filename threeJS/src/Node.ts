@@ -1,4 +1,4 @@
-import { 
+import {
     Object3D
 } from "three";
 
@@ -13,9 +13,9 @@ export default class Node implements INode {
     protected _children:    Array<Node>;
 
     get object(): Object3D {
-        return this._obj
+        return this._obj;
     }
-    
+
     constructor(obj?: Object3D) {
         this._obj = obj ? obj : new Object3D();
         this._children = [];
@@ -76,37 +76,37 @@ export default class Node implements INode {
     }
 
     public remove(child: Node): void {
-		const index = this._children.indexOf(child);
+        const index = this._children.indexOf(child);
 
         if (index !== - 1) {
-			this._children.splice(index, 1);
+            this._children.splice(index, 1);
             this._obj.remove(child._obj);
         }
     }
 
-    public traverse( callback: (obj: Node) => void ): void {
-		for (let i = 0; i < this._children.length; i ++ ) {
+    public traverse(callback: (obj: Node) => void): void {
+        for (let i = 0; i < this._children.length; i ++) {
             const child = this._children[i];
             callback(child);
             child.traverse(callback);
-		}
+        }
     }
 
     public getObjectByName(name: string): Node | undefined {
-		if (this._obj.name === name) {
+        if (this._obj.name === name) {
             return this;
         }
 
-		for (let i = 0; i < this._children.length; ++i) {
-			const child = this._children[i],
-			      object = child.getObjectByName(name);
+        for (let i = 0; i < this._children.length; ++i) {
+            const child = this._children[i],
+                  object = child.getObjectByName(name);
 
-			if (object !== undefined) {
-				return object;
-			}
-		}
+            if (object !== undefined) {
+                return object;
+            }
+        }
 
-		return undefined;
+        return undefined;
     }
 
     public updateMatrixWorld(): void {

@@ -5,7 +5,7 @@ import { ICamera } from "../Proxy/ICamera";
 export enum BehaviourRetCode {
     keepBehaviour = 0,
     dontKeepBehaviour
-};
+}
 
 export abstract class Behaviour {
 
@@ -27,5 +27,5 @@ export abstract class Behaviour {
 
     frameStarted?(curTime: number, delta: number): void;
     frameEnded?(curTime: number, delta: number): void;
-    
-};
+
+}

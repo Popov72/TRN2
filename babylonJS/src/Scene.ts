@@ -1,6 +1,6 @@
-import { 
-    Scene as BScene, 
-    Color4 
+import {
+    Scene as BScene,
+    Color4
 } from "babylonjs";
 
 import { IScene, TextureList } from "../../src/Proxy/IScene";
@@ -32,8 +32,8 @@ export default class Scene implements IScene {
         return this._scene;
     }
 
-    public traverse( callback: (obj: Mesh) => void ): void {
-		for (let i = 0; i < this._children.length; i ++ ) {
+    public traverse(callback: (obj: Mesh) => void): void {
+        for (let i = 0; i < this._children.length; i ++) {
             const child = this._children[i];
             callback(child);
         }
@@ -47,10 +47,10 @@ export default class Scene implements IScene {
     }
 
     public remove(obj: Mesh): void {
-		const index = this._children.indexOf(obj);
+        const index = this._children.indexOf(obj);
 
         if (index !== - 1) {
-			this._children.splice(index, 1);
+            this._children.splice(index, 1);
         }
         this._scene.removeMesh(obj.object);
     }
@@ -64,15 +64,15 @@ export default class Scene implements IScene {
     }
 
     public getObjectByName(name: string): Mesh | undefined {
-		for (let i = 0; i < this._children.length; ++i) {
-			const child = this._children[i];
+        for (let i = 0; i < this._children.length; ++i) {
+            const child = this._children[i];
 
-			if (child.name === name) {
-				return child;
-			}
-		}
+            if (child.name === name) {
+                return child;
+            }
+        }
 
-		return undefined;
+        return undefined;
     }
 
 }

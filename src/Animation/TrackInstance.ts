@@ -101,10 +101,10 @@ export default class TrackInstance {
             // The next animation is the current one (looping). Reset internal variables
             this.param.curFrame -= this._track.numFrames;
             this.param.curFrame += this.nextTrackInstanceFrame;
-            
+
             // The next test should always fail, but if the frame rate is *very* bad
             // (elapsedTime is huge), it could succeed
-            if (this.param.curFrame >= this._track.numFrames) this.param.curFrame = this._track.numFrames - 1;
+            if (this.param.curFrame >= this._track.numFrames) { this.param.curFrame = this._track.numFrames - 1; }
 
             this.noInterpolationToNextTrack = false;
         }
@@ -162,7 +162,7 @@ export default class TrackInstance {
         if (this.param.nextKeyIsInCurrentTrack || this._track.numKeys == 1 || detectRecursInfinite) {
             let nextKey = curKey + 1;
 
-            if (nextKey >= this._track.numKeys) nextKey = 0; // to handle animations with only one key
+            if (nextKey >= this._track.numKeys) { nextKey = 0; } // to handle animations with only one key
 
             if (detectRecursInfinite && !this.param.nextKeyIsInCurrentTrack && this._track.numKeys != 1) {
                 nextKey = this._track.numKeys - 1;
@@ -173,7 +173,7 @@ export default class TrackInstance {
                 const dataCurKey  = this._track.keys[curKey].data[numData];
                 const dataNextKey = this._track.keys[nextKey].data[numData];
 
-                if (!buffer[numData] || !dataCurKey || !dataNextKey) continue; // without this line, the lost artifact TR3 levels bug
+                if (!buffer[numData] || !dataCurKey || !dataNextKey) { continue; } // without this line, the lost artifact TR3 levels bug
 
                 const newpos: Position = [
                     dataCurKey.position[0] + (dataNextKey.position[0] - dataCurKey.position[0]) * this.param.interpFactor,
@@ -183,8 +183,8 @@ export default class TrackInstance {
 
                 if (internalBuffer) {
                     buffer[numData].setPosition([
-                        newpos[0] + this.skeleton.bonesStartingPos[numData].pos_init[0], 
-                        newpos[1] + this.skeleton.bonesStartingPos[numData].pos_init[1], 
+                        newpos[0] + this.skeleton.bonesStartingPos[numData].pos_init[0],
+                        newpos[1] + this.skeleton.bonesStartingPos[numData].pos_init[1],
                         newpos[2] + this.skeleton.bonesStartingPos[numData].pos_init[2]
                     ]);
                 } else {
@@ -207,8 +207,8 @@ export default class TrackInstance {
                 const dataCurKey  = this._track.keys[curKey].data[numData];
                 const dataNextKey = this.interpolatedData[numData];
 
-                if (!buffer[numData] || !dataCurKey || !dataNextKey) continue; // without this line, the lost artifact TR3 levels bug
-                
+                if (!buffer[numData] || !dataCurKey || !dataNextKey) { continue; } // without this line, the lost artifact TR3 levels bug
+
                 const newpos: Position = [
                     dataCurKey.position[0] + (dataNextKey.position[0] - dataCurKey.position[0]) * this.param.interpFactor,
                     dataCurKey.position[1] + (dataNextKey.position[1] - dataCurKey.position[1]) * this.param.interpFactor,
@@ -217,8 +217,8 @@ export default class TrackInstance {
 
                 if (internalBuffer) {
                     buffer[numData].setPosition([
-                        newpos[0] + this.skeleton.bonesStartingPos[numData].pos_init[0], 
-                        newpos[1] + this.skeleton.bonesStartingPos[numData].pos_init[1], 
+                        newpos[0] + this.skeleton.bonesStartingPos[numData].pos_init[0],
+                        newpos[1] + this.skeleton.bonesStartingPos[numData].pos_init[1],
                         newpos[2] + this.skeleton.bonesStartingPos[numData].pos_init[2]
                     ]);
                 } else {

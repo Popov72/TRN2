@@ -1,7 +1,7 @@
 import {
     Engine,
     ShaderMaterial,
-    Vector3, 
+    Vector3,
     Vector4
 } from "babylonjs";
 
@@ -84,7 +84,7 @@ export default class Material implements IMaterial {
     }
 
     protected _setUniformValue(uname: string, uval: any): void {
-        switch(uval.type) {
+        switch (uval.type) {
             case 't':
                 this._material.setTexture(uname, uval.value);
                 break;
@@ -130,21 +130,23 @@ export default class Material implements IMaterial {
         shd.metadata = {
             "userData": this.userData,
             "uniforms": this.cloneUniforms(this.uniforms),
-        }
+        };
 
         return new Material(shd);
     }
 
     protected cloneUniforms(src: any): any {
         const dst: any = {};
-    
+
         for (const u in src) {
             dst[u] = {};
-    
+
             for (const p in src[u]) {
                 const property = src[u][p];
-    
-                if (p === "_value") continue;
+
+                if (p === "_value") {
+                    continue;
+                }
 
                 if (Array.isArray(property)) {
                     dst[u][p] = property.slice();
@@ -153,7 +155,7 @@ export default class Material implements IMaterial {
                 }
             }
         }
-    
+
         return dst;
     }
 

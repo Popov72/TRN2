@@ -7,7 +7,7 @@ export interface IScene {
 
     textures: TextureList | undefined;
 
-    traverse( callback: (obj: IMesh) => void ): void;
+    traverse(callback: (obj: IMesh) => void): void;
 
     add(obj: IMesh | ICamera): void;
 

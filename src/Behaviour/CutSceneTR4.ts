@@ -48,13 +48,13 @@ export default class CutSceneTR4 {
         if (cutscene[0].index == 1) {
             jQuery.ajax({
                 type: "GET",
-                url: '/resources/level/tr4/TR4_cutscenes/cut' + (icutscene+1) + '.json',
+                url: '/resources/level/tr4/TR4_cutscenes/cut' + (icutscene + 1) + '.json',
                 dataType: "json",
                 cache: false,
                 async: false
             }).done(function(data) { cutscene.push(data); });
 
-            cutscene[1].index = icutscene+1;
+            cutscene[1].index = icutscene + 1;
         }
 
         // get the sound for this cut scene
@@ -114,7 +114,7 @@ export default class CutSceneTR4 {
             this.sceneData.objects[actorMoveables[ac].name].animationStartIndex = this.sceneData.animTracks.length;
 
             const oanimation = Track.createTrack(animation);
-            
+
             this.sceneData.animTracks.push(oanimation);
 
             if (cutscene.index == 1 && ac == 0) {
@@ -122,7 +122,7 @@ export default class CutSceneTR4 {
                 const animationCont = this.makeAnimationForActor(cutscenes[1], cutscenes[1].actors[ac], "anim_cutscene2_actor" + ac);
 
                 oanimation.nextTrack = this.sceneData.animTracks.length;
-                animationCont.nextTrack = this.sceneData.animTracks.length-1;
+                animationCont.nextTrack = this.sceneData.animTracks.length - 1;
 
                 this.sceneData.animTracks.push(Track.createTrack(animationCont));
             }
@@ -147,18 +147,18 @@ export default class CutSceneTR4 {
             angleX = 2 * Math.PI * (angleX % 1024) / 1024.0,
             angleY = 2 * Math.PI * (angleY % 1024) / 1024.0,
             angleZ = 2 * Math.PI * (angleZ % 1024) / 1024.0;
-    
-            const qx = glMatrix.quat.create(), 
-                  qy = glMatrix.quat.create(), 
+
+            const qx = glMatrix.quat.create(),
+                  qy = glMatrix.quat.create(),
                   qz = glMatrix.quat.create();
-    
-            glMatrix.quat.setAxisAngle(qx, [1,0,0], angleX);
-            glMatrix.quat.setAxisAngle(qy, [0,1,0], -angleY);
-            glMatrix.quat.setAxisAngle(qz, [0,0,1], -angleZ);
-    
+
+            glMatrix.quat.setAxisAngle(qx, [1, 0, 0], angleX);
+            glMatrix.quat.setAxisAngle(qy, [0, 1, 0], -angleY);
+            glMatrix.quat.setAxisAngle(qz, [0, 0, 1], -angleZ);
+
             glMatrix.quat.mul(qy, qy, qx);
             glMatrix.quat.mul(qy, qy, qz);
-    
+
             return qy;
         }
 
@@ -185,9 +185,9 @@ export default class CutSceneTR4 {
 
             prev.push({
                 "position": {
-                    x: posHdr ? posHdr.startPosX*CST0 : 0,
-                    y: posHdr ? -posHdr.startPosY*CST0 : 0,
-                    z: posHdr ? -posHdr.startPosZ*CST0 : 0
+                    x: posHdr ? posHdr.startPosX * CST0 : 0,
+                    y: posHdr ? -posHdr.startPosY * CST0 : 0,
+                    z: posHdr ? -posHdr.startPosZ * CST0 : 0
                 },
                 "rotation": {
                     x: rotHdr.startRotX % 1024,
@@ -220,14 +220,14 @@ export default class CutSceneTR4 {
                     break;
                 }
 
-                let transX = 0, 
-                    transY = 0, 
+                let transX = 0,
+                    transY = 0,
                     transZ = 0;
 
                 if (posData) {
-                    transX =  posData.dx[d]*CST0;
-                    transY = -posData.dy[d]*CST0;
-                    transZ = -posData.dz[d]*CST0;
+                    transX =  posData.dx[d] * CST0;
+                    transY = -posData.dy[d] * CST0;
+                    transZ = -posData.dz[d] * CST0;
                 }
 
                 const cur: any = {
@@ -237,8 +237,8 @@ export default class CutSceneTR4 {
                         z: transZ + prev[m].position.z
                     },
                     "rotation": {
-                        x: (rotData.dx[d] + prev[m].rotation.x) % 1024, 
-                        y: (rotData.dy[d] + prev[m].rotation.y) % 1024, 
+                        x: (rotData.dx[d] + prev[m].rotation.x) % 1024,
+                        y: (rotData.dy[d] + prev[m].rotation.y) % 1024,
                         z: (rotData.dz[d] + prev[m].rotation.z) % 1024
                     }
                 };
@@ -246,8 +246,8 @@ export default class CutSceneTR4 {
                 const quat = makeQuaternion(cur.rotation.x, cur.rotation.y, cur.rotation.z);
 
                 key.data.push({
-                    "position": 	{ x:cur.position.x, y:cur.position.y, z:cur.position.z },
-                    "quaternion":	{ x:quat[0], y:quat[1], z:quat[2], w:quat[3] }
+                    "position": 	{ x: cur.position.x, y: cur.position.y, z: cur.position.z },
+                    "quaternion":	{ x: quat[0], y: quat[1], z: quat[2], w: quat[3] }
                 });
 
                 prev[m] = cur;
@@ -266,13 +266,13 @@ export default class CutSceneTR4 {
 
     protected makeAnimationForCamera(cutscene: any): Array<any> {
         // create camera frames
-        const frames = [], 
-              ocam = cutscene.camera, 
+        const frames = [],
+              ocam = cutscene.camera,
               CST = 2;
 
         let prev = {
-            posX:       ocam.cameraHeader.startPosX*CST,    posY:       ocam.cameraHeader.startPosY*CST,    posZ:       ocam.cameraHeader.startPosZ*CST,
-            targetX:    ocam.targetHeader.startPosX*CST,    targetY:    ocam.targetHeader.startPosY*CST,    targetZ:    ocam.targetHeader.startPosZ*CST
+            posX:       ocam.cameraHeader.startPosX * CST,    posY:       ocam.cameraHeader.startPosY * CST,    posZ:       ocam.cameraHeader.startPosZ * CST,
+            targetX:    ocam.targetHeader.startPosX * CST,    targetY:    ocam.targetHeader.startPosY * CST,    targetZ:    ocam.targetHeader.startPosZ * CST
         };
 
         for (let d = 0; d < cutscene.numFrames; ++d) {
@@ -282,14 +282,14 @@ export default class CutSceneTR4 {
             const cur = {
                 fov: 13000,
                 roll: 0,
-                
-                posX: ocam.cameraPositionData.dx[d]*CST + prev.posX,
-                posY: ocam.cameraPositionData.dy[d]*CST + prev.posY,
-                posZ: ocam.cameraPositionData.dz[d]*CST + prev.posZ,
 
-                targetX: ocam.targetPositionData.dx[d]*CST + prev.targetX,
-                targetY: ocam.targetPositionData.dy[d]*CST + prev.targetY,
-                targetZ: ocam.targetPositionData.dz[d]*CST + prev.targetZ
+                posX: ocam.cameraPositionData.dx[d] * CST + prev.posX,
+                posY: ocam.cameraPositionData.dy[d] * CST + prev.posY,
+                posZ: ocam.cameraPositionData.dz[d] * CST + prev.posZ,
+
+                targetX: ocam.targetPositionData.dx[d] * CST + prev.targetX,
+                targetY: ocam.targetPositionData.dy[d] * CST + prev.targetY,
+                targetZ: ocam.targetPositionData.dz[d] * CST + prev.targetZ
             };
             frames.push(cur);
             prev = cur;

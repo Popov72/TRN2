@@ -44,10 +44,10 @@ export class MaterialManager {
         u.pointLight_distance           = { type: "fv1", value: [0] };
 
         u.numSpotLight                  = { type: "i",   value: 0 };
-        u.spotLight_position            = { type: "fv",  value: [0 ,0, 0]  };
-        u.spotLight_color               = { type: "fv",  value: [0 ,0, 0]  };
+        u.spotLight_position            = { type: "fv",  value: [0 , 0, 0]  };
+        u.spotLight_color               = { type: "fv",  value: [0 , 0, 0]  };
         u.spotLight_distance            = { type: "fv1", value: [0] };
-        u.spotLight_direction           = { type: "fv",  value: [0 ,0, 0]  };
+        u.spotLight_direction           = { type: "fv",  value: [0 , 0, 0]  };
         u.spotLight_coneCos             = { type: "fv1", value: [0] };
         u.spotLight_penumbraCos         = { type: "fv1", value: [0] };
     }
@@ -68,8 +68,8 @@ export class MaterialManager {
                 this.setLightUniformsForMaterial(roomData, material, false);
             }
 
-            if (!roomData.flickering)      material.uniforms.flickerColor.value = [1, 1, 1];
-            if (roomData.filledWithWater)  material.uniforms.tintColor.value = [this.sceneData.waterColor.in.r, this.sceneData.waterColor.in.g, this.sceneData.waterColor.in.b];
+            if (!roomData.flickering) {      material.uniforms.flickerColor.value = [1, 1, 1]; }
+            if (roomData.filledWithWater) {  material.uniforms.tintColor.value = [this.sceneData.waterColor.in.r, this.sceneData.waterColor.in.g, this.sceneData.waterColor.in.b]; }
 
             material.uniformsUpdated();
         }
@@ -93,10 +93,10 @@ export class MaterialManager {
         for (let l = 0; l < lights.length; ++l) {
             const light = lights[l];
 
-            switch(light.type) {
+            switch (light.type) {
                 case 'directional':
-                    if (u.directionalLight_direction.value === undefined || (!noreset && u.numDirectionalLight.value == 0))   u.directionalLight_direction.value = [];
-                    if (u.directionalLight_color.value === undefined || (!noreset && u.numDirectionalLight.value == 0))       u.directionalLight_color.value = [];
+                    if (u.directionalLight_direction.value === undefined || (!noreset && u.numDirectionalLight.value == 0)) { u.directionalLight_direction.value = []; }
+                    if (u.directionalLight_color.value === undefined || (!noreset && u.numDirectionalLight.value == 0))     { u.directionalLight_color.value = []; }
 
                     u.directionalLight_direction.value  = u.directionalLight_direction.value.concat([light.dx, light.dy, light.dz]);
                     u.directionalLight_color.value      = u.directionalLight_color.value.concat(light.color);
@@ -104,9 +104,9 @@ export class MaterialManager {
                     u.numDirectionalLight.value++;
                     break;
                 case 'point':
-                    if (u.pointLight_position.value === undefined || (!noreset && u.numPointLight.value == 0))  u.pointLight_position.value = [];
-                    if (u.pointLight_color.value === undefined || (!noreset && u.numPointLight.value == 0))     u.pointLight_color.value = [];
-                    if (u.pointLight_distance.value === undefined || (!noreset && u.numPointLight.value == 0))  u.pointLight_distance.value = [];
+                    if (u.pointLight_position.value === undefined || (!noreset && u.numPointLight.value == 0))  { u.pointLight_position.value = []; }
+                    if (u.pointLight_color.value === undefined || (!noreset && u.numPointLight.value == 0))     { u.pointLight_color.value = []; }
+                    if (u.pointLight_distance.value === undefined || (!noreset && u.numPointLight.value == 0))  { u.pointLight_distance.value = []; }
 
                     u.pointLight_position.value = u.pointLight_position.value.concat([light.x, light.y, light.z]);
                     u.pointLight_color.value    = u.pointLight_color.value.concat(light.color);
@@ -115,12 +115,12 @@ export class MaterialManager {
                     u.numPointLight.value++;
                     break;
                 case 'spot':
-                    if (u.spotLight_position.value === undefined || (!noreset && u.numSpotLight.value == 0))       u.spotLight_position.value = [];
-                    if (u.spotLight_color.value === undefined || (!noreset && u.numSpotLight.value == 0))          u.spotLight_color.value = [];
-                    if (u.spotLight_direction.value === undefined || (!noreset && u.numSpotLight.value == 0))      u.spotLight_direction.value = [];
-                    if (u.spotLight_distance.value === undefined || (!noreset && u.numSpotLight.value == 0))       u.spotLight_distance.value = [];
-                    if (u.spotLight_coneCos.value === undefined || (!noreset && u.numSpotLight.value == 0))        u.spotLight_coneCos.value = [];
-                    if (u.spotLight_penumbraCos.value === undefined || (!noreset && u.numSpotLight.value == 0))    u.spotLight_penumbraCos.value = [];
+                    if (u.spotLight_position.value === undefined || (!noreset && u.numSpotLight.value == 0))    { u.spotLight_position.value = []; }
+                    if (u.spotLight_color.value === undefined || (!noreset && u.numSpotLight.value == 0))       { u.spotLight_color.value = []; }
+                    if (u.spotLight_direction.value === undefined || (!noreset && u.numSpotLight.value == 0))   { u.spotLight_direction.value = []; }
+                    if (u.spotLight_distance.value === undefined || (!noreset && u.numSpotLight.value == 0))    { u.spotLight_distance.value = []; }
+                    if (u.spotLight_coneCos.value === undefined || (!noreset && u.numSpotLight.value == 0))     { u.spotLight_coneCos.value = []; }
+                    if (u.spotLight_penumbraCos.value === undefined || (!noreset && u.numSpotLight.value == 0)) { u.spotLight_penumbraCos.value = []; }
 
                     u.spotLight_position.value  = u.spotLight_position.value.concat([light.x, light.y, light.z]);
                     u.spotLight_color.value     = u.spotLight_color.value.concat(light.color);
@@ -144,7 +144,7 @@ export class MaterialManager {
 
             for (let m = 0; m < materials.length; ++m) {
                 const material = materials[m];
-                if (!material.uniforms || material.uniforms.numPointLight === undefined || material.uniforms.numPointLight < 0) continue;
+                if (!material.uniforms || material.uniforms.numPointLight === undefined || material.uniforms.numPointLight < 0) { continue; }
 
                 this.setLightUniformsForMaterial(this.sceneData.objects['room' + data.roomIndex], material, false);
             }

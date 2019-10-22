@@ -2,13 +2,13 @@ import { ICamera } from "./ICamera";
 import { IScene } from "./IScene";
 
 export interface PerfData {
-    "numDrawCalls" : number,
-    "numObjects": number,
-    "numFaces": number,
-    "numTextures": number,
-    "numGeometries": number,
-    "numParticles": number,
-    "numPrograms": number,
+    "numDrawCalls" : number;
+    "numObjects": number;
+    "numFaces": number;
+    "numTextures": number;
+    "numGeometries": number;
+    "numParticles": number;
+    "numPrograms": number;
 }
 
 export interface IRenderer {

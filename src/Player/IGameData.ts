@@ -9,23 +9,23 @@ import { Panel } from "../Utils/Panel";
 import { ConfigManager } from "../ConfigManager";
 
 export default interface IGameData {
-    "container":        Element,
-    
-    "sceneRender":      IScene,
-    "sceneBackground":  IScene,
+    "container":        Element;
 
-    "camera":           ICamera,
-    
-    "bhvMgr":           BehaviourManager,
-    "objMgr":           ObjectManager,
-    "confMgr":          ConfigManager,
-    "matMgr":           MaterialManager,
-    "anmMgr":           AnimationManager,
-    "trlvl":            TRLevel,
+    "sceneRender":      IScene;
+    "sceneBackground":  IScene;
 
-    "curRoom":          number,
+    "camera":           ICamera;
 
-    "panel":            Panel,
+    "bhvMgr":           BehaviourManager;
+    "objMgr":           ObjectManager;
+    "confMgr":          ConfigManager;
+    "matMgr":           MaterialManager;
+    "anmMgr":           AnimationManager;
+    "trlvl":            TRLevel;
 
-    [name: string]: any,
+    "curRoom":          number;
+
+    "panel":            Panel;
+
+    [name: string]: any;
 }
