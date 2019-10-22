@@ -64,6 +64,7 @@ export default class Camera implements ICamera {
     }
 
     public updateProjectionMatrix(): void {
+        this._camera.getProjectionMatrix(true);
     }
 
     public lookAt(pos: Position): void {
