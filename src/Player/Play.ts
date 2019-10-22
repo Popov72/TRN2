@@ -75,7 +75,7 @@ export default class Play {
         Browser.bindRequestFullscreen(document.body);
     }
 
-	public async start(sceneJSON: RawLevel, scene: IScene) {
+	public async initialize(sceneJSON: RawLevel, scene: IScene) {
         this.gameData.sceneData = sceneJSON.data;
 		this.gameData.sceneRender = scene;
         this.gameData.sceneBackground = this.renderer.createScene();
@@ -103,7 +103,7 @@ export default class Play {
         this.gameData.trlvl   = new TRLevel();
         this.gameData.anmMgr  = new AnimationManager();
         this.gameData.shdMgr  = Engine.getShaderMgr();
-
+        
         this.gameData.bhvMgr.initialize(this.gameData);
         this.gameData.matMgr.initialize(this.gameData);
         this.gameData.objMgr.initialize(this.gameData);
@@ -163,6 +163,10 @@ export default class Play {
             this.gameData.matMgr.setUniformsFromRoom(obj, data.roomIndex);
         });
 
+        return Promise.resolve();
+	}
+
+    public play(): void {
 		this.gameData.panel.show();
         this.gameData.panel.updateFromParent();
 
@@ -175,7 +179,7 @@ export default class Play {
 		this.renderLoop();
 
         this.onWindowResize();
-	}
+    }
 
 	private renderLoop(): void {
 		requestAnimationFrame( this.renderLoop.bind(this) );
