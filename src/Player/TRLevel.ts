@@ -204,7 +204,7 @@ export class TRLevel {
                 ];
 
                 const meshb = Engine.makeMeshBuilder(),
-                      mesh = meshb.createMesh('room' + m + '_portal' + p, this.shdMgr.getVertexShader('portal'), this.shdMgr.getFragmentShader('portal'), undefined, vertices, faces, undefined, colors);
+                      mesh = meshb.createMesh('room' + m + '_portal' + p, this.shdMgr.getVertexShader('TR_portal'), this.shdMgr.getFragmentShader('TR_portal'), undefined, vertices, faces, undefined, colors);
 
                 mesh.materials.forEach((m) => (m.transparent = true, m.depthWrite = false));
                 mesh.setPosition([0, 0, 0]);

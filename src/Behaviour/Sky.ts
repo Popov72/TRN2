@@ -52,8 +52,8 @@ export class Sky extends Behaviour {
             const material = materials[mat];
 
             material.depthWrite = false;
-            material.vertexShader = this.gameData.shdMgr.getVertexShader('sky');
-            material.fragmentShader = this.gameData.shdMgr.getFragmentShader('sky');
+            material.vertexShader = this.gameData.shdMgr.getVertexShader('TR_sky');
+            material.fragmentShader = this.gameData.shdMgr.getFragmentShader('TR_sky');
         }
 
         return [BehaviourRetCode.keepBehaviour, null];

@@ -77,8 +77,8 @@ export default class LevelConverterHelper {
                 "lighting":     { type: "f3", value: [0, 0, 0] },
                 "camPosition":  { type: "f3", value: [0, 0, 0] }
             },
-            "vertexShader": "",
-            "fragmentShader": "",
+            "vertexShader": "TR_" + objType,
+            "fragmentShader": "TR_standard",
             "userData": {}
         };
 

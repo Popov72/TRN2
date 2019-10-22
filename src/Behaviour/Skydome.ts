@@ -85,7 +85,7 @@ export class Skydome extends Behaviour {
         };
 
         const meshb = Engine.makeMeshBuilder(),
-              sky = meshb.createMesh('skydome', this.gameData.shdMgr.getVertexShader('skydome'), this.gameData.shdMgr.getFragmentShader('skydome'), uniforms, meshData.vertices, meshData.faces, meshData.textures, undefined);
+              sky = meshb.createMesh('skydome', this.gameData.shdMgr.getVertexShader('TR_skydome'), this.gameData.shdMgr.getFragmentShader('TR_skydome'), uniforms, meshData.vertices, meshData.faces, meshData.textures, undefined);
 
         this.gameData.sceneData.objects['skydome'] = {
             "type"					: 'skydome',

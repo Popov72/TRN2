@@ -166,7 +166,7 @@ export class Panel {
 		this.elem.find('#noobjecttexture').on('click', function() {
 			const shaderMgr = this_._parent.shdMgr,
 			      scene = this_._parent.sceneRender,
-			      shader = shaderMgr.getFragmentShader('uniformcolor');
+			      shader = shaderMgr.getFragmentShader('TR_uniformcolor');
 			scene.traverse( (obj) => {
 				if (obj.name.match(/moveable|sprite|staticmesh/) == null) return;
 
