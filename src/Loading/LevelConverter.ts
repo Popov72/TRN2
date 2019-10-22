@@ -1,5 +1,4 @@
 import { ConfigManager } from "../ConfigManager";
-import { ShaderManager } from "../ShaderManager";
 import { RawLevel } from "./LevelLoader";
 import { baseFrameRate, ObjectID } from "../Constants";
 import { Commands } from "../Animation/Commands";
@@ -17,7 +16,6 @@ interface mapNumberToNumber {
 export default class LevelConverter {
 
     private confMgr: ConfigManager;
-    private shaderMgr: ShaderManager;
     private sc: any;
     private helper: LevelConverterHelper;
     private laraObjectID: number;
@@ -26,7 +24,6 @@ export default class LevelConverter {
 
     constructor() {
         this.confMgr = <any>null;
-        this.shaderMgr = new ShaderManager();
         this.sc = null;
         this.helper = <any>null;
         this.laraObjectID = -1;
@@ -1154,7 +1151,7 @@ export default class LevelConverter {
 		this.sc.data.rversion = this.sc.data.trlevel.rversion;
 		this.sc.data.soundPath = "resources/sound/" + this.sc.data.rversion.toLowerCase() + "/";
 
-        this.helper = new LevelConverterHelper(this.sc, this.shaderMgr, this.objects);
+        this.helper = new LevelConverterHelper(this.sc, this.objects);
 
         this.laraObjectID = this.confMgr.number('lara > id', true, 0);
 

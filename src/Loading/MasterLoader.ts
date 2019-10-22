@@ -35,6 +35,10 @@ export default class MasterLoader {
 
             converter.convert(level);
 
+            const shdMgr = Engine.getShaderMgr();
+
+            shdMgr.setTRLevel(level);
+
             return Engine.parseScene(converter.sceneJSON).then( (scene: IScene) => {
                 MasterLoader._postProcessLevel(converter.sceneJSON, scene);
 

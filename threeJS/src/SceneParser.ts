@@ -35,6 +35,7 @@ import {
 } from 'three';
 
 import { TextureList } from "../../src/Proxy/IScene";
+import { ShaderManager } from "../../src/ShaderManager";
 
 import Camera from "./Camera";
 import Mesh from "./Mesh";
@@ -43,8 +44,12 @@ import Scene  from "./Scene";
 
 export default class SceneParser extends Loader {
 
-    constructor(manager?: any) {
+    protected _shdMgr: ShaderManager;
+
+    constructor(shdMgr: ShaderManager, manager?: any) {
         super(manager);
+
+        this._shdMgr = shdMgr;
     }
 
 	public parse ( json: any, onLoad: any ): any {
@@ -148,6 +153,8 @@ export default class SceneParser extends Loader {
                 if ( cache[ data.uuid ] === undefined ) {
 
                     cache[ data.uuid ] = loader.parse( data );
+                    cache[ data.uuid ].vertexShader = this._shdMgr.getVertexShader(cache[ data.uuid ].vertexShader);
+                    cache[ data.uuid ].fragmentShader = this._shdMgr.getFragmentShader(cache[ data.uuid ].fragmentShader);
 
                 }
 

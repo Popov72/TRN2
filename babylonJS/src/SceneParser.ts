@@ -19,7 +19,7 @@ import { TextureList } from "../../src/Proxy/IScene";
 import Camera from "./Camera";
 import Mesh from "./Mesh";
 import Scene  from "./Scene";
-import Shader  from "./Shader";
+import { ShaderManager } from "./ShaderManager";
 
 export default class SceneParser {
 
@@ -29,12 +29,14 @@ export default class SceneParser {
     private textureMap: {
         [name: string] : Texture
     };
+    private shdMgr: ShaderManager;
 
     private scene: BScene;
     private tscene: Scene;
 
-    constructor(engine: Engine) {
+    constructor(engine: Engine, shdMgr: ShaderManager) {
         this.engine = engine;
+        this.shdMgr = shdMgr;
         
         this.scene = new BScene(engine);
         this.scene.useRightHandedSystem = true;
@@ -50,7 +52,7 @@ export default class SceneParser {
 
         this.createScene();
 
-        //this.scene.debugLayer.show();
+        //this.scene.debugLayer.show({ embedMode: false, handleResize: false, overlay: true, showExplorer: true, showInspector: true });
 
         this.scene.getBoundingBoxRenderer().showBackLines = false;
 
@@ -70,8 +72,6 @@ export default class SceneParser {
                     break;
 
                 case "Mesh":
-                    //if (!object.name.startsWith('room76') && !object.name.startsWith('moveable425') && !object.name.startsWith('room146')) continue;
-                    //if (object.name != "room23") continue;
                     this.createMesh(object);
                 break;
             }
@@ -162,9 +162,12 @@ export default class SceneParser {
                 const material = this.getMaterial(materials[m]);
 
                 let uniformsUsed = new Set<string>(),
-                    vertexCode = Shader.getShader("Vertex", material.name, material.vertexShader, uniformsUsed),
-                    fragmentCode = Shader.getShader("Fragment", material.name, material.fragmentShader, uniformsUsed);
+                    vertexTag = this.shdMgr.getVertexShader(material.vertexShader),
+                    fragmentTag = this.shdMgr.getFragmentShader(material.fragmentShader);
 
+                this.shdMgr.getVertexUniforms(material.vertexShader)!.forEach((u) => uniformsUsed.add(u));
+                this.shdMgr.getFragmentUniforms(material.fragmentShader)!.forEach((u) => uniformsUsed.add(u));
+            
                 let uniforms = Array.from<string>(uniformsUsed);
                 let samplers = ["map", "mapBump"];
 
@@ -173,8 +176,8 @@ export default class SceneParser {
                 }
 
                 const shd = new ShaderMaterial(material.uuid, this.scene, {
-                    "vertex":   vertexCode, 
-                    "fragment": fragmentCode, 
+                    "vertex":   vertexTag, 
+                    "fragment": fragmentTag, 
                 }, {
                     attributes: attributes,
                     samplers: samplers,

@@ -1,3 +1,5 @@
+import { RawLevel } from "./Loading/LevelLoader";
+
 export enum shaderType {
     vertex = "vertex",
     fragment = "fragment",
@@ -11,10 +13,12 @@ export class ShaderManager {
 
     protected _fpath: string;
     protected _fileCache: FileCache;
+    protected _level: RawLevel;
 
     constructor() {
 	    this._fpath = '/resources/shader/';
         this._fileCache = {};
+        this._level = <any>null;
     }
 
 	public getShader(ptype: shaderType, name: string): string {
@@ -28,6 +32,10 @@ export class ShaderManager {
 	public getFragmentShader(name: string) {
 		return this.getShader(shaderType.fragment, name);
 	}
+
+    public setTRLevel(level: RawLevel): void {
+        this._level = level;
+    }
 
 	protected _getFile(fname: string) {
 		if (typeof this._fileCache[fname] != 'undefined') {
@@ -46,6 +54,7 @@ export class ShaderManager {
 			cache:      false,
 			async:      false
 		}).done( (data) => res = data );
+        res = res.replace(/##tr_version##/g, this._level.rversion.substr(2));
 		return res;
 	}
 

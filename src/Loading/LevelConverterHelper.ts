@@ -1,11 +1,10 @@
-import { ShaderManager } from "../ShaderManager";
 import Utils from "../Utils/Misc";
 
 export default class LevelConverterHelper {
 
     private objects: Array<any>;
 
-    constructor(public sc: any, public shaderMgr: ShaderManager, objects: Array<any>) {
+    constructor(public sc: any, objects: Array<any>) {
         this.objects = objects;
     }
 
@@ -81,15 +80,6 @@ export default class LevelConverterHelper {
             "fragmentShader": "TR_standard",
             "userData": {}
         };
-
-        let vertexShaderName = objType,
-            fragmentShaderName = "standard";
-
-        mat.vertexShader = this.shaderMgr.getVertexShader(vertexShaderName);
-        mat.fragmentShader = this.shaderMgr.getFragmentShader(fragmentShaderName);
-
-        mat.vertexShader   = mat.vertexShader.replace(/##tr_version##/g, this.sc.data.trlevel.rversion.substr(2));
-        mat.fragmentShader = mat.fragmentShader.replace(/##tr_version##/g, this.sc.data.trlevel.rversion.substr(2));
 
         return mat;
 	}

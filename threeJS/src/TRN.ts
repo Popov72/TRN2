@@ -22,7 +22,7 @@ Engine.registerFunctions( {
     "makeMeshBuilder":  (mesh?: IMesh) => new MeshBuilder(mesh as Mesh),
 
     "parseScene":       (sceneJSON: any) => {
-        const sceneParser = new SceneParser();
+        const sceneParser = new SceneParser(shdMgr);
 
         return new Promise<any>((resolve, reject) => {
             sceneParser.parse(sceneJSON, resolve);
