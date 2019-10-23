@@ -1,4 +1,4 @@
-const noSound = true;
+const noSound = false;
 
 import { ICamera } from "../Proxy/ICamera";
 import { IMesh } from "../Proxy/IMesh";
@@ -79,7 +79,8 @@ export class CutScene extends Behaviour {
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
         const useAddLights = this.nbhv.useadditionallights === 'true' || this.nbhv.useadditionallights === true,
-              index = this.nbhv.index || 0;
+              index = this.nbhv.index || 0,
+              promises: Array<Promise<void>> = [];
 
         this.matMgr.useAdditionalLights = useAddLights;
 
@@ -128,27 +129,29 @@ export class CutScene extends Behaviour {
             });
         }
 
-        let promiseSound: Promise<any> = Promise.resolve(null);
-
         if (index > 0) {
-            promiseSound = new CutSceneTR4(this.gameData, this.cutscene, this.helper, lara).makeTR4Cutscene(parseInt(index));
+            const tr4Promise = new CutSceneTR4(this.gameData, this.cutscene, this.helper, lara).makeTR4Cutscene(parseInt(index));
+            promises.push(tr4Promise.then(() => {
+                this.makeObjectList();
+                this.registerAnimations();
+            }));
         } else {
-            this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, 0, []);
-            promiseSound = Misc.loadSoundAsync(this.sceneData.soundPath + this.sceneData.levelShortFileNameNoExt.toUpperCase());
+            promises.push(...this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, 0, []));
+            promises.push(
+                Misc.loadSoundAsync(this.sceneData.soundPath + this.sceneData.levelShortFileNameNoExt.toUpperCase()).then((ret: any) => {
+                    if (ret.code < 0) {
+                        console.log('Error decoding sound data for cutscene.');
+                    } else {
+                        this.cutscene.sound = ret.sound;
+                    }
+                })
+            );
+
+            this.makeObjectList();
+            this.registerAnimations();
         }
 
-        this.makeObjectList();
-        this.registerAnimations();
-
-        return [BehaviourRetCode.keepBehaviour, [promiseSound.then((ret: any) => {
-            if (ret != null) {
-                if (ret.code < 0) {
-                    console.log('Error decoding sound data for cutscene.');
-                } else {
-                    this.cutscene.sound = ret.sound;
-                }
-            }
-        })]];
+        return [BehaviourRetCode.keepBehaviour, promises];
     }
 
     protected makeObjectList(): void {

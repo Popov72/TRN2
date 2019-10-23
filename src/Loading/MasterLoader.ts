@@ -2,6 +2,7 @@ import Engine from "../Proxy/Engine";
 import { IMesh } from "../Proxy/IMesh";
 import { IScene } from "../Proxy/IScene";
 
+import { ConfigManager } from "../ConfigManager";
 import { LevelLoader } from "./LevelLoader";
 import LevelConverter from "./LevelConverter";
 
@@ -11,8 +12,8 @@ export default class MasterLoader {
 	 	* a string which is the name of the level to download.
 	 	* a JSON object like { data:XXX, name:YYY } where data are the binary data of the TR level and YYY the filename
 	 */
-    public static loadLevel(trlevel: string | any): Promise<any> {
-        const loader = new LevelLoader();
+    public static loadLevel(trlevel: string | any, confMgr: ConfigManager): Promise<any> {
+        const loader = new LevelLoader(confMgr);
 
         return new Promise<any>((resolve, reject) => {
             if (typeof(trlevel) != 'string') {
@@ -51,8 +52,6 @@ export default class MasterLoader {
         const sceneData = sceneJSON.data, sceneRender = scene;
 
         sceneData.textures = sceneRender.textures;
-
-        console.log(scene);
 
         // Set all objects as auto update=false
         // Camera, skies, animated objects will have their matrixAutoUpdate set to true later

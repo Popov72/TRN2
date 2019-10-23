@@ -43,6 +43,7 @@ export default class Play {
             "confMgr": <any>null,
             "trlvl":  <any>null,
             "anmMgr": <any>null,
+            "shdMgr": <any>null,
 
             "startTime": -1,
             "lastTime": -1,

@@ -15,15 +15,15 @@ export class ShaderManager extends ShaderManagerBase {
         this._uniforms = new Map();
     }
 
-    public getShader(ptype: shaderType, name: string) {
+    public getShader(ptype: shaderType, name: string): Promise<string> {
         return this._getFile2(name, ptype);
     }
 
-    public getVertexShader(name: string) {
+    public getVertexShader(name: string): Promise<string> {
         return this.getShader(shaderType.vertex, name);
     }
 
-    public getFragmentShader(name: string) {
+    public getFragmentShader(name: string): Promise<string> {
         return this.getShader(shaderType.fragment, name);
     }
 
@@ -39,16 +39,20 @@ export class ShaderManager extends ShaderManagerBase {
         return this.getUniforms(name + '.fs');
     }
 
-    protected _getFile2(fname: string, ptype: string): string {
-        const code = this._loadFile(fname + (ptype == shaderType.vertex ? '.vs' : '.fs')),
-              uniformsUsed = new Set<string>();
+    protected _getFile2(fname: string, ptype: string): Promise<string> {
+        const promiseCode = this._loadFile(fname + (ptype == shaderType.vertex ? '.vs' : '.fs'));
 
-        if (code === "") {
-            throw `Can't load shader "${fname}"!`;
-        }
-        this._uniforms.set(fname + (ptype == shaderType.vertex ? '.vs' : '.fs'), uniformsUsed);
+        return promiseCode.then((code) => {
+            if (code === "") {
+                throw `Can't load shader "${fname}"!`;
+            }
 
-        return Shader.getShader(ptype == 'vertex' ? 'Vertex' : 'Fragment', fname, code, uniformsUsed);
+            const uniformsUsed = new Set<string>();
+
+            this._uniforms.set(fname + (ptype == shaderType.vertex ? '.vs' : '.fs'), uniformsUsed);
+
+            return Shader.getShader(ptype == 'vertex' ? 'Vertex' : 'Fragment', fname, code, uniformsUsed);
+        });
     }
 
 }

@@ -2,34 +2,34 @@ import jQuery from "jquery";
 
 export class ConfigManager {
 
-    private _root: any;
-    private _levelname: string | null;
+    protected _root:        any;
+    protected _levelname:   string;
+    protected _trversion:   string;
 
-    constructor(public trversion: string, fpath?: string) {
-        this._root = null;
-        this._levelname = null;
-
-        fpath = fpath || '/resources/level/TRLevels.xml';
-
-        jQuery.ajax({
-            type:       "GET",
-            url:        fpath,
-            dataType:   "xml",
-            cache:      false,
-            async:      false
-        }).done((data: any) => this._root = data);
+    constructor(xmlConf: XMLDocument) {
+        this._root = jQuery(xmlConf);
+        this._levelname = "";
+        this._trversion = "";
     }
 
-    get levelName(): string | null {
+    get trversion(): string {
+        return this._trversion;
+    }
+
+    set trversion(tv: string) {
+        this._trversion = tv;
+    }
+
+    get levelName(): string {
         return this._levelname;
     }
 
-    set levelName(levelname: string | null) {
+    set levelName(levelname: string) {
         this._levelname = levelname;
     }
 
     globalParam(path: string, getnode: boolean = false): string | any {
-        const node: any = jQuery(this._root).find('game[id="' + this.trversion + '"] > global ' + path);
+        const node: any = this._root.find('game[id="' + this.trversion + '"] > global ' + path);
         return getnode ? node : (node.length > 0 ? node.text() : null);
     }
 
@@ -42,9 +42,9 @@ export class ConfigManager {
     }
 
     param(path: string, checkinglobal: boolean = false, getnode: boolean = false): string | any {
-        let node: any = this._levelname ? jQuery(this._root).find('game[id="' + this.trversion + '"] > levels > level[id="' + this._levelname + '"] ' + path) : null;
+        let node: any = this._levelname ? this._root.find('game[id="' + this.trversion + '"] > levels > level[id="' + this._levelname + '"] ' + path) : null;
         if ((!node || node.length == 0) && checkinglobal) {
-            node = jQuery(this._root).find('game[id="' + this.trversion + '"] > global ' + path);
+            node = this._root.find('game[id="' + this.trversion + '"] > global ' + path);
         }
         return getnode ? node : (node.length > 0 ? node.text() : null);
     }

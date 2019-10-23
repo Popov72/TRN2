@@ -47,16 +47,19 @@ export class Sky extends Behaviour {
         this.gameData.sceneRender.remove(this.objSky);
         this.gameData.sceneBackground.add(this.objSky);
 
-        const materials = this.objSky.materials;
-        for (let mat = 0; mat < materials.length; ++mat) {
-            const material = materials[mat];
+        const promiseShaders = Promise.all([this.gameData.shdMgr.getVertexShader('TR_sky'), this.gameData.shdMgr.getFragmentShader('TR_sky')]).then((shd) => {
+            const materials = this.objSky.materials;
+            for (let mat = 0; mat < materials.length; ++mat) {
+                const material = materials[mat];
 
-            material.depthWrite = false;
-            material.vertexShader = this.gameData.shdMgr.getVertexShader('TR_sky');
-            material.fragmentShader = this.gameData.shdMgr.getFragmentShader('TR_sky');
-        }
+                material.depthWrite = false;
 
-        return [BehaviourRetCode.keepBehaviour, null];
+                material.vertexShader = shd[0];
+                material.fragmentShader = shd[1];
+            }
+        });
+
+        return [BehaviourRetCode.keepBehaviour, [promiseShaders]];
     }
 
     public frameEnded(): void {

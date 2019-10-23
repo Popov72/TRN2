@@ -26,7 +26,9 @@ export default class CutSceneHelper {
         this.scene = gameData.sceneRender;
     }
 
-    public prepareLevel(trVersion: string, levelName: string, csIndex: number, actorMoveables: Array<any>): void {
+    public prepareLevel(trVersion: string, levelName: string, csIndex: number, actorMoveables: Array<any>): Array<Promise<void>> {
+        const promises: Array<Promise<any>> = [];
+
         if (trVersion == 'TR2') {
             if (levelName == 'cut3.tr2') {
                 // bad guys are not at the right location
@@ -105,7 +107,7 @@ export default class CutSceneHelper {
             case 9: {
                 // Add volumetric fog in the rooms / objects
                 const rooms  = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 110, 111, 112, 113, 114, 115, 116, 117, 122, 123]),
-                      shader = this.shdMgr.getFragmentShader("volumetric_fog");
+                      shader = this.shdMgr.getFragmentShader("TR_volumetric_fog");
 
                 this.scene.traverse((obj) => {
                     const data = this.sceneData.objects[obj.name];
@@ -115,7 +117,8 @@ export default class CutSceneHelper {
                         for (let m = 0; m < materials.length; ++m) {
                             const material = materials[m];
 
-                            material.fragmentShader = shader;
+                            promises.push(shader.then((shd) => material.fragmentShader = shd));
+
                             material.uniforms.volFogCenter = { "type": "f3", "value": [52500.0, 3140.0, -49460.0] };
                             material.uniforms.volFogRadius = { "type": "f",  "value": 6000 };
                             material.uniforms.volFogColor =  { "type": "f3", "value": [0.1, 0.75, 0.3] };
@@ -193,6 +196,8 @@ export default class CutSceneHelper {
                 break;
             }
         }
+
+        return promises;
     }
 
     public fadeOut(duration: number): void {

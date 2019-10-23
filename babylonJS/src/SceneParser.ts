@@ -31,6 +31,7 @@ export default class SceneParser {
     };
     private shdMgr: ShaderManager;
     private _numTextureLoadedNotifications: number;
+    private _numMeshesToHandle = 0;
 
     private scene: BScene;
     private tscene: Scene;
@@ -47,6 +48,7 @@ export default class SceneParser {
         this.tscene = new Scene(this.scene, this.textures);
         this.textureMap = {};
         this._numTextureLoadedNotifications = 0;
+        this._numMeshesToHandle = 0;
     }
 
     public parse(json: any, onLoad: any): void {
@@ -62,7 +64,7 @@ export default class SceneParser {
         // we need to have the width/height properties of the texture uniforms to be set before going on, because
         // we need them later on (when cloning materials - those properties must have valid values and not be undefined)
         const idTimer = setInterval(() => {
-            if (this._numTextureLoadedNotifications == 0) {
+            if (this._numTextureLoadedNotifications == 0 && this._numMeshesToHandle == 0) {
                 clearInterval(idTimer);
                 onLoad(this.tscene);
             }
@@ -164,84 +166,102 @@ export default class SceneParser {
             }
         });
 
-        if (materials) {
-            const multimat = new MultiMaterial(json.name, this.scene),
-                  totalVertices = mesh.getTotalVertices();
+        const multimat = new MultiMaterial(json.name, this.scene),
+                totalVertices = mesh.getTotalVertices(),
+                promises: Array<Promise<void>> = [];
 
-            for (let m = 0; m < materials.length; ++m) {
-                const material = this.getMaterial(materials[m]);
+        for (let m = 0; m < materials.length; ++m) {
+            const material = this.getMaterial(materials[m]);
 
-                let uniformsUsed = new Set<string>(),
-                    vertexTag = this.shdMgr.getVertexShader(material.vertexShader),
-                    fragmentTag = this.shdMgr.getFragmentShader(material.fragmentShader);
+            const doShaderMat = ((mat: any) => {
+                const material = mat;
 
-                this.shdMgr.getVertexUniforms(material.vertexShader)!.forEach((u) => uniformsUsed.add(u));
-                this.shdMgr.getFragmentUniforms(material.fragmentShader)!.forEach((u) => uniformsUsed.add(u));
+                return (shdCode: Array<any>) => {
+                    let uniformsUsed = new Set<string>();
 
-                let uniforms = Array.from<string>(uniformsUsed);
-                let samplers = ["map", "mapBump"];
+                    this.shdMgr.getVertexUniforms(material.vertexShader)!.forEach((u) => uniformsUsed.add(u));
+                    this.shdMgr.getFragmentUniforms(material.fragmentShader)!.forEach((u) => uniformsUsed.add(u));
 
-                for (const uname in material.uniforms) {
-                    uniforms.push(uname);
-                }
+                    let uniforms = Array.from<string>(uniformsUsed);
+                    let samplers = ["map", "mapBump"];
 
-                const shd = new ShaderMaterial(material.uuid, this.scene, {
-                    "vertex":   vertexTag,
-                    "fragment": fragmentTag,
-                }, {
-                    attributes: attributes,
-                    samplers: samplers,
-                    uniforms: uniforms,
-                    needAlphaBlending: material.transparent,
-                });
-
-                for (const uname in material.uniforms) {
-                    const uval = material.uniforms[uname];
-                    switch (uval.type) {
-                        case 't':
-                            shd.setTexture(uname, this.textureMap[uval.value]);
-                            this._numTextureLoadedNotifications++;
-                            this.textureMap[uval.value].onLoadObservable.add((texture: Texture) => {
-                                uval.width = texture.getSize().width;
-                                uval.height = texture.getSize().height;
-                                this._numTextureLoadedNotifications--;
-                            });
-                            uval.value = this.textureMap[uval.value];
-                            break;
-                        case 'i':
-                            shd.setInt(uname, uval.value);
-                            break;
-                        case 'f':
-                            shd.setFloat(uname, uval.value);
-                            break;
-                        case 'f3':
-                            shd.setVector3(uname, new Vector3((uval.value as Array<number>)[0], (uval.value as Array<number>)[1], (uval.value as Array<number>)[2]));
-                            break;
-                        case 'f4':
-                            shd.setVector4(uname, new Vector4((uval.value as Array<number>)[0], (uval.value as Array<number>)[1], (uval.value as Array<number>)[2], (uval.value as Array<number>)[3]));
-                            break;
+                    for (const uname in material.uniforms) {
+                        uniforms.push(uname);
                     }
-                }
 
-                shd.metadata = {
-                    "uniforms": material.uniforms,
-                    "userData": material.userData,
+                    const shd = new ShaderMaterial(material.uuid, this.scene, {
+                        "vertex":   shdCode[0],
+                        "fragment": shdCode[1],
+                    }, {
+                        attributes: attributes,
+                        samplers: samplers,
+                        uniforms: uniforms,
+                        needAlphaBlending: material.transparent,
+                    });
+
+                    for (const uname in material.uniforms) {
+                        const uval = material.uniforms[uname];
+                        switch (uval.type) {
+                            case 't':
+                                shd.setTexture(uname, this.textureMap[uval.value]);
+                                if (!this.textureMap[uval.value].isReady()) {
+                                    this._numTextureLoadedNotifications++;
+                                    this.textureMap[uval.value].onLoadObservable.add((texture: Texture) => {
+                                        uval.width = texture.getSize().width;
+                                        uval.height = texture.getSize().height;
+                                        this._numTextureLoadedNotifications--;
+                                    });
+                                } else {
+                                    uval.width = this.textureMap[uval.value].getSize().width;
+                                    uval.height = this.textureMap[uval.value].getSize().height;
+                                }
+                                uval.value = this.textureMap[uval.value];
+                                break;
+                            case 'i':
+                                shd.setInt(uname, uval.value);
+                                break;
+                            case 'f':
+                                shd.setFloat(uname, uval.value);
+                                break;
+                            case 'f3':
+                                shd.setVector3(uname, new Vector3((uval.value as Array<number>)[0], (uval.value as Array<number>)[1], (uval.value as Array<number>)[2]));
+                                break;
+                            case 'f4':
+                                shd.setVector4(uname, new Vector4((uval.value as Array<number>)[0], (uval.value as Array<number>)[1], (uval.value as Array<number>)[2], (uval.value as Array<number>)[3]));
+                                break;
+                        }
+                    }
+
+                    shd.metadata = {
+                        "uniforms": material.uniforms,
+                        "userData": material.userData,
+                    };
+
+                    if (material.transparent) {
+                        shd.alphaMode = Engine.ALPHA_SCREENMODE;
+                        shd.disableDepthWrite = true;
+                    }
+
+                    multimat.subMaterials.push(shd);
+
+                    SubMesh.AddToMesh(multimat.subMaterials.length - 1, 0, totalVertices, groups[m].start, groups[m].count, mesh);
                 };
+            })(material);
 
-                if (material.transparent) {
-                    shd.alphaMode = Engine.ALPHA_SCREENMODE;
-                    shd.disableDepthWrite = true;
-                }
-
-                multimat.subMaterials.push(shd);
-
-                SubMesh.AddToMesh(multimat.subMaterials.length - 1, 0, totalVertices, groups[m].start, groups[m].count, mesh);
-            }
-
-            mesh.material = multimat;
+            promises.push(
+                Promise.all([this.shdMgr.getVertexShader(material.vertexShader), this.shdMgr.getFragmentShader(material.fragmentShader)]).then((shdCode) => doShaderMat(shdCode))
+            );
         }
 
-        this.tscene.add(new Mesh(mesh));
+        this._numMeshesToHandle++;
+
+        Promise.all(promises).then(() => {
+            mesh.material = multimat;
+
+            this.tscene.add(new Mesh(mesh));
+
+            this._numMeshesToHandle--;
+        });
     }
 
     private getImage(id: string): any {

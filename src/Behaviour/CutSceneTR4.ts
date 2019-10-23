@@ -34,35 +34,44 @@ export default class CutSceneTR4 {
     }
 
     public makeTR4Cutscene(icutscene: number): Promise<any> {
-        const cutscene: Array<any> = [];
-        jQuery.ajax({
-            type: "GET",
-            url: '/resources/level/tr4/TR4_cutscenes/cut' + icutscene + '.json',
-            dataType: "json",
-            cache: false,
-            async: false
-        }).done(function(data) { cutscene.push(data); });
+        return fetch('/resources/level/tr4/TR4_cutscenes/cut' + icutscene + '.json').then((response) => {
+            return response.json().then((data) => {
+                const cutscene: Array<any> = [];
 
-        cutscene[0].index = icutscene;
+                cutscene.push(data);
+                cutscene[0].index = icutscene;
 
-        if (cutscene[0].index == 1) {
-            jQuery.ajax({
-                type: "GET",
-                url: '/resources/level/tr4/TR4_cutscenes/cut' + (icutscene + 1) + '.json',
-                dataType: "json",
-                cache: false,
-                async: false
-            }).done(function(data) { cutscene.push(data); });
+                let soundPromise = Promise.resolve();
 
-            cutscene[1].index = icutscene + 1;
-        }
+                // get the sound for this cut scene
+                if (cutscene[0].info.audio) {
+                    soundPromise = Misc.loadSoundAsync(this.sceneData.soundPath + cutscene[0].info.audio + '.aac').then((ret: any) => {
+                        if (ret.code < 0) {
+                            console.log('Error decoding sound data for cutscene.');
+                        } else {
+                            this.cutscene.sound = ret.sound;
+                        }
+                    });
+                }
 
-        // get the sound for this cut scene
-        const promiseSound = cutscene[0].info.audio ? Misc.loadSoundAsync(this.sceneData.soundPath + cutscene[0].info.audio + '.aac') : Promise.resolve(null);
+                if (cutscene[0].index == 1) {
+                    return fetch('/resources/level/tr4/TR4_cutscenes/cut' + (icutscene + 1) + '.json').then((response) => {
+                        return response.json().then((data) => {
+                            cutscene.push(data);
+                            cutscene[1].index = icutscene + 1;
 
-        this.makeCutsceneData(cutscene);
+                            this.makeCutsceneData(cutscene);
 
-        return promiseSound;
+                            return soundPromise;
+                        });
+                    });
+                }
+
+                this.makeCutsceneData(cutscene);
+
+                return soundPromise;
+            });
+        });
     }
 
     protected makeCutsceneData(cutscenes: Array<any>): void {

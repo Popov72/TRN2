@@ -21,33 +21,25 @@ export class Skydome extends Behaviour {
         this.objMgr = gameData.objMgr;
         this.camera = gameData.camera;
         this.objSky = <any>null;
-
-        this.createSkyDome();
     }
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
-        const objSky = this.objMgr.objectList['skydome'];
+        const promise = this.createSkyDome().then(() => {
+            this.objSky.renderOrder = 0;
+            this.objSky.matrixAutoUpdate = true;
 
-        if (!objSky || !objSky[0]) {
-            return [BehaviourRetCode.dontKeepBehaviour, null];
-        }
+            this.gameData.sceneBackground.add(this.objSky);
 
-        this.objSky = (objSky[0] as Array<IMesh>)[0];
+            const skyColor = [this.nbhv.color.r / 255.0, this.nbhv.color.g / 255.0, this.nbhv.color.b / 255.0],
+                  material = this.objSky.materials[0];
 
-        this.objSky.renderOrder = 0;
-        this.objSky.matrixAutoUpdate = true;
+            material.depthWrite = false;
+            material.uniforms.tintColor.value = skyColor;
 
-        this.gameData.sceneBackground.add(this.objSky);
+            material.uniformsUpdated();
+        });
 
-        const skyColor = [this.nbhv.color.r / 255.0, this.nbhv.color.g / 255.0, this.nbhv.color.b / 255.0],
-              material = this.objSky.materials[0];
-
-        material.depthWrite = false;
-        material.uniforms.tintColor.value = skyColor;
-
-        material.uniformsUpdated();
-
-        return [BehaviourRetCode.keepBehaviour, null];
+        return [BehaviourRetCode.keepBehaviour, [promise]];
     }
 
     public frameEnded(curTime: number, delta: number): void {
@@ -62,7 +54,7 @@ export class Skydome extends Behaviour {
         material.uniformsUpdated(["offsetRepeat"]);
     }
 
-    protected createSkyDome(): void {
+    protected createSkyDome(): Promise<any> {
         const meshData = SkyDome.create(
             /*curvature*/ 10.0,
             /*tiling*/ 3,
@@ -84,17 +76,20 @@ export class Skydome extends Behaviour {
             "tintColor" :       { type: "f3",   value: [0, 0, 0] }
         };
 
-        const meshb = Engine.makeMeshBuilder(),
-              sky = meshb.createMesh('skydome', this.gameData.shdMgr.getVertexShader('TR_skydome'), this.gameData.shdMgr.getFragmentShader('TR_skydome'), uniforms, meshData.vertices, meshData.faces, meshData.textures, undefined);
+        return Promise.all([this.gameData.shdMgr.getVertexShader('TR_skydome'), this.gameData.shdMgr.getFragmentShader('TR_skydome')]).then((shd) => {
+            const meshb = Engine.makeMeshBuilder();
 
-        this.gameData.sceneData.objects['skydome'] = {
-            "type"					: 'skydome',
-            "objectid"              : '0',
-            "roomIndex"             : -1,
-            "visible"  				: true
-        };
+            this.objSky = meshb.createMesh('skydome', shd[0], shd[1], uniforms, meshData.vertices, meshData.faces, meshData.textures, undefined);
 
-        this.objMgr.objectList['skydome'] = {0: [sky] };
+            this.gameData.sceneData.objects['skydome'] = {
+                "type"					: 'skydome',
+                "objectid"              : '0',
+                "roomIndex"             : -1,
+                "visible"  				: true
+            };
+
+            this.objMgr.objectList['skydome'] = {0: [this.objSky] };
+        });
     }
 
 }

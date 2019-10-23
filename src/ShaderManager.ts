@@ -6,7 +6,7 @@ export enum shaderType {
 }
 
 interface FileCache {
-    [name: string] : string;
+    [name: string] : Promise<string>;
 }
 
 export class ShaderManager {
@@ -21,15 +21,15 @@ export class ShaderManager {
         this._level = <any>null;
     }
 
-    public getShader(ptype: shaderType, name: string): string {
+    public getShader(ptype: shaderType, name: string): Promise<string> {
         return this._getFile(name + (ptype == shaderType.vertex ? '.vs' : '.fs'));
     }
 
-    public getVertexShader(name: string) {
+    public getVertexShader(name: string): Promise<string> {
         return this.getShader(shaderType.vertex, name);
     }
 
-    public getFragmentShader(name: string) {
+    public getFragmentShader(name: string): Promise<string> {
         return this.getShader(shaderType.fragment, name);
     }
 
@@ -45,17 +45,13 @@ export class ShaderManager {
         return this._fileCache[fname];
     }
 
-    protected _loadFile(fname: string) {
-        let res: string = "";
-        jQuery.ajax({
-            type:       "GET",
-            url:        this._fpath + fname,
-            dataType:   "text",
-            cache:      false,
-            async:      false
-        }).done((data) => res = data);
-        res = res.replace(/##tr_version##/g, this._level.rversion.substr(2));
-        return res;
+    protected _loadFile(fname: string): Promise<string> {
+        return fetch(this._fpath + fname).then((response) => {
+            return response.text().then((txt) => {
+                txt = txt.replace(/##tr_version##/g, this._level.rversion.substr(2));
+                return txt;
+            });
+        });
     }
 
 }

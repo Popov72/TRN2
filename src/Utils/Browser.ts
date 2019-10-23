@@ -59,10 +59,17 @@ export default class Browser {
 
     public static _qs: any = null;
 
-    public static AudioContext =
-        typeof(AudioContext) != 'undefined' ? new AudioContext() :
-        typeof((window as any).webkitAudioContext) != 'undefined' ? new (window as any).webkitAudioContext() :
-        typeof((window as any).mozAudioContext) != 'undefined' ? new (window as any).mozAudioContext() : null;
+    protected static _AudioContext: any = null;
+
+    public static get AudioContext(): any {
+        if (Browser._AudioContext === null) {
+            Browser._AudioContext =
+                typeof(AudioContext) != 'undefined' ? new AudioContext() :
+                typeof((window as any).webkitAudioContext) != 'undefined' ? new (window as any).webkitAudioContext() :
+                typeof((window as any).mozAudioContext) != 'undefined' ? new (window as any).mozAudioContext() : null;
+        }
+        return Browser._AudioContext;
+    }
 
     public static bindRequestPointerLock(domElement: Element): void {
         domElement.requestPointerLock =
@@ -79,7 +86,7 @@ export default class Browser {
             (domElement as any).webkitRequestFullScreen;
     }
 
-    static get QueryString(): any {
+    public static get QueryString(): any {
         if (!Browser._qs) {
         }
 

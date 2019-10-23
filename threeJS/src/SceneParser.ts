@@ -45,18 +45,20 @@ import Scene  from "./Scene";
 export default class SceneParser extends Loader {
 
     protected _shdMgr: ShaderManager;
+    protected _numShadersToLoad: number;
 
     constructor(shdMgr: ShaderManager, manager?: any) {
         super(manager);
 
         this._shdMgr = shdMgr;
+        this._numShadersToLoad = 0;
     }
 
     public parse(json: any, onLoad: any): any {
 
         var geometries = this.parseGeometries(json.geometries);
 
-        var images = this.parseImages(json.images, function() {
+        var images = this.parseImages(json.images, () => {
 
             if (onLoad !== undefined) {
                 let tscene = object as Scene;
@@ -72,7 +74,12 @@ export default class SceneParser extends Loader {
                         }
                     }
                 });
-                onLoad(object, textures);
+                const idTimer = setInterval(() => {
+                    if (this._numShadersToLoad == 0) {
+                        clearInterval(idTimer);
+                        onLoad(object, textures);
+                    }
+                }, 0);
             }
 
         });
@@ -153,8 +160,18 @@ export default class SceneParser extends Loader {
                 if (cache[ data.uuid ] === undefined) {
 
                     cache[ data.uuid ] = loader.parse(data);
-                    cache[ data.uuid ].vertexShader = this._shdMgr.getVertexShader(cache[ data.uuid ].vertexShader);
-                    cache[ data.uuid ].fragmentShader = this._shdMgr.getFragmentShader(cache[ data.uuid ].fragmentShader);
+                    this._numShadersToLoad += 2;
+
+                    ((uuid) => {
+                        this._shdMgr.getVertexShader(cache[ data.uuid ].vertexShader).then((shd) => {
+                            cache[ uuid ].vertexShader = shd;
+                            this._numShadersToLoad--;
+                        });
+                        this._shdMgr.getFragmentShader(cache[ data.uuid ].fragmentShader).then((shd) => {
+                            cache[ uuid ].fragmentShader = shd;
+                            this._numShadersToLoad--;
+                        });
+                    })(data.uuid);
 
                 }
 

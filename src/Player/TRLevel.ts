@@ -205,16 +205,18 @@ export class TRLevel {
                     0, 2, 3
                 ];
 
-                const meshb = Engine.makeMeshBuilder(),
-                      mesh = meshb.createMesh('room' + m + '_portal' + p, this.shdMgr.getVertexShader('TR_portal'), this.shdMgr.getFragmentShader('TR_portal'), undefined, vertices, faces, undefined, colors);
+                Promise.all([this.shdMgr.getVertexShader('TR_portal'), this.shdMgr.getFragmentShader('TR_portal')]).then((shd) => {
+                    const meshb = Engine.makeMeshBuilder(),
+                          mesh = meshb.createMesh('room' + m + '_portal' + p, shd[0], shd[1], undefined, vertices, faces, undefined, colors);
 
-                mesh.materials.forEach((m) => (m.transparent = true, m.depthWrite = false));
-                mesh.setPosition([0, 0, 0]);
-                mesh.matrixAutoUpdate = false;
-                mesh.visible = false;
-                meshPortals.push(mesh);
+                    mesh.materials.forEach((m) => (m.transparent = true, m.depthWrite = false));
+                    mesh.setPosition([0, 0, 0]);
+                    mesh.matrixAutoUpdate = false;
+                    mesh.visible = false;
+                    meshPortals.push(mesh);
 
-                this.sceneRender.add(mesh);
+                    this.sceneRender.add(mesh);
+                });
             }
 
             // static meshes in the room

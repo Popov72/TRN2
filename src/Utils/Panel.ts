@@ -3,66 +3,62 @@ import { IRenderer } from "../Proxy/IRenderer";
 
 export class Panel {
 
-    protected _parent: IGameData;
-    protected renderer: IRenderer;
-    protected elem: JQuery<any>;
+    protected _parent:      IGameData;
+    protected _renderer:    IRenderer;
+    protected _elem:        JQuery<any>;
+    protected _show:        boolean;
 
     constructor(domElement: Element, gameData: IGameData, renderer: IRenderer) {
-        let html: any;
-
+        this._elem = jQuery('');
         this._parent = gameData;
-        this.renderer = renderer;
+        this._renderer = renderer;
+        this._show = false;
 
-        jQuery.ajax({
-            type: "GET",
-            url: '/resources/template/panel.html',
-            dataType: "html",
-            cache: false,
-            async: false
-        }).done(function(data) { html = data; });
-
-        this.elem = jQuery(html);
-
-        this.elem.appendTo(domElement);
-
-        this.bindEvents(this);
+        fetch('/resources/template/panel.html').then((response) => {
+            response.text().then((html) => {
+                this._elem = jQuery(html);
+                this._elem.appendTo(domElement);
+                this.bindEvents(this);
+                this._setState();
+            });
+        });
     }
 
     public show(): void {
-        this.elem.css('display', 'block');
-        jQuery("#stats").css('display', 'block');
+        this._show = true;
+        this._setState();
     }
 
     public hide(): void {
-        this.elem.css('display', 'none');
-        jQuery("#stats").css('display', 'none');
+        this._show = false;
+        this._setState();
     }
 
     public showInfo(): void {
-        const sceneData = this._parent.sceneData, camera = this._parent.camera, perfData = this.renderer.getPerfData([this._parent.sceneRender, this._parent.sceneBackground]);
+        const sceneData = this._parent.sceneData, camera = this._parent.camera, perfData = this._renderer.getPerfData([this._parent.sceneRender, this._parent.sceneBackground]);
 
-        this.elem.find('#currentroom').html(this._parent.curRoom.toString());
-        this.elem.find('#numlights').html(this._parent.curRoom != -1 ? (this._parent.matMgr.useAdditionalLights ? sceneData.objects['room' + this._parent.curRoom].lightsExt.length : sceneData.objects['room' + this._parent.curRoom].lights.length) : '');
-        this.elem.find('#camerapos').html(camera.position[0].toFixed(5) + ',' + camera.position[1].toFixed(5) + ',' + camera.position[2].toFixed(5));
-        this.elem.find('#camerarot').html(camera.quaternion[0].toFixed(5) + ',' + camera.quaternion[1].toFixed(5) + ',' + camera.quaternion[2].toFixed(5) + ',' + camera.quaternion[3].toFixed(5));
+        this._elem.find('#currentroom').html(this._parent.curRoom.toString());
+        this._elem.find('#numlights').html(this._parent.curRoom != -1 ? (this._parent.matMgr.useAdditionalLights ? sceneData.objects['room' + this._parent.curRoom].lightsExt.length : sceneData.objects['room' + this._parent.curRoom].lights.length) : '');
+        this._elem.find('#camerapos').html(camera.position[0].toFixed(5) + ',' + camera.position[1].toFixed(5) + ',' + camera.position[2].toFixed(5));
+        this._elem.find('#camerarot').html(camera.quaternion[0].toFixed(5) + ',' + camera.quaternion[1].toFixed(5) + ',' + camera.quaternion[2].toFixed(5) + ',' + camera.quaternion[3].toFixed(5));
         if (perfData) {
-            this.elem.find('#renderinfo').html(perfData.numDrawCalls + ' / ' + perfData.numFaces + ' / ' + perfData.numObjects);
-            this.elem.find('#memoryinfo').html(perfData.numGeometries + ' / ' + perfData.numPrograms + ' / ' + perfData.numTextures);
+            this._elem.find('#renderinfo').html(perfData.numDrawCalls + ' / ' + perfData.numFaces + ' / ' + perfData.numObjects);
+            this._elem.find('#memoryinfo').html(perfData.numGeometries + ' / ' + perfData.numPrograms + ' / ' + perfData.numTextures);
         }
     }
 
     public updateFromParent(): void {
-        this.elem.find('#singleroommode').prop('checked', this._parent.singleRoomMode);
-        this.elem.find('#useaddlights').prop('checked', this._parent.matMgr.useAdditionalLights);
+        this._elem.find('#singleroommode').prop('checked', this._parent.singleRoomMode);
+        this._elem.find('#useaddlights').prop('checked', this._parent.matMgr.useAdditionalLights);
     }
 
     public bindEvents(This: Panel) {
 
-        this.elem.find('#singleroommode').on('click', function() {
+        this._elem.find('#singleroommode').on('click', function() {
             This._parent.singleRoomMode = this.checked;
         });
 
-        this.elem.find('#wireframemode').on('click', function() {
+        this._elem.find('#wireframemode').on('click', function() {
             var scene = This._parent.sceneRender;
             scene.traverse((obj) => {
                 const materials = obj.materials;
@@ -73,7 +69,7 @@ export class Panel {
             });
         });
 
-        this.elem.find('#usefog').on('click', function() {
+        this._elem.find('#usefog').on('click', function() {
             var scene = This._parent.sceneRender;
             scene.traverse((obj) => {
                 const materials = obj.materials;
@@ -87,7 +83,7 @@ export class Panel {
             });
         });
 
-        this.elem.find('#nolights').on('click', function() {
+        this._elem.find('#nolights').on('click', function() {
             const scene = This._parent.sceneRender,
                   white = [1, 1, 1];
             scene.traverse((obj) => {
@@ -107,7 +103,7 @@ export class Panel {
             });
         });
 
-        this.elem.find('#showboundingboxes').on('click', function() {
+        this._elem.find('#showboundingboxes').on('click', function() {
             const scene = This._parent.sceneRender;
 
             scene.traverse((obj) => {
@@ -117,7 +113,7 @@ export class Panel {
             });
         });
 
-        this.elem.find('#showportals').on('click', function() {
+        this._elem.find('#showportals').on('click', function() {
             const scene = This._parent.sceneRender,
                   sceneData = This._parent.sceneData;
             scene.traverse((obj) => {
@@ -135,7 +131,7 @@ export class Panel {
             });
         });
 
-        this.elem.find('#fullscreen').on('click', function() {
+        this._elem.find('#fullscreen').on('click', function() {
             if (document.fullscreenElement != null) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -145,7 +141,7 @@ export class Panel {
             }
         });
 
-        this.elem.find('#useqwerty').on('click', function() {
+        this._elem.find('#useqwerty').on('click', function() {
             const bc = This._parent.bhvMgr.getBehaviour("BasicControl");
             if (bc === undefined) { return; }
             const states = (bc[0] as any).states,
@@ -163,26 +159,28 @@ export class Panel {
             }
         });
 
-        this.elem.find('#noobjecttexture').on('click', function() {
+        this._elem.find('#noobjecttexture').on('click', function() {
             const shaderMgr = This._parent.shdMgr,
                   scene = This._parent.sceneRender,
                   shader = shaderMgr.getFragmentShader('TR_uniformcolor');
-            scene.traverse((obj) => {
-                if (obj.name.match(/moveable|sprite|staticmesh/) == null) { return; }
+            shader.then((code: string) => {
+                scene.traverse((obj) => {
+                    if (obj.name.match(/moveable|sprite|staticmesh/) == null) { return; }
 
-                const materials = obj.materials;
-                for (let i = 0; i < materials.length; ++i) {
-                    const material = materials[i], origFragmentShader = (material as any).origFragmentShader;
-                    if (!origFragmentShader) {
-                        (material as any).origFragmentShader = material.fragmentShader;
+                    const materials = obj.materials;
+                    for (let i = 0; i < materials.length; ++i) {
+                        const material = materials[i], origFragmentShader = (material as any).origFragmentShader;
+                        if (!origFragmentShader) {
+                            (material as any).origFragmentShader = material.fragmentShader;
+                        }
+
+                        material.fragmentShader = this.checked ? code : (material as any).origFragmentShader;
                     }
-
-                    material.fragmentShader = this.checked ? shader : (material as any).origFragmentShader;
-                }
+                });
             });
         });
 
-        this.elem.find('#nobumpmapping').on('click', function() {
+        this._elem.find('#nobumpmapping').on('click', function() {
             const scene = This._parent.sceneRender;
             scene.traverse((obj) => {
                 const data = This._parent.sceneData.objects[obj.name];
@@ -202,7 +200,7 @@ export class Panel {
             });
         });
 
-        this.elem.find('#useaddlights').on('click', function() {
+        this._elem.find('#useaddlights').on('click', function() {
             This._parent.matMgr.useAdditionalLights = this.checked;
             This._parent.matMgr.setLightUniformsForObjects(This._parent.objMgr.objectList['moveable']);
         });
@@ -210,9 +208,14 @@ export class Panel {
         const prefix = ['', 'webkit', 'moz'];
         for (let i = 0; i < prefix.length; ++i) {
             document.addEventListener(prefix[i] + "fullscreenchange", function() {
-                This.elem.find('#fullscreen').prop('checked', document.fullscreenElement != null);
+                This._elem.find('#fullscreen').prop('checked', document.fullscreenElement != null);
             }, false);
         }
+    }
+
+    protected _setState(): void {
+        this._elem.css('display', this._show ? 'block' : 'none');
+        jQuery("#stats").css('display', this._show ? 'block' : 'none');
     }
 
 }

@@ -45,10 +45,12 @@ export interface RawLevel {
  */
 export class LevelLoader {
 
-    private _level: RawLevel;
+    private _level:     RawLevel;
+    private _confMgr:   ConfigManager;
 
-    constructor() {
+    constructor(confMgr: ConfigManager) {
         this._level = <any>{};
+        this._confMgr = confMgr;
     }
 
     get level(): RawLevel {
@@ -142,7 +144,8 @@ export class LevelLoader {
         this._level.textile = [];
         this._level.animatedTexturesUVCount = this._level.animatedTexturesUVCount || 0;
 
-        this._level.confMgr = new ConfigManager(this._level.rversion);
+        this._level.confMgr = this._confMgr;
+        this._level.confMgr.trversion = this._level.rversion;
         this._level.confMgr.levelName = this._level.filename.toLowerCase();
 
         if (this._level.textile32misc != undefined) {

@@ -1,12 +1,13 @@
 import TR4CutSceneDecoder from "./Loading/TR4CutScene/TR4CutSceneDecoder";
 
-import { IScene } from "./Proxy/IScene";
+import jQuery from "jquery";
 
 import Browser from "./Utils/Browser";
 import { ProgressBar } from "./Utils/ProgressBar";
 
 import MasterLoader from "./Loading/MasterLoader";
 import Play from "./Player/Play";
+import { ConfigManager } from "./ConfigManager";
 
 const showTiles = false;
 
@@ -48,34 +49,38 @@ function loadAndPlayLevel(level: string | any) {
 
     progressbar.show();
 
-    window.setTimeout(() => {
-        MasterLoader.loadLevel(level).then((res) => {
-            if (!showTiles) {
-                const play = new Play(document.getElementById('container') as Element);
-                (window as any).play = play;
-                fetch('/resources/template/help.html').then((response) => {
-                    response.text().then((html) => {
-                        jQuery(html).appendTo(document.body);
+    fetch('/resources/level/TRLevels.xml').then((response) => {
+        response.text().then((txt) => {
+            const confMgr = new ConfigManager(jQuery.parseXML(txt));
+
+            MasterLoader.loadLevel(level, confMgr).then((res) => {
+                if (!showTiles) {
+                    const play = new Play(document.getElementById('container') as Element);
+                    (window as any).play = play;
+                    fetch('/resources/template/help.html').then((response) => {
+                        response.text().then((html) => {
+                            jQuery(html).appendTo(document.body);
+                        });
                     });
-                });
-                if (Browser.QueryString.autostart == '1') {
-                    play.initialize(res[0], res[1]).then(() => {
-                        progressbar.hide();
-                        play.play();
-                    });
-                } else {
-                    play.initialize(res[0], res[1]).then(() => {
-                        progressbar.showStart(function() {
+                    if (Browser.QueryString.autostart == '1') {
+                        play.initialize(res[0], res[1]).then(() => {
                             progressbar.hide();
                             play.play();
                         });
-                    });
+                    } else {
+                        play.initialize(res[0], res[1]).then(() => {
+                            progressbar.showStart(function() {
+                                progressbar.hide();
+                                play.play();
+                            });
+                        });
+                    }
+                } else {
+                    progressbar.hide();
                 }
-            } else {
-                progressbar.hide();
-            }
+            });
         });
-    }, 10);
+    });
 }
 
 function handleFileSelect(evt: Event) {

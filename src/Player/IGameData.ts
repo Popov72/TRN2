@@ -7,6 +7,7 @@ import { MaterialManager } from "./MaterialManager";
 import { TRLevel } from "./TRLevel";
 import { Panel } from "../Utils/Panel";
 import { ConfigManager } from "../ConfigManager";
+import { ShaderManager } from "../ShaderManager";
 
 export default interface IGameData {
     "container":        Element;
@@ -22,6 +23,7 @@ export default interface IGameData {
     "matMgr":           MaterialManager;
     "anmMgr":           AnimationManager;
     "trlvl":            TRLevel;
+    "shdMgr":           ShaderManager;
 
     "curRoom":          number;
 
