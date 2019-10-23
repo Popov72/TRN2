@@ -54,7 +54,7 @@ export default class Mesh extends Node implements IMesh {
     }
 
     public showBoundingBox(show: boolean): void {
-        if (!this._boundingBox && this.object instanceof TMesh) {
+        if (!this._boundingBox && this.object instanceof TMesh && this.object.name.indexOf('portal') < 0) {
             this._boundingBox = new Box3Helper(this.object.geometry.boundingBox);
             this._boundingBox.name = this.object.name + '_box';
             this._obj.add(this._boundingBox);
