@@ -1,0 +1,97 @@
+{
+    "name": "particles",
+    "id": "particles",
+    "capacity": 100,
+    "particleEmitterType": {
+        "type": "ConeParticleEmitter",
+        "radius": 5.12,
+        "angle": 0.17453292519943295,
+        "directionRandomizer": 0
+    },
+    "textureName": "resources/picture/flare3.png",
+    "invertY": false,
+    "animations": [],
+    "beginAnimationOnStart": false,
+    "beginAnimationFrom": 0,
+    "beginAnimationTo": 60,
+    "beginAnimationLoop": false,
+    "startDelay": 0,
+    "renderingGroupId": 0,
+    "isBillboardBased": true,
+    "billboardMode": 2,
+    "minAngularSpeed": -2.5,
+    "maxAngularSpeed": 2.5,
+    "minSize": 512,
+    "maxSize": 512,
+    "minScaleX": 1,
+    "maxScaleX": 1,
+    "minScaleY": 1,
+    "maxScaleY": 1,
+    "minEmitPower": 358.4,
+    "maxEmitPower": 614.4,
+    "minLifeTime": 1.2,
+    "maxLifeTime": 2,
+    "emitRate": 40,
+    "gravity": [
+        0,
+        0,
+        0
+    ],
+    "noiseStrength": [
+        10,
+        10,
+        10
+    ],
+    "color1": [
+        1,
+        1,
+        1,
+        1
+    ],
+    "color2": [
+        1,
+        1,
+        1,
+        1
+    ],
+    "colorDead": [
+        0,
+        0,
+        0,
+        1
+    ],
+    "updateSpeed": 0.016666666666666666,
+    "targetStopDuration": 0,
+    "blendMode": 2,
+    "preWarmCycles": 0,
+    "preWarmStepOffset": 1,
+    "minInitialRotation": 0,
+    "maxInitialRotation": 0,
+    "startSpriteCellID": 0,
+    "endSpriteCellID": 0,
+    "spriteCellChangeSpeed": 1,
+    "spriteCellWidth": 0,
+    "spriteCellHeight": 0,
+    "spriteRandomStartCell": false,
+    "isAnimationSheetEnabled": false,
+    "sizeGradients": [
+        {
+            "gradient": 0,
+            "factor1": 512,
+            "factor2": 512
+        },
+        {
+            "gradient": 1,
+            "factor1": 5.12,
+            "factor2": 5.12
+        }
+    ],
+    "textureMask": [
+        1,
+        1,
+        1,
+        1
+    ],
+    "customShader": null,
+    "preventAutoStart": false
+}

@@ -189,13 +189,11 @@
                     <global>true</global>
                 </behaviour>
             </moveable>
-            <moveable id="253">
-                <spritesequence>252</spritesequence>
-                <behaviour name="ParticleSystem">
-                    <particlesys_name>TRPlayer/Fire</particlesys_name>
-                    <particlesys_offset><x>0</x><y>0</y><z>0</z></particlesys_offset>
-                </behaviour>
-            </moveable>
+            <behaviour name="ParticleSystem">
+                <itemid>253</itemid>
+                <name>torch</name>
+                <offset><x>0</x><y>0</y><z>0</z></offset>
+            </behaviour>
 			<cutscene>
 				<animminid>123</animminid>
 				<animmaxid>132</animmaxid>
@@ -208,12 +206,10 @@
 				<behaviour name="Lara">
 					<startanim>23</startanim>
 				</behaviour>
-                <moveable id="253">
-                    <behaviour name="ParticleSystem">
-                        <particlesys_name>TRPlayer/Smoke</particlesys_name>
-                        <particlesys_offset><x>0</x><y>-50</y><z>0</z></particlesys_offset>
-                    </behaviour>
-                </moveable>
+                <behaviour name="ParticleSystem">
+                    <name>fireandsmoke</name>
+                    <offset><x>0</x><y>-50</y><z>0</z></offset>
+                </behaviour>
 			</level>
 			<level id="boat.tr2"		type="normal"	name="Venice">
 				<behaviour name="Lara">
@@ -226,12 +222,23 @@
 					<startanim>70</startanim>
 				</behaviour>
 			</level>
-			<level id="rig.tr2"			type="normal"	name="Offshore Rig"/>
+			<level id="rig.tr2"			type="normal"	name="Offshore Rig">
+                <behaviour name="ParticleSystem">
+                    <itemid>253</itemid>
+                    <name>torch</name>
+                    <offset><x>0</x><y>150</y><z>0</z></offset>
+                </behaviour>
+            </level>
 			<level id="platform.tr2"	type="normal"	name="Diving Area"/>
 			<level id="unwater.tr2"		type="normal"	name="40 Fathoms">
 				<behaviour name="Lara">
 					<startanim>86</startanim>
 				</behaviour>
+                <behaviour name="ParticleSystem">
+                    <itemid>253</itemid>
+                    <name>torch</name>
+                    <offset><x>0</x><y>100</y><z>0</z></offset>
+                </behaviour>
 			</level>
 			<level id="keel.tr2"		type="normal"	name="Wreck of the Maria Doria"/>
 			<level id="living.tr2"		type="normal"	name="Living Quarters">
@@ -243,27 +250,36 @@
 			<level id="deck.tr2"		type="normal"	name="The Deck"/>
 			<level id="skidoo.tr2"		type="normal"	name="Tibetan Foothills"/>
 			<level id="monastry.tr2"	type="normal"	name="Barkhang Monastery">
-                <moveable id="253">
-                    <behaviour name="ParticleSystem">
-                        <particlesys_name>TRPlayer/Fire</particlesys_name>
-                        <particlesys_offset><x>0</x><y>-200</y><z>0</z></particlesys_offset>
-                    </behaviour>
-                </moveable>
+                <behaviour name="ParticleSystem">
+                    <itemid>253</itemid>
+                    <name>torch</name>
+                    <offset><x>0</x><y>100</y><z>0</z></offset>
+                </behaviour>
 			</level>
-			<level id="catacomb.tr2"	type="normal"	name="Catacombs of the Talion"/>
+			<level id="catacomb.tr2"	type="normal"	name="Catacombs of the Talion">
+                <behaviour name="ParticleSystem">
+                    <itemid>253</itemid>
+                    <name>torch</name>
+                    <offset><x>0</x><y>200</y><z>0</z></offset>
+                </behaviour>
+            </level>
 			<level id="icecave.tr2"		type="normal"	name="Ice Palace"/>
 			<level id="emprtomb.tr2"	type="normal"	name="Temple of Xian"/>
 			<level id="floating.tr2"	type="normal"	name="Floating Islands"/>
-			<level id="xian.tr2"		type="normal"	name="Dragon's Lair"/>
+			<level id="xian.tr2"		type="normal"	name="Dragon's Lair">
+                <behaviour name="ParticleSystem">
+                    <itemid>253</itemid>
+                    <name>torch</name>
+                    <offset><x>0</x><y>100</y><z>0</z></offset>
+                </behaviour>
+            </level>
 			<level id="house.tr2"		type="normal"	name="Home Sweet Home"/>
 			<!--level id="title"		type="normal"	name="Title display"/-->
 			<level id="cut1.tr2"		type="cutscene"	name="At the Fancy Door">
-                <moveable id="253">
-                    <behaviour name="ParticleSystem">
-                        <particlesys_name>TRPlayer/Smoke</particlesys_name>
-                        <particlesys_offset><x>0</x><y>0</y><z>0</z></particlesys_offset>
-                    </behaviour>
-                </moveable>
+                <behaviour name="ParticleSystem">
+                    <name>fireandsmoke</name>
+                    <offset><x>0</x><y>-50</y><z>0</z></offset>
+                </behaviour>
                 <behaviour name="MakeLayeredMesh" objectid="123" cutsceneonly="true"/>
                 <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
 			</level>
@@ -284,12 +300,11 @@
                 <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
             </level>
 			<level id="cut4.tr2"	type="cutscene"	name="Bartoli Stabs Himself">
-                <moveable id="253">
-                    <behaviour name="ParticleSystem">
-                        <particlesys_name>TRPlayer/Fire</particlesys_name>
-                        <particlesys_offset><x>0</x><y>-1350</y><z>0</z></particlesys_offset>
-                    </behaviour>
-                </moveable>
+                <behaviour name="ParticleSystem">
+                    <itemid>253</itemid>
+                    <name>torch</name>
+                    <offset><x>0</x><y>0</y><z>0</z></offset>
+                </behaviour>
                 <behaviour name="MakeLayeredMesh" objectid="124" cutsceneonly="true"/>
                 <behaviour name="CutScene" objectid="0" cutsceneonly="true"/>
 			</level>
@@ -522,8 +537,8 @@
             </moveable>
             <moveable id="144">
                 <behaviour name="ParticleSystem">
-                    <particlesys_name>TRPlayer/Torch</particlesys_name>
-                    <particlesys_offset><x>0</x><y>0</y><z>250</z></particlesys_offset>
+                    <name>torch</name>
+                    <offset><x>0</x><y>30</y><z>-250</z></offset>
                 </behaviour>
                 <behaviour name="Light">
                     <color><r>255</r><g>255</g><b>255</b></color>

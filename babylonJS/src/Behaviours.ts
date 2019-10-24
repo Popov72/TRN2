@@ -5,6 +5,7 @@ import "../../src/Behaviour/Fade";
 import "../../src/Behaviour/FadeUniformColor";
 import "../../src/Behaviour/Lara";
 import "../../src/Behaviour/MakeLayeredMesh";
+import "./Behaviour/ParticleSystem";
 import "../../src/Behaviour/RemoveObject";
 import "../../src/Behaviour/ScrollTexture";
 import "../../src/Behaviour/SetAnimation";
