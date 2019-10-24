@@ -42,7 +42,7 @@ export class Panel {
         this._elem.find('#camerapos').html(camera.position[0].toFixed(5) + ',' + camera.position[1].toFixed(5) + ',' + camera.position[2].toFixed(5));
         this._elem.find('#camerarot').html(camera.quaternion[0].toFixed(5) + ',' + camera.quaternion[1].toFixed(5) + ',' + camera.quaternion[2].toFixed(5) + ',' + camera.quaternion[3].toFixed(5));
         if (perfData) {
-            this._elem.find('#renderinfo').html(perfData.numDrawCalls + ' / ' + perfData.numFaces + ' / ' + perfData.numObjects);
+            this._elem.find('#renderinfo').html(perfData.numDrawCalls + ' / ' + perfData.numFaces + ' / ' + perfData.numObjects + ' / ' + perfData.numParticles);
             this._elem.find('#memoryinfo').html(perfData.numGeometries + ' / ' + perfData.numPrograms + ' / ' + perfData.numTextures);
         }
     }
