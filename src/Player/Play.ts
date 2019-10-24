@@ -1,5 +1,6 @@
 import Engine from "../Proxy/Engine";
 
+import { Position } from "../Proxy/INode";
 import { IScene } from "../Proxy/IScene";
 import { IRenderer } from "../Proxy/IRenderer";
 
@@ -180,6 +181,59 @@ export default class Play {
         this.renderLoop();
 
         this.onWindowResize();
+    }
+
+    public goto(name: string, type?: string): void {
+        let objTypeList = [];
+        if (type !== undefined) {
+            objTypeList = [type];
+        } else {
+            objTypeList = ["moveable", "room", "staticmesh", "sprite", "spriteseq"];
+        }
+
+        let choice1: Position | null = null, choice2: Position | null = null;
+        objTypeList.forEach((tp) => {
+            const list = this.gameData.objMgr.objectList[tp];
+            for (const id in list) {
+                const lstObjs_ = list[id];
+                (Array.isArray(lstObjs_) ? lstObjs_ : [lstObjs_]).forEach((obj) => {
+                    const data = this.gameData.sceneData.objects[obj.name];
+                    if (obj.name === name || obj.name.indexOf(name) >= 0) {
+                        let pos: Position = [0, 0, 0];
+                        if (data.type == 'room') {
+                            const bb = obj.getBoundingBox();
+                            pos = [(bb.min[0] + bb.max[0]) / 2, (bb.min[1] + bb.max[1]) / 2, (bb.min[2] + bb.max[2]) / 2];
+                        } else {
+                            pos = obj.position;
+                        }
+                        if (obj.name === name) {
+                            choice1 = pos;
+                        } else {
+                            choice2 = pos;
+                        }
+                    }
+                });
+            }
+        });
+
+        if (!choice1 && !choice2) {
+            const partsys: any = (this.gameData.sceneRender as any)._scene;
+            if (partsys && partsys.particleSystems) {
+                (<Array<any>>partsys.particleSystems).forEach((psys) => {
+                    if (<string>psys.name === name) {
+                        choice1 = [psys.worldOffset.x, psys.worldOffset.y, psys.worldOffset.z];
+                    } else if ((<string>psys.name).indexOf(name) >= 0) {
+                        choice2 = [psys.worldOffset.x, psys.worldOffset.y, psys.worldOffset.z];
+                    }
+                });
+            }
+        }
+
+        if (choice1) {
+            this.gameData.camera.setPosition(choice1);
+        } else if (choice2) {
+            this.gameData.camera.setPosition(choice2);
+        }
     }
 
     private renderLoop(): void {
