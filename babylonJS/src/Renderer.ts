@@ -41,6 +41,7 @@ export default class Renderer implements IRenderer {
         newScene.useRightHandedSystem = true;
         //newScene.autoClear = false;
         newScene.clearColor = new Color4(0, 0, 0, 1);
+        newScene.detachControl();
         return new Scene(newScene);
     }
 

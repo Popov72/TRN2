@@ -66,6 +66,7 @@ export default class SceneParser {
         const idTimer = setInterval(() => {
             if (this._numTextureLoadedNotifications == 0 && this._numMeshesToHandle == 0) {
                 clearInterval(idTimer);
+                this.scene.detachControl();
                 onLoad(this.tscene);
             }
         }, 0);
@@ -98,6 +99,9 @@ export default class SceneParser {
         camera.minZ = json.near;
         camera.maxZ = json.far;
         camera.mode = BCamera.PERSPECTIVE_CAMERA;
+
+        camera.inputs.clear();
+        camera.inputs.removeMouse();
 
         this.scene.setActiveCameraByName(json.name);
 
