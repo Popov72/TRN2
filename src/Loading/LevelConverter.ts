@@ -248,7 +248,7 @@ export default class LevelConverter {
                     row = Math.floor(tile / this.sc.data.trlevel.atlas.numColPerRow), col = tile - row * this.sc.data.trlevel.atlas.numColPerRow;
                     tile = 0;
                 }
-                anmcoords.push({ minU: (sprite.x + col * 256 + 0.5) / this.sc.data.trlevel.atlas.width, minV: (sprite.y + row * 256 + 0.5) / this.sc.data.trlevel.atlas.height, texture: "texture" + tile});
+                anmcoords.push({ minU: (sprite.x + col * 256 + 0.5) / this.sc.data.trlevel.atlas.width, minV: (sprite.y + row * 256 + 0.5) / this.sc.data.trlevel.atlas.height, texture: "" + tile});
             }
             this.sc.data.animatedTextures.push({
                 "animcoords": anmcoords,
