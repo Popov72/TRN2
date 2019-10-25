@@ -33,14 +33,6 @@
                         <pistol>1</pistol>
                     </animobject>
                 </behaviour>
-                <behaviour name="Flare">
-                    <offset><x>0</x><y>0</y><z>0</z></offset>
-                    <color><r>255</r><g>255</g><b>255</b></color>
-                    <range><max>2000</max><inner>500</inner></range>
-                    <blink>true</blink>
-                    <objects_only>no</objects_only>
-                    <global>true</global>
-                </behaviour>
             </moveable>
 			<cutscene>
 				<animminid>77</animminid>
@@ -179,14 +171,6 @@
                     <animobject>
                         <pistol>1</pistol>
                     </animobject>
-                </behaviour>
-                <behaviour name="Flare">
-                    <offset><x>0</x><y>0</y><z>0</z></offset>
-                    <color><r>255</r><g>255</g><b>255</b></color>
-                    <range><max>2000</max><inner>500</inner></range>
-                    <blink>true</blink>
-                    <objects_only>no</objects_only>
-                    <global>true</global>
                 </behaviour>
             </moveable>
             <behaviour name="ParticleSystem">
@@ -365,14 +349,6 @@
                         <pistol>1</pistol>
                     </animobject>
                 </behaviour>
-                <behaviour name="Flare">
-                    <offset><x>0</x><y>0</y><z>0</z></offset>
-                    <color><r>255</r><g>255</g><b>255</b></color>
-                    <range><max>2000</max><inner>500</inner></range>
-                    <blink>true</blink>
-                    <objects_only>no</objects_only>
-                    <global>true</global>
-                </behaviour>
             </moveable>
 			<cutscene>
 				<animminid>148</animminid>
@@ -525,14 +501,6 @@
                         <holster>13</holster>
                         <holster_pistols>14</holster_pistols>
                     </animobject>
-                </behaviour>
-                <behaviour name="Flare">
-                    <offset><x>0</x><y>0</y><z>0</z></offset>
-                    <color><r>0</r><g>255</g><b>0</b></color>
-                    <range><max>2000</max><inner>500</inner></range>
-                    <blink>true</blink>
-                    <objects_only>no</objects_only>
-                    <global>true</global>
                 </behaviour>
             </moveable>
             <moveable id="144">
