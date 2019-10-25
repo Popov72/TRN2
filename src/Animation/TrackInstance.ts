@@ -1,7 +1,7 @@
 import Engine from "../Proxy/Engine";
 import { INode, Position } from "../Proxy/INode";
 
-import Skeleton from "../Player/Skeleton";
+import { Skeleton } from "../Player/Skeleton";
 import Track from "./Track";
 
 declare var glMatrix: any;

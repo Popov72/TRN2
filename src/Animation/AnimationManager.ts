@@ -6,7 +6,8 @@ import TrackInstance from "../Animation/TrackInstance";
 import { IMesh } from "../Proxy/IMesh";
 import { Commands } from "./Commands";
 import { ObjectID } from "../Constants";
-import { LAYER, MASK } from "../Player/Layer";
+import { LAYER } from "../Player/Layer";
+import { MASK } from "../Player/Skeleton";
 
 export class AnimationManager {
 

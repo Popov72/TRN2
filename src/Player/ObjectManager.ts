@@ -8,7 +8,7 @@ import { AnimationManager } from "../Animation/AnimationManager";
 import { BehaviourManager } from "../Behaviour/BehaviourManager";
 import IGameData from "../Player/IGameData";
 import { MaterialManager } from "./MaterialManager";
-import Skeleton from "../Player/Skeleton";
+import { Skeleton } from "../Player/Skeleton";
 
 export interface MeshList {
     [id: number]: IMesh | Array<IMesh>;

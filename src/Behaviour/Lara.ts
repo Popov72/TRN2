@@ -8,7 +8,8 @@ import { ObjectManager } from "../Player/ObjectManager";
 import { ConfigManager } from "../ConfigManager";
 import { AnimationManager } from "../Animation/AnimationManager";
 import { ObjectID } from "../Constants";
-import { Layer, LAYER, MASK, BONE } from "../Player/Layer";
+import { Layer, LAYER } from "../Player/Layer";
+import { MASK, BONE } from "../Player/Skeleton";
 
 declare var glMatrix: any;
 
