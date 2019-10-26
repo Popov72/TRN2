@@ -34,7 +34,7 @@ export class Lara extends Behaviour {
 
         if (this.objectid === undefined) {
             throw "Invalid id for Lara!";
-    }
+        }
 
         ObjectID.Lara  = this.objectid;
     }
@@ -96,13 +96,12 @@ export class Lara extends Behaviour {
                 // for some reason, pistol animation mesh is only for left hand in TR4... So copy it to do right hand animation
                 const meshb = Engine.makeMeshBuilder(mvbPistolAnim);
                 meshb.copyFacesWithSkinIndex(BONE.ARM_L3, BONE.ARM_R3);
-                layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
-            } else {
-                layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
             }
+
+            layer.setMesh(LAYER.WEAPON, mvbPistolAnim, 0);
         }
 
-        // create "holster empty" object
+        // create "holster empty" object - TR4 only
         ObjectID.HolsterEmpty = this.nbhv.animobject && this.nbhv.animobject.holster ? parseInt(this.nbhv.animobject.holster) : -1;
 
         const mvbHolsterEmpty = this.objMgr.createMoveable(ObjectID.HolsterEmpty, -1, undefined, true, dataLara.skeleton);
@@ -114,7 +113,7 @@ export class Lara extends Behaviour {
             layer.setMeshBuilder(LAYER.HOLSTER_EMPTY, meshb, 0);
         }
 
-        // create "holster full" object
+        // create "holster full" object - TR4 only
         ObjectID.HolsterFull = this.nbhv.animobject && this.nbhv.animobject.holster_pistols ? parseInt(this.nbhv.animobject.holster_pistols) : -1;
 
         const mvbHolsterFull = this.objMgr.createMoveable(ObjectID.HolsterFull, -1, undefined, true, dataLara.skeleton);
@@ -164,5 +163,5 @@ export class Lara extends Behaviour {
 }
 
 BehaviourManager.registerFactory(Lara.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Lara(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Lara(nbhv, gameData, objectid, objecttype)
 );
