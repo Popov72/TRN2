@@ -115,8 +115,6 @@ export default class Play {
         delete this.gameData.sceneData.trlevel.confMgr;
         delete this.gameData.sceneData.trlevel;
 
-        ObjectID.Lara  = this.gameData.confMgr.number('lara > id', true, 0);
-
         const isCutScene = this.gameData.confMgr.param('', false, true).attr('type') == 'cutscene',
               cutsceneIndex = this.gameData.sceneData.rversion == 'TR4' && Browser.QueryString.cutscene != undefined ? parseInt(Browser.QueryString.cutscene) : -1;
 

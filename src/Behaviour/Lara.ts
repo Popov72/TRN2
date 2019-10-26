@@ -31,6 +31,12 @@ export class Lara extends Behaviour {
         this.anmMgr = gameData.anmMgr;
         this.objMgr = gameData.objMgr;
         this.lara = <any>null;
+
+        if (this.objectid === undefined) {
+            throw "Invalid id for Lara!";
+    }
+
+        ObjectID.Lara  = this.objectid;
     }
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
