@@ -1,4 +1,4 @@
-const noSound = true;
+const noSound = false;
 
 import { ICamera } from "../Proxy/ICamera";
 import { IMesh } from "../Proxy/IMesh";
@@ -12,6 +12,7 @@ import { AnimationManager } from "../Animation/AnimationManager";
 import { ObjectID } from "../Constants";
 import { MaterialManager } from "../Player/MaterialManager";
 import { TRLevel } from "../Player/TRLevel";
+import Browser from "../Utils/Browser";
 import Misc from "../Utils/Misc";
 import TrackInstance from "../Animation/TrackInstance";
 import { baseFrameRate } from "../Constants";
@@ -29,6 +30,7 @@ export interface CutSceneData {
     "position"      : Position;
     "quaternion"    : Quaternion;
     "sound"         : any;
+    "gainNode"      : any;
 }
 
 export class CutScene extends Behaviour {
@@ -73,7 +75,8 @@ export class CutScene extends Behaviour {
             "frames"    : null,
             "position"  : [0, 0, 0],
             "quaternion": [0, 0, 0, 0],
-            "sound"     : null
+            "sound"     : null,
+            "gainNode"  : null,
         };
     }
 
@@ -143,6 +146,7 @@ export class CutScene extends Behaviour {
                         console.log('Error decoding sound data for cutscene.');
                     } else {
                         this.cutscene.sound = ret.sound;
+                        this.cutscene.gainNode = ret.gainNode;
                     }
                 })
             );
@@ -211,8 +215,22 @@ export class CutScene extends Behaviour {
         }
     }
 
+    public setVolume(v: number): void {
+        if (this.cutscene.gainNode) {
+            this.cutscene.gainNode.gain.value = v;
+        }
+    }
+
     public onBeforeRenderLoop(): void {
         if (this.cutscene.sound != null && !noSound) {
+            this.cutscene.gainNode = Browser.AudioContext.createGain();
+
+            this.setVolume(this.gameData.panel.noSound ? 0 : 1);
+
+            this.cutscene.gainNode.connect(Browser.AudioContext.destination);
+
+            this.cutscene.sound.connect(this.cutscene.gainNode);
+
             Misc.startSound(this.cutscene.sound);
         }
 

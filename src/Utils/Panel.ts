@@ -1,5 +1,6 @@
-import IGameData from "../Player/IGameData";
 import { IRenderer } from "../Proxy/IRenderer";
+import IGameData from "../Player/IGameData";
+import { CutScene } from "../Behaviour/CutScene";
 
 export class Panel {
 
@@ -32,6 +33,10 @@ export class Panel {
     public hide(): void {
         this._show = false;
         this._setState();
+    }
+
+    public get noSound(): boolean {
+        return this._elem.find('#nosound').prop('checked');
     }
 
     public showInfo(): void {
@@ -211,6 +216,14 @@ export class Panel {
                 This._elem.find('#fullscreen').prop('checked', document.fullscreenElement != null);
             }, false);
         }
+
+        this._elem.find('#nosound').on('click', function() {
+            const cutscene = (This._parent.bhvMgr.getBehaviour("CutScene") as Array<CutScene>);
+            if (cutscene && cutscene.length > 0) {
+                cutscene[0].setVolume(this.checked ? 0 : 1);
+            }
+        });
+
     }
 
     protected _setState(): void {

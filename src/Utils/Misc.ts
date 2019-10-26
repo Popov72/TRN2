@@ -171,7 +171,6 @@ export default class Utils {
                             } else {
                                 ret.sound = Browser.AudioContext.createBufferSource();
                                 ret.sound.buffer = buffer;
-                                ret.sound.connect(Browser.AudioContext.destination);
                             }
                             resolve(ret);
                         }
