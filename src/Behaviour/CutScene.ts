@@ -1,4 +1,4 @@
-const noSound = false;
+const noSound = true;
 
 import { ICamera } from "../Proxy/ICamera";
 import { IMesh } from "../Proxy/IMesh";
@@ -306,45 +306,15 @@ export class CutScene extends Behaviour {
             pos[1] += data.skeleton.bones[0].position[1];
             pos[2] += data.skeleton.bones[0].position[2];
 
-            //const roomObj = this.trlvl.getRoomByPos(pos);
             const roomObj = this.objMgr.getRoomByPos(pos);
 
             if (roomObj >= 0 && roomObj != data.roomIndex) {
-                const dataCurRoom = this.sceneData.objects['room' + data.roomIndex],
-                        curRoomLights = this.matMgr.useAdditionalLights ? dataCurRoom.lightsExt : dataCurRoom.lights,
-                        curLIdx = this.matMgr.getFirstDirectionalLight(curRoomLights);
-                const dataNewRoom = this.sceneData.objects['room' + roomObj],
-                        newRoomLights = this.matMgr.useAdditionalLights ? dataNewRoom.lightsExt : dataNewRoom.lights,
-                        newLIdx = this.matMgr.getFirstDirectionalLight(newRoomLights);
-
-                data.roomIndex = roomObj;
-
-                this.matMgr.setUniformsFromRoom(obj, roomObj);
-
-                if (data.layer) {
-                    data.layer.setRoom(roomObj);
-                }
-
-                if (curLIdx >= 0 && newLIdx >= 0) {
-                    const uniforms = [];
-                    for (let i = 0; i < obj.materials.length; ++i) {
-                        const material = obj.materials[i];
-                        uniforms.push({ a: material.uniforms.directionalLight_color.value, i: 0 });
-                    }
-                    this.bhvMgr.addBehaviour('FadeUniformColor',
-                        {
-                            "colorStart":   curRoomLights[curLIdx].color,
-                            "colorEnd":     newRoomLights[newLIdx].color,
-                            "duration":     1.0,
-                            "uniforms":     uniforms
-                        }
-                    );
-                }
+                this.objMgr.changeRoomMembership(obj, data.roomIndex, roomObj);
             }
         }
     }
 }
 
 BehaviourManager.registerFactory(CutScene.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new CutScene(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new CutScene(nbhv, gameData, objectid, objecttype)
 );

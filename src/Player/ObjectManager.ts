@@ -359,10 +359,6 @@ export class ObjectManager {
                 obj.visible = data.visible;
             }
 
-            if (data.boxHelper) {
-                data.boxHelper.visible = obj.visible;
-            }
-
             // Update material uniforms
             const materials = obj.materials,
                   room = this.sceneData.objects['room' + data.roomIndex];
@@ -400,6 +396,42 @@ export class ObjectManager {
             }
         }
         return -1;
+    }
+
+    public changeRoomMembership(obj: IMesh, oldRoomIndex: number, newRoomIndex: number): void {
+        const data = this.sceneData.objects[obj.name];
+
+        const dataCurRoom = this.sceneData.objects['room' + oldRoomIndex],
+              curRoomLights = this.matMgr.useAdditionalLights ? dataCurRoom.lightsExt : dataCurRoom.lights,
+              curLIdx = this.matMgr.getFirstDirectionalLight(curRoomLights);
+
+        const dataNewRoom = this.sceneData.objects['room' + newRoomIndex],
+              newRoomLights = this.matMgr.useAdditionalLights ? dataNewRoom.lightsExt : dataNewRoom.lights,
+              newLIdx = this.matMgr.getFirstDirectionalLight(newRoomLights);
+
+        data.roomIndex = newRoomIndex;
+
+        this.matMgr.setUniformsFromRoom(obj, newRoomIndex);
+
+        if (data.layer) {
+            data.layer.setRoom(newRoomIndex);
+        }
+
+        if (curLIdx >= 0 && newLIdx >= 0) {
+            const uniforms = [];
+            for (let i = 0; i < obj.materials.length; ++i) {
+                const material = obj.materials[i];
+                uniforms.push({ a: material.uniforms.directionalLight_color.value, i: 0 });
+            }
+            this.bhvMgr.addBehaviour('FadeUniformColor',
+                {
+                    "colorStart":   curRoomLights[curLIdx].color,
+                    "colorEnd":     newRoomLights[newLIdx].color,
+                    "duration":     1.0,
+                    "uniforms":     uniforms
+                }
+            );
+        }
     }
 
 }
