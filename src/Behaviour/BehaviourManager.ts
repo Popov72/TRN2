@@ -208,7 +208,7 @@ export class BehaviourManager {
             }
 
             // create the behaviour
-            promises = promises.concat(this.addBehaviour(name, nbhv, objectid === null ? undefined : objectid, objecttype === null ? undefined : objecttype) || []);
+            promises = promises.concat(this.addBehaviour(name, nbhv, objectid === null ? undefined : parseInt(objectid), objecttype === null ? undefined : objecttype) || []);
         }
 
         return promises;
