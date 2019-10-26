@@ -5,7 +5,8 @@ import { IScene } from "../Proxy/IScene";
 import IGameData from "../Player/IGameData";
 import { ObjectManager } from "../Player/ObjectManager";
 import { ShaderManager } from "../ShaderManager";
-import { LAYER, MASK } from "../Player/Layer";
+import { LAYER } from "../Player/Layer";
+import { MASK } from "../Player/Skeleton";
 import { Commands } from "../Animation/Commands";
 
 declare var glMatrix: any;
