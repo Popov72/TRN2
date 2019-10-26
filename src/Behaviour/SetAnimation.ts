@@ -30,5 +30,5 @@ export class SetAnimation extends Behaviour {
 }
 
 BehaviourManager.registerFactory(SetAnimation.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new SetAnimation(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new SetAnimation(nbhv, gameData, objectid, objecttype)
 );

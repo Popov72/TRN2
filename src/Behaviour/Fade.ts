@@ -83,5 +83,5 @@ export class Fade extends Behaviour {
 }
 
 BehaviourManager.registerFactory(Fade.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Fade(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Fade(nbhv, gameData, objectid, objecttype)
 );

@@ -49,5 +49,5 @@ export class ScrollTexture extends Behaviour {
 }
 
 BehaviourManager.registerFactory(ScrollTexture.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new ScrollTexture(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new ScrollTexture(nbhv, gameData, objectid, objecttype)
 );

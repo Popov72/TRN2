@@ -71,5 +71,5 @@ export class UVRotate extends Behaviour {
 }
 
 BehaviourManager.registerFactory(UVRotate.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new UVRotate(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new UVRotate(nbhv, gameData, objectid, objecttype)
 );

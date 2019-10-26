@@ -69,5 +69,5 @@ export class Sky extends Behaviour {
 }
 
 BehaviourManager.registerFactory(Sky.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Sky(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Sky(nbhv, gameData, objectid, objecttype)
 );

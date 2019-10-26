@@ -43,5 +43,5 @@ export class Sprite extends Behaviour {
 }
 
 BehaviourManager.registerFactory(Sprite.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Sprite(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Sprite(nbhv, gameData, objectid, objecttype)
 );

@@ -368,5 +368,5 @@ export class BasicControl extends Behaviour {
 }
 
 BehaviourManager.registerFactory(BasicControl.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new BasicControl(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new BasicControl(nbhv, gameData, objectid, objecttype)
 );

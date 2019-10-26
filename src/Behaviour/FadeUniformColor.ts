@@ -41,5 +41,5 @@ export class FadeUniformColor extends Fade {
 }
 
 BehaviourManager.registerFactory(FadeUniformColor.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new FadeUniformColor(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new FadeUniformColor(nbhv, gameData, objectid, objecttype)
 );

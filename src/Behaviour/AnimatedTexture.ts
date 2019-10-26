@@ -88,5 +88,5 @@ export class AnimatedTexture extends Behaviour {
 }
 
 BehaviourManager.registerFactory(AnimatedTexture.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new AnimatedTexture(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new AnimatedTexture(nbhv, gameData, objectid, objecttype)
 );

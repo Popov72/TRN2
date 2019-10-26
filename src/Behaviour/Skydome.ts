@@ -95,5 +95,5 @@ export class Skydome extends Behaviour {
 }
 
 BehaviourManager.registerFactory(Skydome.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new Skydome(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Skydome(nbhv, gameData, objectid, objecttype)
 );

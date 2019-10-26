@@ -83,5 +83,5 @@ export class ParticleSystem extends Behaviour {
 }
 
 BehaviourManager.registerFactory(ParticleSystem.name,
-    (nbhv: any, gameData: any, objectid?: number, objecttype?: string) => new ParticleSystem(nbhv, gameData, objectid, objecttype)
+    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new ParticleSystem(nbhv, gameData, objectid, objecttype)
 );
