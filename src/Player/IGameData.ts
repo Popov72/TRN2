@@ -10,6 +10,7 @@ import { ConfigManager } from "../ConfigManager";
 import { ShaderManager } from "../ShaderManager";
 
 export default interface IGameData {
+    "curFrame":         number;
     "container":        Element;
 
     "sceneRender":      IScene;

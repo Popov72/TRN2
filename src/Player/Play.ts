@@ -25,6 +25,7 @@ export default class Play {
 
     constructor(container: Element) {
         this.gameData = {
+            "curFrame": 0,
             "container": container,
 
             "curRoom": -1,
@@ -264,6 +265,8 @@ export default class Play {
         this.gameData.bhvMgr.frameEnded(curTime, delta);
 
         this.render();
+
+        this.gameData.curFrame++;
     }
 
     private render(): void {
