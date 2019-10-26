@@ -1,5 +1,7 @@
 import {
-    Object3D
+    Object3D,
+    Quaternion as TQuaternion,
+    Vector3,
 } from "three";
 
 import { INode, Position, Quaternion } from "../../src/Proxy/INode";
@@ -70,6 +72,14 @@ export default class Node implements INode {
         this._obj.renderOrder = ro;
     }
 
+    get frustumCulled(): boolean {
+        return this._obj.frustumCulled;
+    }
+
+    set frustumCulled(fc: boolean) {
+        this._obj.frustumCulled = fc;
+    }
+
     public add(child: Node): void {
         this._obj.add(child._obj);
         this._children.push(child);
@@ -123,6 +133,15 @@ export default class Node implements INode {
 
     public lookAt(pos: Position): void {
         this._obj.lookAt(...pos);
+    }
+
+    public decomposeMatrixWorld(pos: Position, quat: Quaternion): void {
+        const _pos = new Vector3(), _quat = new TQuaternion(), _scale = new Vector3();
+
+        this._obj.matrixWorld.decompose(_pos, _quat, _scale);
+
+        pos[0] = _pos.x;    pos[1] = _pos.y;    pos[2] = _pos.z;
+        quat[0] = _quat.x;  quat[1] = _quat.y;  quat[2] = _quat.z;  quat[3] = _quat.w;
     }
 
 }

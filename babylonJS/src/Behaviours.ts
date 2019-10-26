@@ -6,6 +6,7 @@ import "../../src/Behaviour/FadeUniformColor";
 import "../../src/Behaviour/Lara";
 import "../../src/Behaviour/MakeLayeredMesh";
 import "./Behaviour/ParticleSystem";
+import "../../src/Behaviour/Ponytail";
 import "../../src/Behaviour/RemoveObject";
 import "../../src/Behaviour/ScrollTexture";
 import "../../src/Behaviour/SetAnimation";

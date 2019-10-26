@@ -25,6 +25,7 @@ export interface IMesh {
     name: string;
     visible: boolean;
     renderOrder: number;
+    frustumCulled: boolean;
 
     updateMatrixWorld(): void;
 

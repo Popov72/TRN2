@@ -4,6 +4,7 @@ import { IScene } from "../Proxy/IScene";
 
 import IGameData from "../Player/IGameData";
 import { ObjectManager } from "../Player/ObjectManager";
+import { Ponytail } from "../Behaviour/Ponytail";
 import { ShaderManager } from "../ShaderManager";
 import { LAYER } from "../Player/Layer";
 import { MASK } from "../Player/Skeleton";
@@ -110,23 +111,28 @@ export default class CutSceneHelper {
                 const rooms  = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 110, 111, 112, 113, 114, 115, 116, 117, 122, 123]),
                       shader = this.shdMgr.getFragmentShader("TR_volumetric_fog");
 
+                const setShader = (obj: IMesh) => {
+                    const materials = obj.materials;
+                    for (let m = 0; m < materials.length; ++m) {
+                        const material = materials[m];
+
+                        promises.push(shader.then((shd) => material.fragmentShader = shd));
+
+                        material.uniforms.volFogCenter = { "type": "f3", "value": [52500.0, 3140.0, -49460.0] };
+                        material.uniforms.volFogRadius = { "type": "f",  "value": 6000 };
+                        material.uniforms.volFogColor =  { "type": "f3", "value": [0.1, 0.75, 0.3] };
+                    }
+                }
+
                 this.scene.traverse((obj) => {
                     const data = this.sceneData.objects[obj.name];
 
                     if (data && rooms.has(data.roomIndex) || actorMoveables.indexOf(obj) >= 0) {
-                        const materials = obj.materials;
-                        for (let m = 0; m < materials.length; ++m) {
-                            const material = materials[m];
-
-                            promises.push(shader.then((shd) => material.fragmentShader = shd));
-
-                            material.uniforms.volFogCenter = { "type": "f3", "value": [52500.0, 3140.0, -49460.0] };
-                            material.uniforms.volFogRadius = { "type": "f",  "value": 6000 };
-                            material.uniforms.volFogColor =  { "type": "f3", "value": [0.1, 0.75, 0.3] };
-
-                        }
+                        setShader(obj);
                     }
                 });
+
+                (this.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>)[0].braids.forEach((braid) => setShader(braid.model));
 
                 break;
             }

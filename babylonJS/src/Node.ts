@@ -1,6 +1,7 @@
 import {
     Quaternion as BQuaternion,
-    TransformNode
+    TransformNode,
+    Vector3
 } from "babylonjs";
 
 import { INode, Position, Quaternion } from "../../src/Proxy/INode";
@@ -59,4 +60,14 @@ export default class Node implements INode {
     public matrixWorldToArray(arr: Float32Array, ofst: number): void {
         arr.set(this._node.getWorldMatrix().toArray(), ofst);
     }
+
+    public decomposeMatrixWorld(pos: Position, quat: Quaternion): void {
+        const _pos = new Vector3(), _quat = new BQuaternion(), _scale = new Vector3();
+
+        this._node.getWorldMatrix().decompose(_scale, _quat, _pos);
+
+        pos[0] = _pos.x;    pos[1] = _pos.y;    pos[2] = _pos.z;
+        quat[0] = _quat.x;  quat[1] = _quat.y;  quat[2] = _quat.z;  quat[3] = _quat.w;
+    }
+
 }

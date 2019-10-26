@@ -16,4 +16,6 @@ export interface INode {
     updateMatrixWorld(): void;
 
     matrixWorldToArray(arr: Float32Array, ofst: number): void;
+
+    decomposeMatrixWorld(pos: Position, quat: Quaternion): void;
 }

@@ -93,10 +93,10 @@ export class Skeleton {
 
     public updateBoneMatrices(): void {
         this._bones[0].updateMatrixWorld();
-        this._setBoneMatrices();
+        this.setBoneMatrices();
     }
 
-    private _setBoneMatrices() {
+    public setBoneMatrices() {
         for (let b = 0; b < this._bones.length; b ++) {
             const bone = this._bones[b];
 

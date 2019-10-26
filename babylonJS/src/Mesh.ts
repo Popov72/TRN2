@@ -106,6 +106,14 @@ export default class Mesh implements IMesh {
         this._mesh.renderingGroupId = ro;
     }
 
+    get frustumCulled(): boolean {
+        return !this._mesh.alwaysSelectAsActiveMesh;
+    }
+
+    set frustumCulled(fc: boolean) {
+        this._mesh.alwaysSelectAsActiveMesh = !fc;
+    }
+
     public updateMatrixWorld(): void {
         this._mesh.computeWorldMatrix();
     }
