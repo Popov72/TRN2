@@ -934,19 +934,17 @@ export default class LevelConverter {
         }
     }
 
-    private makeSkinnedLara(): void {
-        const laraID = 0;
-
-        const joints = this.helper.getGeometryFromId('moveable' + ObjectID.LaraJoints).data,
+    private weldSkinJoints(mainSkinId: number, jointSkinId: number): void {
+        const joints = this.helper.getGeometryFromId('moveable' + jointSkinId).data,
               jointsVertices = joints.vertices,
-              main = this.helper.getGeometryFromId('moveable' + laraID).data,
+              main = this.helper.getGeometryFromId('moveable' + mainSkinId).data,
               mainVertices = main.vertices;
 
-        const bones = this.sc.data.objects['moveable' + ObjectID.LaraJoints].bonesStartingPos,
-              numJoints = bones.length,
+        const bones = this.sc.data.objects['moveable' + mainSkinId].bonesStartingPos,
+              numBones = bones.length,
               posStack: Array<any> = [];
 
-        for (let j = 0; j < numJoints; ++j) {
+        for (let j = 0; j < numBones; ++j) {
             const bone = bones[j], pos = bone.pos_init.slice(0);
             if (bone.parent >= 0) {
                 pos[0] += posStack[bone.parent][0];
@@ -962,8 +960,9 @@ export default class LevelConverter {
                 if (bidx != b1 && bidx != b2) { continue; }
                 const boneTrans = posStack[bidx],
                       dx = mainVertices[v * 3 + 0] + boneTrans[0] - x, dy = mainVertices[v * 3 + 1] + boneTrans[1] - y, dz = mainVertices[v * 3 + 2] + boneTrans[2] - z,
-                    dist = dx * dx + dy * dy + dz * dz;
+                      dist = dx * dx + dy * dy + dz * dz;
                 if (dist < 24) {
+                //if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 && Math.abs(dz) <= 1) {
                     return v;
                 }
             }
@@ -987,6 +986,38 @@ export default class LevelConverter {
                 joints.skinIndices[i * 2 + 1] = main.skinIndices[idx * 2 + 1];
             }
         }
+
+    }
+
+    private makeLaraBraid(): void {
+        const braidId =  this.confMgr.number('behaviour[name="Ponytail"] > id', true, -1),
+              young = this.confMgr.boolean('behaviour[name="Ponytail"] > young', true, false);
+
+        if (braidId < 0) { return; }
+
+        this.weldSkinJoints(braidId, braidId);
+
+        const braid = this.helper.getGeometryFromId('moveable' + braidId).data,
+              vertices = braid.vertices;
+
+        if (this.sc.data.trlevel.rversion == 'TR4') {
+            if (!young) {
+                vertices[0 * 3 + 0] -= 5;
+                vertices[1 * 3 + 0] -= 5;
+                vertices[2 * 3 + 0] += 5;
+                vertices[3 * 3 + 0] += 5;
+            }
+        }
+    }
+
+    private makeSkinnedLara(): void {
+        const laraID = 0;
+
+        this.weldSkinJoints(laraID, ObjectID.LaraJoints);
+
+        const joints = this.helper.getGeometryFromId('moveable' + ObjectID.LaraJoints).data,
+              main = this.helper.getGeometryFromId('moveable' + laraID).data,
+              mainVertices = main.vertices;
 
         let numMatInMain = 0;
         for (let f = 0; f < main.faces.length; ++f) {
@@ -1211,6 +1242,8 @@ export default class LevelConverter {
         this.createAnimations();
 
         this.createVertexNormals();
+
+        this.makeLaraBraid();
 
         if (this.sc.data.trlevel.rversion == 'TR4') {
             this.makeSkinnedLara();

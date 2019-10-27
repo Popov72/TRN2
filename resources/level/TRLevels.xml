@@ -518,7 +518,7 @@
             <behaviour name="Ponytail">
                 <id>30</id>
                 <offsets>
-                    <offset><x>0</x><y>23</y><z>32</z></offset>
+                    <offset><x>-3</x><y>23</y><z>32</z></offset>
                 </offsets>
             </behaviour>
             <moveable id="144">
@@ -551,9 +551,10 @@
 				<behaviour name="UVRotate" objectid="77" objecttype="room"/>
                 <behaviour name="Ponytail">
                     <id>30</id>
+                    <young>true</young>
                     <offsets>
-                        <offset><x>-32</x><y>48</y><z>32</z></offset>
-                        <offset><x>32</x><y>48</y><z>32</z></offset>
+                        <offset><x>-32</x><y>54</y><z>32</z></offset>
+                        <offset><x>32</x><y>54</y><z>32</z></offset>
                     </offsets>
                 </behaviour>
 			</level>
@@ -568,9 +569,10 @@
 				</behaviour>
                 <behaviour name="Ponytail">
                     <id>30</id>
+                    <young>true</young>
                     <offsets>
-                        <offset><x>-32</x><y>48</y><z>32</z></offset>
-                        <offset><x>32</x><y>48</y><z>32</z></offset>
+                        <offset><x>-32</x><y>54</y><z>32</z></offset>
+                        <offset><x>32</x><y>54</y><z>32</z></offset>
                     </offsets>
                 </behaviour>
                 <behaviour name="RemoveObject" objectid="431" cutsceneonly="true"/>
