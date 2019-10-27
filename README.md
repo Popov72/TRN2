@@ -1,4 +1,4 @@
-<p align="center"><img title="City of Vilcabamba" src="resources/logo.png"/></p>
+<p align="center"><img title="Tomb Raider Nostalgia" src="resources/picture/logo.png"/></p>
 
 
 Tomb Raider Nostalgia - View levels and play cut scenes for old Tomb Raider games 1/2/3/4.
@@ -40,30 +40,35 @@ Note that you can use any web server for this matter. I described how to use Pyt
 
 You can also use PHP in much the same way than Python to start a simple HTTP server: install PHP on your computer (if not already installed), then use the command **PHP -S localhost:8000** from the TRN directory to start a simple web server.
 
+## Credits
+* **XProger**: I have stolen and ported the _Braid_ class from his awesome [OpenLara](https://github.com/XProger/OpenLara) as well as some other ideas (like the _Layer_ concept)
+* **Sapper** and **T4Larson**, who did a great job deciphering the TR4 cutscene file format: no TR4 cutscene replay without them! The description of the format can be found [**here**](https://www.trsearch.org/tool/32/download)
+* All people from the **Tomb Raider** community for their continuing support
+
 ## Screenshots
 Click on the picture to view the corresponding level.<br>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR1&level=tr1/level2.phd&autostart=1"><img title="City of Vilcabamba" src="resources/TR1_big/level2.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR1&level=tr1/level2.phd&autostart=1"><img title="City of Vilcabamba" src="resources/picture/TR1_big/level2.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR1&level=tr1/level10b.phd&autostart=1"><img title="Atlantis" src="resources/TR1_big/level10b.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR1&level=tr1/level10b.phd&autostart=1"><img title="Atlantis" src="resources/picture/TR1_big/level10b.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR1&level=tr1/cut4.phd"><img title="Lara vs. Natla" src="resources/TR1_big/cut4.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR1&level=tr1/cut4.phd"><img title="Lara vs. Natla" src="resources/picture/TR1_big/cut4.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR2&level=tr2/boat.tr2&autostart=1"><img title="Venice" src="resources/TR2_big/boat.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR2&level=tr2/boat.tr2&autostart=1"><img title="Venice" src="resources/picture/TR2_big/boat.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR2&level=tr2/xian.tr2&autostart=1"><img title="Dragon's Lair" src="resources/TR2_big/xian.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR2&level=tr2/xian.tr2&autostart=1"><img title="Dragon's Lair" src="resources/picture/TR2_big/xian.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR2&level=tr2/cut3.tr2"><img title="Bartoli vs. Monk" src="resources/TR2_big/cut3.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR2&level=tr2/cut3.tr2"><img title="Bartoli vs. Monk" src="resources/picture/TR2_big/cut3.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR3&level=tr3/nevada.tr2&autostart=1"><img title="Nevada Desert" src="resources/TR3_big/nevada.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR3&level=tr3/nevada.tr2&autostart=1"><img title="Nevada Desert" src="resources/picture/TR3_big/nevada.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR3&level=tr3/city.tr2&autostart=1"><img title="Lost City of Tinnos" src="resources/TR3_big/city.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR3&level=tr3/city.tr2&autostart=1"><img title="Lost City of Tinnos" src="resources/picture/TR3_big/city.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR3&level=tr3/cut2.tr2"><img title="Saved by the Bell" src="resources/TR3_big/cut2.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR3&level=tr3/cut2.tr2"><img title="Saved by the Bell" src="resources/picture/TR3_big/cut2.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/csplit1.tr4&autostart=1"><img title="Catacombs" src="resources/TR4_big/csplit1.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/csplit1.tr4&autostart=1"><img title="Catacombs" src="resources/picture/TR4_big/csplit1.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/palaces.tr4&autostart=1"><img title="Pharos,Temple Of Isis" src="resources/TR4_big/palaces.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/palaces.tr4&autostart=1"><img title="Pharos,Temple Of Isis" src="resources/picture/TR4_big/palaces.jpg"/></a>
 
-<a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/palaces2.tr4&autostart=1"><img title="Cleopatra´s Palaces" src="resources/TR4_big/palaces2.jpg"/></a>
+<a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/palaces2.tr4&autostart=1"><img title="Cleopatra´s Palaces" src="resources/picture/TR4_big/palaces2.jpg"/></a>
 
