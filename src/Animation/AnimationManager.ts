@@ -6,6 +6,7 @@ import TrackInstance from "../Animation/TrackInstance";
 import { IMesh } from "../Proxy/IMesh";
 import { Commands } from "./Commands";
 import { ObjectID } from "../Constants";
+import { Ponytail } from "../Behaviour/Ponytail";
 import { LAYER } from "../Player/Layer";
 import { MASK } from "../Player/Skeleton";
 
@@ -230,8 +231,16 @@ export class AnimationManager {
                             break;
                         }
 
+                        case Commands.Misc.ANIMCMD_MISC_RESETHAIR: {
+                            const ponytail = this.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>;
+
+                            if (ponytail && ponytail.length > 0) {
+                                ponytail[0].reset();
+                            }
+                            break;
+                        }
+
                         case Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION: {
-                            //console.log('custom function at frame #', curFrame, ' (' + frame + ')');
                             command.params[2]();
                             break;
                         }

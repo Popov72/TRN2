@@ -40,6 +40,10 @@ export class Ponytail extends Behaviour {
         this._braids.forEach((b) => b.update(delta));
     }
 
+    public reset(): void {
+        this._braids.forEach((b) => b.reset());
+    }
+
     public get braids(): Array<Braid> {
         return this._braids;
     }

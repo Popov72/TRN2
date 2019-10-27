@@ -9,6 +9,7 @@ import { ShaderManager } from "../ShaderManager";
 import { LAYER } from "../Player/Layer";
 import { MASK } from "../Player/Skeleton";
 import { Commands } from "../Animation/Commands";
+import Track from "../Animation/Track";
 
 declare var glMatrix: any;
 
@@ -132,7 +133,10 @@ export default class CutSceneHelper {
                     }
                 });
 
-                (this.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>)[0].braids.forEach((braid) => setShader(braid.model));
+                const ponytail = this.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>;
+                if (ponytail && ponytail.length > 0) {
+                    ponytail[0].braids.forEach((braid) => setShader(braid.model));
+                }
 
                 break;
             }
@@ -203,6 +207,12 @@ export default class CutSceneHelper {
                 break;
             }
         }
+
+        // Reset Lara braid to take into account Lara's current position/rotation
+        const lara = actorMoveables[0],
+              track: Track = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+        track.commands.splice(0, 0, { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_RESETHAIR] });
 
         return promises;
     }
