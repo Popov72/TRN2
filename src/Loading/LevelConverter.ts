@@ -759,7 +759,8 @@ export default class LevelConverter {
                 "objectid"              : moveable.objectID,
                 "visible"  				: false,
                 "bonesStartingPos"      : !isDummy ? bones : null,
-                "internallyLit"         : !moveableIsExternallyLit
+                "internallyLit"         : !moveableIsExternallyLit,
+                "startingMesh"          : moveableGeom.startingMesh
             };
         }
     }

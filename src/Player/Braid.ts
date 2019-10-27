@@ -10,7 +10,7 @@ import { Position, Quaternion } from "../Proxy/INode";
 
 import IGameData from "./IGameData";
 import { ObjectID } from "../Constants";
-import { Skeleton, BONE } from "./Skeleton";
+import { Skeleton, BONE, MASK } from "./Skeleton";
 
 declare var glMatrix: any;
 
@@ -83,6 +83,8 @@ class Basis {
 export class Braid {
 
     protected _lara: IMesh;
+    protected _laraSkeleton: Skeleton;
+    protected _laraStartingMesh: number;
     protected _offset: Position;
     protected _time: number;
     protected _gameData: IGameData;
@@ -91,7 +93,6 @@ export class Braid {
     protected _jointsCount: number;
     protected _joints: Array<Joint>;
     protected _basis: Array<Basis>;
-    protected _laraSkeleton: Skeleton;
     protected _headBasis: Basis;
     protected _curFrame: number;
 
@@ -107,11 +108,12 @@ export class Braid {
 
         this._laraSkeleton = this._gameData.sceneData.objects[this._lara.name].skeleton;
         this._laraSkeleton.updateBoneMatrices();
+        this._laraStartingMesh = this._gameData.sceneData.objects['moveable' + this._gameData.sceneData.objects[this._lara.name].objectid].startingMesh;
 
         this._model = this.getModel();
         this._modelSkeleton = this._gameData.sceneData.objects[this._model.name].skeleton;
 
-        const modelJointCount = (this._gameData.sceneData.objects[this._model.name].skeleton as Skeleton).bones.length;
+        const modelJointCount = this._modelSkeleton.bones.length;
 
         this._jointsCount = modelJointCount + 1;
         this._joints = new Array(this._jointsCount);
@@ -121,12 +123,20 @@ export class Braid {
             this._basis[b] = new Basis();
         }
 
-        const basis = this.getBasis();
+        this.reset();
+    }
+
+    public get model(): IMesh {
+        return this._model;
+    }
+
+    public reset(): void {
+        const basis = this.getBasis(true);
 
         basis.translate(this._offset);
 
         for (let i = 0; i < this._jointsCount - 1; i++) {
-            const bonePos = this._modelSkeleton.bonesStartingPos[1 + Math.min(i, modelJointCount - 2)].pos_init;
+            const bonePos = this._modelSkeleton.bonesStartingPos[1 + Math.min(i, this._jointsCount - 3)].pos_init;
 
             this._joints[i] = {
                 "posPrev":  basis.pos.slice() as Position,
@@ -142,10 +152,6 @@ export class Braid {
             "pos":      basis.pos.slice() as Position,
             "length":   1.0,
         };
-    }
-
-    public get model(): IMesh {
-        return this._model;
     }
 
     protected getModel(): IMesh {
@@ -165,8 +171,8 @@ export class Braid {
         return mvb;
     }
 
-    protected getBasis(): Basis {
-        if (this._curFrame == this._gameData.curFrame) {
+    protected getBasis(force: boolean = false): Basis {
+        if (!force && (this._curFrame == this._gameData.curFrame)) {
             return this._headBasis;
         }
 
@@ -210,46 +216,43 @@ export class Braid {
             j.pos[1] -= ACCEL;
         }
     }
-/*
-    void collide() {
-        TR::Level *level = lara->level;
-        const TR::Model *model = lara->getModel();
 
-        TR::Level::FloorInfo info;
-        lara->getFloorInfo(lara->getRoomIndex(), lara->getViewPoint(), info);
+    protected collide(): void {
+        const BRAID_RADIUS = 0.0,
+              meshes = this._gameData.trlvl.trlevel.meshes;
 
-        for (int j = 1; j < jointsCount; j++)
-            if (joints[j].pos.y > info.floor)
-                joints[j].pos.y = info.floor;
+        const pos: Position = [0, 0, 0], quat: Quaternion = [0, 0, 0, 0], dir: Position = [0, 0, 0];
 
-        #define BRAID_RADIUS 0.0f
+        for (let i = 0; i < this._laraSkeleton.bones.length; i++) {
+            if (!(MASK.BRAID & (1 << i))) { continue; }
 
-        lara->updateJoints();
+            const mesh = meshes[i + this._laraStartingMesh],
+                  mcenter: Position = [mesh.center.x, -mesh.center.y, -mesh.center.z],
+                  mradius: number = mesh.collisionSize;
 
-        for (int i = 0; i < model->mCount; i++) {
-            if (!(JOINT_MASK_BRAID & (1 << i))) continue;
+            this._laraSkeleton.bones[i].decomposeMatrixWorld(pos, quat);
 
-            int offset = level->meshOffsets[model->mStart + i];
-            TR::Mesh *mesh = (TR::Mesh*)&level->meshes[offset];
+            const laraBasis = new Basis(this._lara.position, this._lara.quaternion),
+                  boneBasis = laraBasis.multBasis(new Basis(pos, quat)),
+                  center    = boneBasis.mult(mcenter);
 
-            vec3 center    = lara->joints[i] * mesh->center;
-            float radiusSq = mesh->radius + BRAID_RADIUS;
+            let radiusSq = mradius + BRAID_RADIUS;
+
             radiusSq *= radiusSq;
 
-            for (int j = 1; j < jointsCount; j++) {
-                vec3 dir = joints[j].pos - center;
-                float len = dir.length2() + EPS;
+            for (let j = 1; j < this._jointsCount; j++) {
+                glMatrix.vec3.sub(dir, this._joints[j].pos, center);
+                let len = glMatrix.vec3.squaredLength(dir) + EPS;
                 if (len < radiusSq) {
-                    len = sqrtf(len);
-                    dir *= (mesh->radius + BRAID_RADIUS- len) / len;
-                    joints[j].pos += dir * 0.9f;
+                    len = Math.sqrt(len);
+                    glMatrix.vec3.scale(dir, dir, (mradius + BRAID_RADIUS - len) / len);
+                    glMatrix.vec3.scale(dir, dir, 0.9);
+                    glMatrix.vec3.add(this._joints[j].pos, this._joints[j].pos, dir);
                 }
             }
         }
-
-        #undef BRAID_RADIUS
     }
-*/
+
     protected solve(): void {
         for (let i = 0; i < this._jointsCount - 1; i++) {
             const a = this._joints[i],
@@ -280,7 +283,7 @@ export class Braid {
 
         this.integrate(deltaTime); // Verlet integration step
 
-        //collide(); // check collision with Lara's mesh
+        this.collide(); // check collision with Lara's mesh
 
         for (let i = 0; i < this._jointsCount; i++) { // solve connections (springs)
             this.solve();
