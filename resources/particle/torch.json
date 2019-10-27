@@ -1,6 +1,6 @@
 {
-    "name": "particles",
-    "id": "particles",
+    "name": "torch",
+    "id": "torch",
     "capacity": 100,
     "particleEmitterType": {
         "type": "ConeParticleEmitter",
