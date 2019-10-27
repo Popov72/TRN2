@@ -145,9 +145,9 @@ export class BasicControl extends Behaviour {
                     break;
 
                 case this.STATES.SLOWER:
-                    moveScale /= 3;
-                    rotScale /= 3;
-                    rotMouseScale /= 3;
+                    moveScale /= 6;
+                    rotScale /= 6;
+                    rotMouseScale /= 6;
                     break;
 
                 case this.STATES.FORWARD:
