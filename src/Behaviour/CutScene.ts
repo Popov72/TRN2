@@ -50,6 +50,7 @@ export class CutScene extends Behaviour {
     private objects: { [name: string]: IMesh };
     private bhvCtrl: BasicControl;
     private helper: CutSceneHelper;
+    private lara: IMesh;
 
     constructor(nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) {
         super(nbhv, gameData, objectid, objecttype);
@@ -67,7 +68,8 @@ export class CutScene extends Behaviour {
         this.cutSceneEnded = false;
         this.objects = {};
         this.bhvCtrl = <any>null;
-        this.helper = new CutSceneHelper(gameData);
+        this.helper = <any>null;
+        this.lara = <any>null;
 
         this.cutscene = {
             "index"     : 0,
@@ -90,12 +92,14 @@ export class CutScene extends Behaviour {
         this.cutscene.index = index;
 
         // set cutscene origin
-        const lara = (this.bhvMgr.getBehaviour("Lara") as Array<Lara>)[0].getObject(); //(this.objMgr.objectList['moveable'][ObjectID.Lara] as Array<IMesh>)[0];
+        this.lara = (this.bhvMgr.getBehaviour("Lara") as Array<Lara>)[0].getObject(); //(this.objMgr.objectList['moveable'][ObjectID.Lara] as Array<IMesh>)[0];
+
+        this.helper = new CutSceneHelper(this.gameData, this.lara);
 
         this.cutscene.frames = this.trlvl.trlevel.cinematicFrames;
-        this.cutscene.position = lara.position;
+        this.cutscene.position = this.lara.position;
 
-        let laraQuat = lara.quaternion,
+        let laraQuat = this.lara.quaternion,
             laraAngle = this.confMgr.float('behaviour[name="Lara"] > angle');
 
         if (laraAngle != -Infinity) {
@@ -133,7 +137,7 @@ export class CutScene extends Behaviour {
         }
 
         if (index > 0) {
-            const tr4Promise = new CutSceneTR4(this.gameData, this.cutscene, this.helper, lara).makeTR4Cutscene(parseInt(index));
+            const tr4Promise = new CutSceneTR4(this.gameData, this.cutscene, this.helper, this.lara).makeTR4Cutscene(parseInt(index));
             promises.push(tr4Promise.then(() => {
                 this.makeObjectList();
                 this.registerAnimations();

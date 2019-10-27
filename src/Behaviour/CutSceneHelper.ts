@@ -20,13 +20,15 @@ export default class CutSceneHelper {
     private objMgr:     ObjectManager;
     private shdMgr:     ShaderManager;
     private scene:      IScene;
+    private lara:       IMesh;
 
-    constructor(gameData: IGameData) {
+    constructor(gameData: IGameData, lara: IMesh) {
         this.gameData = gameData;
         this.sceneData = gameData.sceneData;
         this.objMgr = gameData.objMgr;
         this.shdMgr = gameData.shdMgr;
         this.scene = gameData.sceneRender;
+        this.lara = lara;
     }
 
     public prepareLevel(trVersion: string, levelName: string, csIndex: number, actorMoveables: Array<any>): Array<Promise<void>> {
@@ -209,7 +211,7 @@ export default class CutSceneHelper {
         }
 
         // Reset Lara braid to take into account Lara's current position/rotation
-        const lara = actorMoveables[0],
+        const lara = this.lara,
               track: Track = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
         track.commands.splice(0, 0, { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_RESETHAIR] });
