@@ -6,7 +6,10 @@
         "type": "ConeParticleEmitter",
         "radius": 5.12,
         "angle": 0.17453292519943295,
-        "directionRandomizer": 0
+        "directionRandomizer": 0,
+        "radiusRange": 1,
+        "heightRange": 0,
+        "emitFromSpawnPointOnly": false    
     },
     "textureName": "resources/picture/flare3.png",
     "invertY": false,
@@ -18,7 +21,7 @@
     "startDelay": 0,
     "renderingGroupId": 0,
     "isBillboardBased": true,
-    "billboardMode": 2,
+    "billboardMode": 7,
     "minAngularSpeed": -2.5,
     "maxAngularSpeed": 2.5,
     "minSize": 512,
