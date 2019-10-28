@@ -187,6 +187,40 @@ export class Panel {
             });
         });
 
+        this._elem.find('#lowlightsquality').on('click', async function() {
+            const shaderMgr = This._parent.shdMgr,
+                  scene = This._parent.sceneRender;
+
+            shaderMgr.globalLightsInFragment = !this.checked;
+
+            const shaders = [await shaderMgr.getFragmentShader('TR_standard', true), await shaderMgr.getVertexShader('TR_room', true), await shaderMgr.getVertexShader('TR_moveable', true), await shaderMgr.getVertexShader('TR_mesh', true)];
+
+            await Promise.all(shaders);
+
+            scene.traverse((obj) => {
+                const vshader =
+                        obj.name.startsWith("moveable")     ? shaders[2] :
+                        obj.name.startsWith("room")         ? shaders[1] :
+                        obj.name.startsWith("staticmesh")   ? shaders[3] : '';
+
+                if (vshader === '') { return; }
+
+                const materials = obj.materials;
+                for (let i = 0; i < materials.length; ++i) {
+                    const material = materials[i], origFragmentShader = (material as any).origFragmentShader, origVertexShader = (material as any).origVertexShader;
+                    if (!origFragmentShader) {
+                        (material as any).origFragmentShader = material.fragmentShader;
+                    }
+                    if (!origVertexShader) {
+                        (material as any).origVertexShader = material.vertexShader;
+                    }
+
+                    material.vertexShader = this.checked ? vshader : (material as any).origVertexShader;
+                    material.fragmentShader = this.checked ? shaders[0] : (material as any).origFragmentShader;
+                }
+            });
+        });
+
         this._elem.find('#nobumpmapping').on('click', function() {
             const scene = This._parent.sceneRender;
             scene.traverse((obj) => {
