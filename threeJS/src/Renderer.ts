@@ -13,7 +13,10 @@ export default class Renderer implements IRenderer {
     protected _renderer: WebGLRenderer;
 
     constructor(container: Element) {
-        this._renderer = new WebGLRenderer({ antialias: true });
+        const canvas = document.createElement('canvas'),
+              context = canvas.getContext('webgl2', { alpha: false });
+
+        this._renderer = new WebGLRenderer({ canvas: canvas, context: context as any, antialias: true });
         this._renderer.autoClear = false;
 
         container.appendChild(this._renderer.domElement);
