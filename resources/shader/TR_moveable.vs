@@ -1,15 +1,11 @@
 #version 300 es
 precision highp float;
 
-uniform mat4 modelMatrix;
-uniform mat4 modelViewMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
-attribute vec3 position;
-attribute vec2 uv;
-attribute vec3 normal;
-
 #define TR_VERSION			    ##tr_version##
+
+#define NUM_MAX_GLOBALLIGHTS 	6
+#define APPLY_GLOBAL_LIGHTS     ##global_lights_in_vertex##
+#define BLINK_GLOBAL_LIGHTS     1
 
 #define NUM_MAX_POINTLIGHTS 	20
 
@@ -39,7 +35,6 @@ uniform vec4 	offsetRepeat;
 uniform float 	rnd;
 uniform float 	lighting; /* not used */
 uniform vec3    camPosition;
-
 uniform vec3 	ambientColor;
 uniform mat4    boneMatrices[64];
 
@@ -56,9 +51,6 @@ out vec4 vwPos;
 out vec3 vwCamPos;
 out vec3 vNormal;
 
-const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
-
-uniform mat4 boneMatrices[ 64 ];
 mat4 getBoneMatrix( const in float i ) {
     mat4 bone = boneMatrices[ int(i) ];
     return bone;
@@ -82,9 +74,25 @@ vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
 float punctualLightIntensityToIrradianceFactor( const in float lightDistance, const in float cutoffDistance, const in float decayExponent ) {
 	if ( cutoffDistance > 0.0 && decayExponent > 0.0 ) {
 		return pow( saturate( -lightDistance / cutoffDistance + 1.0 ), decayExponent );
-	}
-	return 1.0;
+	} else {
+	    return 1.0;
+    }
 }
+
+#if APPLY_GLOBAL_LIGHTS == 1
+    uniform highp int numGlobalLight;
+    uniform vec3 globalLight_position[NUM_MAX_GLOBALLIGHTS];
+    uniform vec3 globalLight_color[NUM_MAX_GLOBALLIGHTS];
+    uniform float globalLight_distance[NUM_MAX_GLOBALLIGHTS];
+
+    void getGlobalDirectLightIrradiance(in int globalLight, const in GeometricContext geometry, out IncidentLight directLight) {
+        vec3 lVector = (viewMatrix*vec4(globalLight_position[globalLight], 1.0)).xyz - geometry.position;
+        directLight.direction = normalize(lVector);
+        float lightDistance = length(lVector);
+        directLight.color = globalLight_color[globalLight];
+        directLight.color *= punctualLightIntensityToIrradianceFactor(lightDistance, globalLight_distance[globalLight], 1.0);
+    }
+#endif
 
 #if NUM_MAX_DIRLIGHTS > 0
     uniform int numDirectionalLight;
@@ -176,6 +184,8 @@ void main() {
 
 	vec4 skinnedNormal = skinMatrix * vec4( normal, 0.0 );
 
+    vNormal = (modelMatrix * skinnedNormal).xyz;
+
 	vec3 objectNormal = skinnedNormal.xyz;
 
 	vec3 transformedNormal = mat3(modelViewMatrix) * objectNormal; // transposeMat3(inverseMat3(mat3(modelViewMatrix)))
@@ -188,10 +198,8 @@ void main() {
 
 	geometry.position = mvPosition.xyz;
 	geometry.normal = transformedNormal;
-	/*geometry.viewDir = normalize( -mvPosition.xyz );*/
 
 	IncidentLight directLight;
-	vec3 directLightColor_Diffuse;
 	float dotNL;
 
 #if NUM_MAX_DIRLIGHTS > 0
@@ -224,9 +232,27 @@ void main() {
     }
 #endif
 
+    vec3 vGlobalLightFront = vec3(0.0);
+
+#if APPLY_GLOBAL_LIGHTS == 1
+    for ( int i = 0; i < NUM_MAX_GLOBALLIGHTS; i ++ ) {
+        if (i >= numGlobalLight) break;
+        getGlobalDirectLightIrradiance(i, geometry, directLight);
+        dotNL = dot(geometry.normal, directLight.direction);
+        vGlobalLightFront += saturate(dotNL) * directLight.color;
+    }
+
+    #if BLINK_GLOBAL_LIGHTS == 1
+        vGlobalLightFront *= mix(vec3Unit, vec3(0.1, 0.1, 0.1), rnd);
+    #endif
+
+    vLightFront += vGlobalLightFront;
+#endif
+
     if (numPointLight < 0) {
         float fcolor = max(0.0, 1.0 - 2.0 * max(0.0, ambientColor.r - _flags.w));
         vColor *= vec3(fcolor);
+        vColor += vGlobalLightFront;
     } else {
         vLightFront += ambientColor;
         vColor *= vLightFront;

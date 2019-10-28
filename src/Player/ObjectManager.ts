@@ -141,6 +141,8 @@ export class ObjectManager {
 
         (lst as Array<IMesh>).push(obj);
 
+        this.matMgr.createLightUniformsForObject(obj, true);
+
         if (addToScene) {
             this.sceneRender.add(obj);
         }
@@ -192,6 +194,8 @@ export class ObjectManager {
         }
 
         (lst as Array<IMesh>).push(obj);
+
+        this.matMgr.createLightUniformsForObject(obj, true);
 
         if (addToScene) {
             this.sceneRender.add(obj);
@@ -262,7 +266,7 @@ export class ObjectManager {
 
         (lst as Array<IMesh>).push(obj);
 
-        this.matMgr.createLightUniformsForObject(obj);
+        this.matMgr.createLightUniformsForObject(obj, false);
 
         if (addToScene) {
             this.sceneRender.add(obj);

@@ -24,15 +24,24 @@ export class MaterialManager {
         this.sceneData = gameData.sceneData;
     }
 
-    public createLightUniformsForObject(obj: IMesh): void {
+    public createLightUniformsForObject(obj: IMesh, onlyGlobalLights: boolean): void {
         const materials = obj.materials;
         for (let m = 0; m < materials.length; ++m) {
-            this.createLightUniformsForMaterial(materials[m]);
+            this.createLightUniformsForMaterial(materials[m], onlyGlobalLights);
         }
     }
 
-    public createLightUniformsForMaterial(material: IMaterial): void {
+    protected createLightUniformsForMaterial(material: IMaterial, onlyGlobalLights: boolean): void {
         const u = material.uniforms;
+
+        u.numGlobalLight                = { type: "i",   value: 0 };
+        u.globalLight_position          = { type: "fv",  value: [0, 0, 0]  };
+        u.globalLight_color             = { type: "fv",  value: [0, 0, 0]  };
+        u.globalLight_distance          = { type: "fv1", value: [0] };
+
+        if (onlyGlobalLights) {
+            return;
+        }
 
         u.numDirectionalLight           = { type: "i",   value: 0 };
         u.directionalLight_direction    = { type: "fv",  value: [0, 0, 0]  };
@@ -64,9 +73,7 @@ export class MaterialManager {
                 material.uniforms.ambientColor.value = roomData.ambientColor;
             }
 
-            if (data.type == 'moveable' && !data.internallyLit) {
-                this.setLightUniformsForMaterial(roomData, material, false);
-            }
+            this.setLightUniformsForMaterial(roomData, material, false, data.type != 'moveable' || data.internallyLit);
 
             if (!roomData.flickering) {      material.uniforms.flickerColor.value = [1, 1, 1]; }
             if (roomData.filledWithWater) {  material.uniforms.tintColor.value = [this.sceneData.waterColor.in.r, this.sceneData.waterColor.in.g, this.sceneData.waterColor.in.b]; }
@@ -75,16 +82,44 @@ export class MaterialManager {
         }
     }
 
-    public setLightUniformsForMaterial(room: any, material: IMaterial, noreset: boolean = false) {
+    protected setLightUniformsForMaterial(room: any, material: IMaterial, noreset: boolean = false, onlyGlobalLights: boolean = false) {
         const u = material.uniforms;
 
+        // global lights created by the Light behaviour
+        if (!noreset) {
+            u.numGlobalLight.value = 0;
+        }
+
+        let lights: Array<any> = room.globalLights;
+
+        if (lights && lights.length > 0) {
+            for (let l = 0; l < lights.length; ++l) {
+                const light = lights[l];
+
+                if (u.globalLight_position.value === undefined || (!noreset && u.numGlobalLight.value == 0))  { u.globalLight_position.value = []; }
+                if (u.globalLight_color.value === undefined || (!noreset && u.numGlobalLight.value == 0))     { u.globalLight_color.value = []; }
+                if (u.globalLight_distance.value === undefined || (!noreset && u.numGlobalLight.value == 0))  { u.globalLight_distance.value = []; }
+
+                u.globalLight_position.value = u.globalLight_position.value.concat([light.x, light.y, light.z]);
+                u.globalLight_color.value    = u.globalLight_color.value.concat(light.color);
+                u.globalLight_distance.value.push(light.fadeOut);
+
+                u.numGlobalLight.value++;
+            }
+        }
+
+        if (onlyGlobalLights) {
+            return;
+        }
+
+        // regular room lights
         if (!noreset) {
             u.numDirectionalLight.value = 0;
             u.numPointLight.value       = 0;
             u.numSpotLight.value        = 0;
         }
 
-        const lights: Array<any> = this._useAdditionalLights ? room.lightsExt : room.lights;
+        lights = this._useAdditionalLights ? room.lightsExt : room.lights;
         if (lights.length == 0) {
             material.uniformsUpdated();
             return;
@@ -143,10 +178,10 @@ export class MaterialManager {
             const materials = obj.materials;
 
             for (let m = 0; m < materials.length; ++m) {
-                const material = materials[m];
-                if (!material.uniforms || material.uniforms.numPointLight === undefined || material.uniforms.numPointLight < 0) { continue; }
+                const material = materials[m],
+                      onlyGlobalLights = !material.uniforms || material.uniforms.numPointLight === undefined || material.uniforms.numPointLight < 0;
 
-                this.setLightUniformsForMaterial(this.sceneData.objects['room' + data.roomIndex], material, false);
+                this.setLightUniformsForMaterial(this.sceneData.objects['room' + data.roomIndex], material, false, onlyGlobalLights);
             }
         }
     }

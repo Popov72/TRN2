@@ -1,10 +1,11 @@
 import {
-    Engine,
+    Engine as BEngine,
     ShaderMaterial,
     Vector3,
     Vector4
 } from "babylonjs";
 
+import Engine from "../../src/Proxy/Engine";
 import { IMaterial } from "../../src/Proxy/IMaterial";
 
 export default class Material implements IMaterial {
@@ -40,7 +41,7 @@ export default class Material implements IMaterial {
 
     set transparent(t: boolean) {
         this._material.options.needAlphaBlending = t;
-        this._material.alphaMode = Engine.ALPHA_SCREENMODE;
+        this._material.alphaMode = BEngine.ALPHA_SCREENMODE;
     }
 
     get vertexShader(): string {
@@ -51,6 +52,8 @@ export default class Material implements IMaterial {
 
     set vertexShader(vs: string) {
         const mat = this._material;
+
+        mat.options.defines = ["#define __ " + Engine.getShaderMgr().globalLightsInFragment];
 
         (mat as any)._shaderPath.vertex = vs;  //! todo better
     }
@@ -63,6 +66,8 @@ export default class Material implements IMaterial {
 
     set fragmentShader(fs: string) {
         const mat = this._material;
+
+        mat.options.defines = ["#define __ " + Engine.getShaderMgr().globalLightsInFragment];
 
         (mat as any)._shaderPath.fragment = fs;  //! todo better
     }

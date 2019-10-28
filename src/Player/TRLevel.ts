@@ -20,6 +20,7 @@ export class TRLevel {
     private objMgr: ObjectManager;
     private confMgr: ConfigManager;
     private shdMgr: ShaderManager;
+    private gameData: IGameData;
 
     constructor() {
         this.movObjID2Index = new Map();
@@ -28,9 +29,11 @@ export class TRLevel {
         this.confMgr = <any>null;
         this.shdMgr = <any>null;
         this.trlevel = <any>null;
+        this.gameData = <any>null;
     }
 
     public initialize(gameData: IGameData): void {
+        this.gameData = gameData;
         this.trlevel = gameData.sceneData.trlevel;
         this.sceneRender = gameData.sceneRender;
         this.sceneData = gameData.sceneData;
@@ -180,6 +183,8 @@ export class TRLevel {
                   info = room.info,
                   rdata = room.roomData,
                   data = this.sceneData.objects['room' + m];
+
+            this.gameData.matMgr.createLightUniformsForObject(this.gameData.objMgr.objectList['room'][m] as IMesh, true);
 
             // create portals
             const portals = data.portals, meshPortals: Array<IMesh> = [];

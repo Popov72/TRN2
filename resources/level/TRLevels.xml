@@ -527,10 +527,8 @@
                     <offset><x>0</x><y>30</y><z>-250</z></offset>
                 </behaviour>
                 <behaviour name="Light">
-                    <color><r>255</r><g>255</g><b>255</b></color>
-                    <range><max>2000</max><inner>500</inner></range>
-                    <blink>true</blink>
-                    <objects_only>no</objects_only>
+                    <color><r>205</r><g>205</g><b>205</b></color>
+                    <range><max>1500</max></range>
                 </behaviour>
                 <behaviour name="RemoveObject"/>
             </moveable>
