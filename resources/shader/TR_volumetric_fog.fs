@@ -29,10 +29,10 @@ void main() {
         texelColor = texelColor * (bumpColor + 0.25) * 1.25;
     	texelColor.a = a;
     }
-	gl_FragColor = texelColor;
+	glFragColor = texelColor;
 
-	if ( gl_FragColor.a < 0.5 ) discard;
-	gl_FragColor = gl_FragColor * vec4( vColor, 1.0 );
+	if ( glFragColor.a < 0.5 ) discard;
+	glFragColor = glFragColor * vec4( vColor, 1.0 );
 
     float volFogRadius2 = volFogRadius * volFogRadius;
     float distCamToPos = distance(vwPos.xyz, vwCamPos);
@@ -53,12 +53,12 @@ void main() {
         float distToCenter = length(cross(volFogCenter - vwCamPos, dir));
         float fr = distToCenter < volFogRadius ? smoothstep(0.0, 1.0, cos(distToCenter/volFogRadius*3.141592/2.0)) : 0.0;
         //float fr = distToCenter < volFogRadius ? smoothstep(0.0, 1.0, 1.0-distToCenter/volFogRadius) : 0.0;
-        gl_FragColor = mix(gl_FragColor, vec4(volFogColor, gl_FragColor.a), clamp(dist/(volFogRadius*2.0)*fr, 0.0, 1.0));
+        glFragColor = mix(glFragColor, vec4(volFogColor, glFragColor.a), clamp(dist/(volFogRadius*2.0)*fr, 0.0, 1.0));
     }
 
     if (useFog == 1) {
         float depth = gl_FragCoord.z / gl_FragCoord.w;
         float fogFactor = smoothstep( fogNear, fogFar, depth );
-        gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
+        glFragColor = mix( glFragColor, vec4( fogColor, glFragColor.w ), fogFactor );
     }
 }
