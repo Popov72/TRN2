@@ -67,20 +67,12 @@ const tokenSource = ["modelMatrix", "modelViewMatrix",  "projectionMatrix", "vie
 
 export default class Shader {
 
-    private static shaderMap: Map<string, string> = new Map();
-
     public static getShader(shaderType: string, name: string, code: string, uniformsUsed: Set<string>): string {
         code = Shader.parseShader(code, uniformsUsed);
 
-        let ssname = this.shaderMap.get(code);
+        Effect.ShadersStore[`${name}${shaderType}Shader`] = code;
 
-        if (ssname === undefined) {
-            ssname = `${name}`;
-            this.shaderMap.set(code, ssname);
-            Effect.ShadersStore[`${ssname}${shaderType}Shader`] = code;
-        }
-
-        return ssname;
+        return name;
     }
 
     protected static parseShader(code: string, uniformsUsed: Set<string>): string {
