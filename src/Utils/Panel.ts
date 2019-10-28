@@ -41,9 +41,11 @@ export class Panel {
 
     public showInfo(): void {
         const sceneData = this._parent.sceneData, camera = this._parent.camera, perfData = this._renderer.getPerfData([this._parent.sceneRender, this._parent.sceneBackground]);
+        const regularLights = this._parent.curRoom == -1 ? 0 : (this._parent.matMgr.useAdditionalLights ? sceneData.objects['room' + this._parent.curRoom].lightsExt.length : sceneData.objects['room' + this._parent.curRoom].lights.length);
+        const globalLights = this._parent.curRoom == -1 || !sceneData.objects['room' + this._parent.curRoom].globalLights ? 0 : sceneData.objects['room' + this._parent.curRoom].globalLights.length;
 
         this._elem.find('#currentroom').html(this._parent.curRoom.toString());
-        this._elem.find('#numlights').html(this._parent.curRoom != -1 ? (this._parent.matMgr.useAdditionalLights ? sceneData.objects['room' + this._parent.curRoom].lightsExt.length : sceneData.objects['room' + this._parent.curRoom].lights.length) : '');
+        this._elem.find('#numlights').html('' + regularLights + " - " + globalLights);
         this._elem.find('#camerapos').html(camera.position[0].toFixed(5) + ',' + camera.position[1].toFixed(5) + ',' + camera.position[2].toFixed(5));
         this._elem.find('#camerarot').html(camera.quaternion[0].toFixed(5) + ',' + camera.quaternion[1].toFixed(5) + ',' + camera.quaternion[2].toFixed(5) + ',' + camera.quaternion[3].toFixed(5));
         if (perfData) {
