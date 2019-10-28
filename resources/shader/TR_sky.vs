@@ -1,19 +1,20 @@
+#version 300 es
 precision highp float;
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-attribute vec3 position;
-attribute vec2 uv;
-attribute vec3 normal;
+uniform mat4 boneMatrices[64];
 
-attribute vec4 skinIndex;
-attribute vec4 skinWeight;
+in vec3 position;
+in vec2 uv;
+in vec3 normal;
+in vec4 skinIndex;
+in vec4 skinWeight;
 
-varying vec2 vUv;
+out vec2 vUv;
 
-uniform mat4 boneMatrices[ 64 ];
 mat4 getBoneMatrix( const in float i ) {
     mat4 bone = boneMatrices[ int(i) ];
     return bone;

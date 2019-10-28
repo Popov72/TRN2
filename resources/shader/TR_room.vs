@@ -1,4 +1,10 @@
+#version 300 es
 precision highp float;
+
+
+#define saturate(a) clamp( a, 0.0, 1.0 )
+
+const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
@@ -15,13 +21,18 @@ uniform vec4 offsetRepeat;
 uniform float rnd;
 uniform vec3 camPosition;
 
-attribute vec3 vertColor;
-attribute vec4 _flags;
+in vec3 position;
+in vec2 uv;
+in vec3 normal;
+in vec3 vertColor;
+in vec4 _flags;
 
-varying vec2 vUv;
-varying vec3 vColor;
-varying vec4 vwPos;
-varying vec3 vwCamPos;
+out vec2 vUv;
+out vec3 vColor;
+out vec4 vwPos;
+out vec3 vwCamPos;
+out vec3 vNormal;
+
 
 const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
 

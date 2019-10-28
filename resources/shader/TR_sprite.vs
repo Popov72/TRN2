@@ -1,13 +1,12 @@
+#version 300 es
 precision highp float;
+
+const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-attribute vec3 position;
-attribute vec2 uv;
-attribute vec3 normal;
-
 uniform vec3 tintColor;
 uniform vec3 flickerColor;
 uniform vec4 offsetRepeat;
@@ -16,12 +15,15 @@ uniform float rnd;
 uniform vec3 lighting;
 uniform vec3 camPosition;
 
-varying vec2 vUv;
-varying vec3 vColor;
-varying vec4 vwPos;
-varying vec3 vwCamPos;
+in vec3 position;
+in vec2 uv;
+in vec3 normal;
 
-const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
+out vec2 vUv;
+out vec3 vColor;
+out vec4 vwPos;
+out vec3 vwCamPos;
+out vec3 vNormal;
 
 void main() {
     vwCamPos = camPosition;
@@ -34,7 +36,11 @@ void main() {
 
     vwPos = modelMatrix * vec4(pos, 1.0);
 
+    vNormal = vec3(0.0, 0.0, 1.0);
+
 	vec4 mvPosition;
-	mvPosition = modelViewMatrix * vec4( pos, 1.0 );
+
+	mvPosition = modelViewMatrix * vec4(pos, 1.0);
+
 	gl_Position = projectionMatrix * mvPosition;
 }

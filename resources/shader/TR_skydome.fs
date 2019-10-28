@@ -1,13 +1,19 @@
+#version 300 es
 precision highp float;
 
 uniform sampler2D map;
 
-varying vec3 vColor;
-varying vec2 vUv;
+in vec3 vColor;
+in vec2 vUv;
+
+out vec4 glFragColor;
 
 void main() {
-	vec4 texelColor = texture2D( map, vUv );
-	gl_FragColor = texelColor;
-	if ( gl_FragColor.a < 0.5 ) discard;
-	gl_FragColor = gl_FragColor * vec4( vColor, 1.0 );
+	vec4 texelColor = texture(map, vUv);
+
+	glFragColor = texelColor;
+
+	if (glFragColor.a < 0.5) discard;
+
+	glFragColor = glFragColor * vec4(vColor, 1.0);
 }

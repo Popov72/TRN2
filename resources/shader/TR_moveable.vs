@@ -1,3 +1,4 @@
+#version 300 es
 precision highp float;
 
 uniform mat4 modelMatrix;
@@ -24,6 +25,13 @@ attribute vec3 normal;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
+const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
+
+uniform mat4 modelMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
 uniform vec3 	tintColor;
 uniform vec3 	flickerColor;
 uniform float 	curTime;
@@ -33,15 +41,20 @@ uniform float 	lighting; /* not used */
 uniform vec3    camPosition;
 
 uniform vec3 	ambientColor;
+uniform mat4    boneMatrices[64];
 
-attribute vec4 skinIndex;
-attribute vec4 skinWeight;
-attribute vec4 _flags;
+in vec3 position;
+in vec2 uv;
+in vec3 normal;
+in vec4 skinIndex;
+in vec4 skinWeight;
+in vec4 _flags;
 
-varying vec2 vUv;
-varying vec3 vColor;
-varying vec4 vwPos;
-varying vec3 vwCamPos;
+out vec2 vUv;
+out vec3 vColor;
+out vec4 vwPos;
+out vec3 vwCamPos;
+out vec3 vNormal;
 
 const vec3 vec3Unit = vec3(1.0, 1.0, 1.0);
 
@@ -96,7 +109,7 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
         #if TR_VERSION < 4
             directLight.color *= min(pointLight_distance[pointLight] / lightDistance, 1.0);
         #else
-            directLight.color *= punctualLightIntensityToIrradianceFactor( lightDistance, pointLight_distance[pointLight], 1.0/*pointLight.decay*/ );
+            directLight.color *= punctualLightIntensityToIrradianceFactor( lightDistance, pointLight_distance[pointLight], 1.0 );
         #endif
     }
 #endif

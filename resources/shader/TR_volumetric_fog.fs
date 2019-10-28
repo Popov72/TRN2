@@ -1,4 +1,9 @@
+#version 300 es
 precision highp float;
+
+const vec3  fogColor = vec3(0.0, 0.0, 0.0);
+const float fogNear = 14000.0;
+const float fogFar = 21000.0;
 
 uniform int useFog;
 uniform sampler2D map;
@@ -9,22 +14,17 @@ uniform vec3 volFogCenter;
 uniform float volFogRadius;
 uniform vec3 volFogColor;
 
-varying vec3 vColor;
-varying vec2 vUv;
-varying vec4 vwPos;
-varying vec3 vwCamPos;
+in vec3 vColor;
+in vec2 vUv;
+in vec4 vwPos;
+in vec3 vwCamPos;
 
-const vec3  fogColor = vec3(0.0, 0.0, 0.0);
-const float fogNear = 14000.0;
-const float fogFar = 21000.0;
-
-//const vec3 volFogCenter = vec3(36220.0, 5170.0, -45540.0);
-//const float volFogRadius = 4000.0;
+out vec4 glFragColor;
 
 void main() {
-	vec4 texelColor = texture2D( map, vUv );
+	vec4 texelColor = texture( map, vUv );
     if (offsetBump.w == 1.0) {
-        vec4 bumpColor = texture2D( mapBump, vUv + offsetBump.xy);
+        vec4 bumpColor = texture( mapBump, vUv + offsetBump.xy);
         float a = texelColor.a;
         texelColor = texelColor * (bumpColor + 0.25) * 1.25;
     	texelColor.a = a;

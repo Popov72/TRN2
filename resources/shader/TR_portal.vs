@@ -1,17 +1,18 @@
+#version 300 es
 precision highp float;
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-attribute vec3 position;
-attribute vec2 uv;
-attribute vec3 normal;
 
-attribute vec3 vertColor;
+in vec3 position;
+in vec2 uv;
+in vec3 normal;
+in vec3 vertColor;
 
-varying vec2 vUv;
-varying vec3 vColor;
+out vec2 vUv;
+out vec3 vColor;
 
 void main() {
 	vColor = vertColor;
