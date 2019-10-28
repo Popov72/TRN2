@@ -29,16 +29,24 @@ export class ShaderManager {
         return this.getShader(shaderType.vertex, name);
     }
 
-    public getFragmentShader(name: string): Promise<string> {
-        return this.getShader(shaderType.fragment, name);
+    public getShader(ptype: shaderType, name: string, forceReload: boolean = false): Promise<string> {
+        return this._getFile(name + (ptype == shaderType.vertex ? '.vs' : '.fs'), forceReload);
+    }
+
+    public getVertexShader(name: string, forceReload: boolean = false): Promise<string> {
+        return this.getShader(shaderType.vertex, name, forceReload);
+    }
+
+    public getFragmentShader(name: string, forceReload: boolean = false): Promise<string> {
+        return this.getShader(shaderType.fragment, name, forceReload);
     }
 
     public setTRLevel(level: RawLevel): void {
         this._level = level;
     }
 
-    protected _getFile(fname: string) {
-        if (typeof this._fileCache[fname] != 'undefined') {
+    protected _getFile(fname: string, forceReload: boolean = false) {
+        if (!forceReload && typeof this._fileCache[fname] != 'undefined') {
             return this._fileCache[fname];
         }
         this._fileCache[fname] = this._loadFile(fname);

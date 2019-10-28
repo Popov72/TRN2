@@ -15,16 +15,16 @@ export class ShaderManager extends ShaderManagerBase {
         this._uniforms = new Map();
     }
 
-    public getShader(ptype: shaderType, name: string): Promise<string> {
-        return this._getFile2(name, ptype);
+    public getShader(ptype: shaderType, name: string, forceReload: boolean = false): Promise<string> {
+        return this._getFile2(name, ptype, forceReload);
     }
 
-    public getVertexShader(name: string): Promise<string> {
-        return this.getShader(shaderType.vertex, name);
+    public getVertexShader(name: string, forceReload: boolean = false): Promise<string> {
+        return this.getShader(shaderType.vertex, name, forceReload);
     }
 
-    public getFragmentShader(name: string): Promise<string> {
-        return this.getShader(shaderType.fragment, name);
+    public getFragmentShader(name: string, forceReload: boolean = false): Promise<string> {
+        return this.getShader(shaderType.fragment, name, forceReload);
     }
 
     public getUniforms(name: string): Set<string> | undefined {
@@ -39,8 +39,8 @@ export class ShaderManager extends ShaderManagerBase {
         return this.getUniforms(name + '.fs');
     }
 
-    protected _getFile2(fname: string, ptype: string): Promise<string> {
-        const promiseCode = this._loadFile(fname + (ptype == shaderType.vertex ? '.vs' : '.fs'));
+    protected _getFile2(fname: string, ptype: string, forceReload: boolean = false): Promise<string> {
+        const promiseCode = this._getFile(fname + (ptype == shaderType.vertex ? '.vs' : '.fs'), forceReload);
 
         return promiseCode.then((code) => {
             if (code === "") {
