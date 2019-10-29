@@ -1,5 +1,7 @@
 import Engine from "../Proxy/Engine";
-import { INode } from "../Proxy/INode";
+import { IMesh } from "../Proxy/IMesh";
+import { INode, Position, Quaternion } from "../Proxy/INode";
+import { Basis } from "./Basis";
 
 export enum BONE {
     HIPS    = 0,
@@ -89,6 +91,21 @@ export class Skeleton {
 
     get boneMatrices(): Float32Array {
         return this._boneMatrices;
+    }
+
+    public getBoneDecomposition(bone: number, parentMesh?: IMesh): Basis {
+        const _pos: Position = [0, 0, 0], _quat: Quaternion = [0, 0, 0, 0];
+
+        this.bones[bone].decomposeMatrixWorld(_pos, _quat);
+
+        if (parentMesh === undefined) {
+            return new Basis(_pos, _quat);
+        }
+
+        const meshBasis = new Basis(parentMesh.position, parentMesh.quaternion),
+              boneBasis = new Basis(_pos, _quat);
+
+        return meshBasis.multBasis(boneBasis);
     }
 
     public updateBoneMatrices(): void {

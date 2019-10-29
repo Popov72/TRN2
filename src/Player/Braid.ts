@@ -4,13 +4,13 @@
 *** All credits to XProger for this!
 ***
 */
-
 import { IMesh } from "../Proxy/IMesh";
 import { Position, Quaternion } from "../Proxy/INode";
 
 import IGameData from "./IGameData";
 import { ObjectID } from "../Constants";
 import { Skeleton, BONE, MASK } from "./Skeleton";
+import { Basis } from "./Basis";
 
 declare var glMatrix: any;
 
@@ -23,61 +23,6 @@ interface Joint {
     posPrev:    Position;
     pos:        Position;
     length:     number;
-}
-
-class Basis {
-
-    public rot: Quaternion;
-    public pos: Position;
-
-    constructor(pos?: Position, quat?: Quaternion) {
-        this.pos = pos ? pos : [0, 0, 0];
-        this.rot = quat ? quat : [0, 0, 0, 1];
-    }
-
-    public identity(): void {
-        this.rot = [0, 0, 0, 1];
-        this.pos = [0, 0, 0];
-    }
-
-    public multBasis(basis: Basis): Basis {
-        const q: Quaternion = [0, 0, 0, 1], p: Position = [0, 0, 0];
-
-        glMatrix.quat.mul(q, this.rot, basis.rot);
-        glMatrix.vec3.transformQuat(p, basis.pos, this.rot);
-
-        p[0] += this.pos[0];
-        p[1] += this.pos[1];
-        p[2] += this.pos[2];
-
-        return new Basis(p, q);
-    }
-
-    public mult(v: Position): Position {
-        const p: Position = [0, 0, 0];
-
-        glMatrix.vec3.transformQuat(p, v, this.rot);
-
-        p[0] += this.pos[0];
-        p[1] += this.pos[1];
-        p[2] += this.pos[2];
-
-        return p;
-    }
-
-    public translate(v: Position): void {
-        const p: Position = [0, 0, 0];
-
-        glMatrix.vec3.transformQuat(p, v, this.rot);
-
-        this.pos[0] += p[0];
-        this.pos[1] += p[1];
-        this.pos[2] += p[2];
-    }
-
-    public rotate(q: Quaternion): void {
-        glMatrix.quat.mul(this.rot, this.rot, q);
-    }
 }
 
 export class Braid {
@@ -176,14 +121,7 @@ export class Braid {
             return this._headBasis;
         }
 
-        const pos: Position = [0, 0, 0], quat: Quaternion = [0, 0, 0, 0];
-
-        this._laraSkeleton.bones[BONE.HEAD].decomposeMatrixWorld(pos, quat);
-
-        const laraBasis = new Basis(this._lara.position, this._lara.quaternion),
-              boneBasis = new Basis(pos, quat);
-
-        this._headBasis = laraBasis.multBasis(boneBasis);
+        this._headBasis = this._laraSkeleton.getBoneDecomposition(BONE.HEAD, this._lara);
         this._curFrame = this._gameData.curFrame;
 
         return this._headBasis;
