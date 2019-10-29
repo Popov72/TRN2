@@ -63,14 +63,14 @@ export class AnimatedTexture extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    public frameStarted(curTime: number, delta: number) {
+    public onFrameStarted(curTime: number, delta: number) {
         for (let i = 0; i < this.animatedTextures.length; ++i) {
             const animTexture = this.animatedTextures[i];
             animTexture.progressor.update(delta);
         }
     }
 
-    public frameEnded(curTime: number, delta: number) {
+    public onFrameEnded(curTime: number, delta: number) {
         for (let i = 0; i < this.matList.length; ++i) {
             const material = this.matList[i],
                   userData = material.userData,
@@ -87,6 +87,4 @@ export class AnimatedTexture extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(AnimatedTexture.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new AnimatedTexture(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(AnimatedTexture);

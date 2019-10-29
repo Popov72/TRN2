@@ -33,6 +33,4 @@ export class MakeLayeredMesh extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(MakeLayeredMesh.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new MakeLayeredMesh(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(MakeLayeredMesh);

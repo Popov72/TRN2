@@ -33,6 +33,4 @@ export class Zbias extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Zbias.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Zbias(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Zbias);

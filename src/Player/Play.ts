@@ -254,7 +254,7 @@ export default class Play {
 
         this.gameData.fps = delta ? 1 / delta : 60;
 
-        this.gameData.bhvMgr.frameStarted(curTime, delta);
+        this.gameData.bhvMgr.onFrameStarted(curTime, delta);
 
         this.gameData.anmMgr.animateObjects(delta);
 
@@ -262,7 +262,7 @@ export default class Play {
 
         this.gameData.objMgr.updateObjects(curTime);
 
-        this.gameData.bhvMgr.frameEnded(curTime, delta);
+        this.gameData.bhvMgr.onFrameEnded(curTime, delta);
 
         this.render();
 

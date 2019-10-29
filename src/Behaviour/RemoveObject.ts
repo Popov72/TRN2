@@ -29,6 +29,4 @@ export class RemoveObject extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(RemoveObject.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new RemoveObject(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(RemoveObject);

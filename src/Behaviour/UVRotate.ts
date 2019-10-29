@@ -49,7 +49,7 @@ export class UVRotate extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    public frameEnded(curTime: number, delta: number) {
+    public onFrameEnded(curTime: number, delta: number) {
         for (let i = 0; i < this.matList.length; ++i) {
             let material = this.matList[i],
                 userData = material.userData,
@@ -70,6 +70,4 @@ export class UVRotate extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(UVRotate.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new UVRotate(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(UVRotate);

@@ -25,7 +25,7 @@ export abstract class Behaviour {
 
     public abstract init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null];
 
-    frameStarted?(curTime: number, delta: number): void;
-    frameEnded?(curTime: number, delta: number): void;
+    onFrameStarted?(curTime: number, delta: number): void;
+    onFrameEnded?(curTime: number, delta: number): void;
 
 }

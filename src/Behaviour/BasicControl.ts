@@ -120,7 +120,7 @@ export class BasicControl extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    frameStarted(curTime: number, delta: number) {
+    onFrameStarted(curTime: number, delta: number) {
 
         if (this.object === null) { return; }
 
@@ -367,6 +367,4 @@ export class BasicControl extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(BasicControl.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new BasicControl(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(BasicControl);

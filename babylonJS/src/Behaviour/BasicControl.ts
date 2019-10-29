@@ -34,6 +34,4 @@ export class BasicControl extends BasicControlBase {
     }
 }
 
-BehaviourManager.registerFactory(BasicControl.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new BasicControl(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(BasicControl);

@@ -62,12 +62,10 @@ export class Sky extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, [promiseShaders]];
     }
 
-    public frameEnded(): void {
+    public onFrameEnded(): void {
         this.objSky.setPosition(this.camera.position);
     }
 
 }
 
-BehaviourManager.registerFactory(Sky.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Sky(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Sky);

@@ -42,7 +42,7 @@ export class Skydome extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, [promise]];
     }
 
-    public frameEnded(curTime: number, delta: number): void {
+    public onFrameEnded(curTime: number, delta: number): void {
         this.objSky.setPosition(this.camera.position);
 
         const material = this.objSky.materials[0];
@@ -94,6 +94,4 @@ export class Skydome extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Skydome.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Skydome(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Skydome);

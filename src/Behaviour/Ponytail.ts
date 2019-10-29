@@ -36,7 +36,7 @@ export class Ponytail extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    public frameEnded(curTime: number, delta: number): void {
+    public onFrameEnded(curTime: number, delta: number): void {
         this._braids.forEach((b) => b.update(delta));
     }
 
@@ -50,6 +50,4 @@ export class Ponytail extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Ponytail.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Ponytail(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Ponytail);

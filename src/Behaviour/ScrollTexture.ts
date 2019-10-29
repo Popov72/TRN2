@@ -27,7 +27,7 @@ export class ScrollTexture extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    public frameEnded(curTime: number, delta: number): void {
+    public onFrameEnded(curTime: number, delta: number): void {
         for (let i = 0; i < this.lstObjs.length; ++i) {
             const obj = this.lstObjs[i],
                   materials = obj.materials;
@@ -48,6 +48,4 @@ export class ScrollTexture extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(ScrollTexture.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new ScrollTexture(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(ScrollTexture);

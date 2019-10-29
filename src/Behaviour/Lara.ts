@@ -162,6 +162,4 @@ export class Lara extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Lara.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Lara(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Lara);

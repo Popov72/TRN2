@@ -54,6 +54,4 @@ export class Light extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Light.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Light(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Light);

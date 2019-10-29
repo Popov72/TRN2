@@ -23,7 +23,7 @@ export class Sprite extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    public frameEnded(curTime: number, delta: number): void {
+    public onFrameEnded(curTime: number, delta: number): void {
         // make sure the object is always facing the camera
         const cameraRot = this.camera.quaternion;
 
@@ -42,6 +42,4 @@ export class Sprite extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Sprite.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Sprite(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Sprite);

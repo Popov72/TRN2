@@ -10,7 +10,7 @@ type factory = (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: 
 
 export class BehaviourManager {
 
-    private static factories: Map<string, factory> = new Map();
+    private static factories: Map<string, typeof Behaviour> = new Map();
 
     private behaviours: Array<Behaviour>;
     private behavioursByName: Map<string, Array<Behaviour>>;
@@ -18,8 +18,8 @@ export class BehaviourManager {
     private confMgr: ConfigManager;
     private objMgr: ObjectManager;
 
-    public static registerFactory(name: string, func: factory): void {
-        this.factories.set(name, func);
+    public static registerFactory(clss: typeof Behaviour): void {
+        this.factories.set(clss.name, clss);
     }
 
     constructor() {
@@ -70,16 +70,28 @@ export class BehaviourManager {
         }
     }
 
+    public static callStatic(funcname: string, params: Array<any>) {
+        for (const [name, clss] of BehaviourManager.factories) {
+            if ((clss as any)[funcname]) {
+                (clss as any)[funcname].apply(null, params);
+            }
+        }
+    }
+
+    public static onEngineInitialized(gameData: IGameData): void {
+        BehaviourManager.callStatic("onEngineInitialized", [gameData]);
+    }
+
     public onBeforeRenderLoop(): void {
         this.callFunction('onBeforeRenderLoop', []);
     }
 
-    public frameStarted(curTime: number, delta: number) {
-        this.callFunction('frameStarted', [curTime, delta]);
+    public onFrameStarted(curTime: number, delta: number) {
+        this.callFunction('onFrameStarted', [curTime, delta]);
     }
 
-    public frameEnded(curTime: number, delta: number) {
-        this.callFunction('frameEnded', [curTime, delta]);
+    public onFrameEnded(curTime: number, delta: number) {
+        this.callFunction('onFrameEnded', [curTime, delta]);
     }
 
     public getBehaviour(name: string): Array<Behaviour> | undefined {
@@ -114,7 +126,7 @@ export class BehaviourManager {
             throw `Can't find a factory to create a behaviour with name ${name}`;
         }
 
-        const obhv = factory(params, this.gameData, objectid, objecttype);
+        const obhv = new (factory as any)(params, this.gameData, objectid, objecttype);
 
         const [retCode, promises] = obhv.init(lstObjs);
 

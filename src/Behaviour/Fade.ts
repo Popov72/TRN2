@@ -38,7 +38,7 @@ export class Fade extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
-    public frameStarted(curTime: number, delta: number): void {
+    public onFrameStarted(curTime: number, delta: number): void {
         if (this.startTime < 0) {
             this.startTime = curTime;
         }
@@ -82,6 +82,4 @@ export class Fade extends Behaviour {
 
 }
 
-BehaviourManager.registerFactory(Fade.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new Fade(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(Fade);

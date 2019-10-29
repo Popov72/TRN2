@@ -243,7 +243,7 @@ export class CutScene extends Behaviour {
         this.bhvCtrl = (this.bhvMgr.getBehaviour("BasicControl") as Array<Behaviour>)[0] as BasicControl;
     }
 
-    public frameStarted(curTime: number, delta: number): void {
+    public onFrameStarted(curTime: number, delta: number): void {
         if (this.cutSceneEnded) {
             return;
         }
@@ -312,7 +312,7 @@ export class CutScene extends Behaviour {
         }
     }
 
-    public frameEnded(curTime: number, delta: number): void {
+    public onFrameEnded(curTime: number, delta: number): void {
         // Update object lights (only in TR4 cutscenes)
         if (this.cutscene.index <= 0) {
             return;
@@ -337,6 +337,4 @@ export class CutScene extends Behaviour {
     }
 }
 
-BehaviourManager.registerFactory(CutScene.name,
-    (nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) => new CutScene(nbhv, gameData, objectid, objecttype)
-);
+BehaviourManager.registerFactory(CutScene);
