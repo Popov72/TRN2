@@ -30,6 +30,13 @@ export default class MeshBuilder implements IMeshBuilder {
         return this._skinIndices;
     }
 
+    get vertices(): Array<number> {
+        const geometry = this._mesh.geometry as BufferGeometry,
+              positions = Array.from(geometry.attributes.position.array);
+
+        return positions;
+    }
+
     public createFaces(faces: Array<any>, matIndex: number): void {
         const geometry = this._mesh.geometry as BufferGeometry,
               index = Array.from(geometry.index.array),

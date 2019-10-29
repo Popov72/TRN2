@@ -7,6 +7,7 @@ export interface IMeshBuilder {
     mesh: IMesh;
 
     skinIndicesList: Array<indexList>;
+    vertices: Array<number>;
 
     setIndex(index: indexList): void;
 

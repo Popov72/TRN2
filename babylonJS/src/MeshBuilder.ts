@@ -37,6 +37,13 @@ export default class MeshBuilder implements IMeshBuilder {
         return this._skinIndices;
     }
 
+    get vertices(): Array<number> {
+        const geometry = this._mesh.geometry as Geometry,
+              vertices = geometry.getVerticesData("position", false, false);
+
+        return Array.isArray(vertices) ? vertices : Array.from(vertices as Float32Array);
+    }
+
     public setIndex(index: indexList, dontUpdateSubMeshes?: boolean): void {
         const geometry = this._mesh.geometry as Geometry;
 
