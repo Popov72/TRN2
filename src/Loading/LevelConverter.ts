@@ -925,7 +925,7 @@ export default class LevelConverter {
             for (let n = 0; n < normals.length / 3; ++n) {
                 let x = normals[n * 3 + 0], y = normals[n * 3 + 1], z = normals[n * 3 + 2];
                 let nrm = Math.sqrt(x * x + y * y + z * z);
-                if (x == 0 && y == 0 && z == 0) { x = 1; y = z = 0; nrm = 1; } // it's possible some vertices are not used in the object, so normal==0 at this point - put a (fake) valid normal
+                if (x == 0 && y == 0 && z == 0) { x = 0; y = 1; z = 0; nrm = 1; } // it's possible some vertices are not used in the object, so normal==0 at this point - put a (fake) valid normal
                 normals[n * 3 + 0] = x / nrm;
                 normals[n * 3 + 1] = y / nrm;
                 normals[n * 3 + 2] = z / nrm;
