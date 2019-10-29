@@ -164,6 +164,8 @@ export default class Play {
             this.gameData.matMgr.setUniformsFromRoom(obj, data.roomIndex);
         });
 
+        BehaviourManager.onEngineInitialized(this.gameData);
+
         return Promise.resolve();
     }
 
