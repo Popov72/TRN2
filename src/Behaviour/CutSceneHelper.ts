@@ -93,13 +93,29 @@ export default class CutSceneHelper {
             }
 
             case 4: {
-                // Handle the pistols visibility during the fight with the scorpion
+                // Handle the pistols visibility + fire during the fight with the scorpion
                 const lara = actorMoveables[0],
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
                 track1.setCommands([
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [12,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [55,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [70,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [80,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [100,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [110,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [120,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [130,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [140,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [150,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [160,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [170,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [200,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [210,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [220,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [230,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
                 ], 0);

@@ -8,7 +8,7 @@ import { Commands } from "./Commands";
 import { ObjectID } from "../Constants";
 import { Ponytail } from "../Behaviour/Ponytail";
 import { LAYER } from "../Player/Layer";
-import { MASK } from "../Player/Skeleton";
+import { MASK, BONE } from "../Player/Skeleton";
 
 export class AnimationManager {
 
@@ -193,6 +193,16 @@ export class AnimationManager {
 
                             layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
 
+                            break;
+                        }
+
+                        case Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN: {
+                            this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_L3 });
+                            break;
+                        }
+
+                        case Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN: {
+                            this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_R3 });
                             break;
                         }
 

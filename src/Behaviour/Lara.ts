@@ -9,7 +9,7 @@ import { ConfigManager } from "../ConfigManager";
 import { AnimationManager } from "../Animation/AnimationManager";
 import { ObjectID } from "../Constants";
 import { Layer, LAYER } from "../Player/Layer";
-import { MASK, BONE } from "../Player/Skeleton";
+import { Skeleton, MASK, BONE } from "../Player/Skeleton";
 
 declare var glMatrix: any;
 
@@ -158,6 +158,10 @@ export class Lara extends Behaviour {
 
     public getObject(): IMesh {
         return this.lara;
+    }
+
+    public getSkeleton(): Skeleton {
+        return this.sceneData.objects[this.lara.name].skeleton;
     }
 
 }

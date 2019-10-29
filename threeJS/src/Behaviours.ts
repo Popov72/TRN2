@@ -6,6 +6,7 @@ import "../../src/Behaviour/FadeUniformColor";
 import "../../src/Behaviour/Lara";
 import "../../src/Behaviour/Light";
 import "../../src/Behaviour/MakeLayeredMesh";
+import "../../src/Behaviour/MuzzleFlash";
 import "../../src/Behaviour/Ponytail";
 import "../../src/Behaviour/RemoveObject";
 import "../../src/Behaviour/ScrollTexture";
