@@ -8,6 +8,7 @@ import { TRLevel } from "./TRLevel";
 import { Panel } from "../Utils/Panel";
 import { ConfigManager } from "../ConfigManager";
 import { ShaderManager } from "../ShaderManager";
+import { SystemLight } from "./SystemLight";
 
 export default interface IGameData {
     "curFrame":         number;
@@ -25,6 +26,7 @@ export default interface IGameData {
     "anmMgr":           AnimationManager;
     "trlvl":            TRLevel;
     "shdMgr":           ShaderManager;
+    "sysLight":         SystemLight;
 
     "curRoom":          number;
 

@@ -2,14 +2,17 @@ import IGameData from "../Player/IGameData";
 import { IMesh } from "../Proxy/IMesh";
 import { IMaterial } from "../Proxy/IMaterial";
 import { MeshList } from "./ObjectManager";
+import { SystemLight } from "./SystemLight";
 
 export class MaterialManager {
 
     protected _useAdditionalLights: boolean;
     protected sceneData: any;
+    protected _sysLight: SystemLight;
 
     constructor() {
         this._useAdditionalLights = false;
+        this._sysLight = <any>null;
     }
 
     get useAdditionalLights(): boolean {
@@ -22,6 +25,7 @@ export class MaterialManager {
 
     public initialize(gameData: IGameData): void {
         this.sceneData = gameData.sceneData;
+        this._sysLight = gameData.sysLight;
     }
 
     public createLightUniformsForObject(obj: IMesh, onlyGlobalLights: boolean): void {
@@ -33,6 +37,13 @@ export class MaterialManager {
 
     protected createLightUniformsForMaterial(material: IMaterial, onlyGlobalLights: boolean): void {
         const u = material.uniforms;
+
+        u.numSystemLight                = { type: "i",   value: 0 };
+        u.systemLight_position          = { type: "fv",  value: [0, 0, 0]  };
+        u.systemLight_color             = { type: "fv",  value: [0, 0, 0]  };
+        u.systemLight_distance          = { type: "fv1", value: [0] };
+
+        this._sysLight.bindToUniforms(u);
 
         u.numGlobalLight                = { type: "i",   value: 0 };
         u.globalLight_position          = { type: "fv",  value: [0, 0, 0]  };

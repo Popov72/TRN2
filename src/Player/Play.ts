@@ -14,6 +14,7 @@ import { ObjectManager } from "./ObjectManager";
 import { MaterialManager } from "./MaterialManager";
 import { TRLevel } from "./TRLevel";
 import { Panel } from "../Utils/Panel";
+import { SystemLight } from "./SystemLight";
 
 declare var Stats: any;
 
@@ -46,6 +47,7 @@ export default class Play {
             "trlvl":  <any>null,
             "anmMgr": <any>null,
             "shdMgr": <any>null,
+            "sysLight": <any>null,
 
             "startTime": -1,
             "lastTime": -1,
@@ -93,19 +95,14 @@ export default class Play {
             console.log("Can't find camera!");
         }
 
-        //camera.setPosition([70469,7070,-39321]);
-        //camera.setQuaternion([0.18415,-0.58809,-0.13972,-0.77506]);
-
-        camera.setPosition([32751, -827, -55979]);
-        camera.setQuaternion([0.20377, 0.22280, 0.04768, -0.95214]);
-
-        this.gameData.confMgr = this.gameData.sceneData.trlevel.confMgr;
-        this.gameData.bhvMgr  = new BehaviourManager();
-        this.gameData.matMgr  = new MaterialManager();
-        this.gameData.objMgr  = new ObjectManager();
-        this.gameData.trlvl   = new TRLevel();
-        this.gameData.anmMgr  = new AnimationManager();
-        this.gameData.shdMgr  = Engine.getShaderMgr();
+        this.gameData.confMgr   = this.gameData.sceneData.trlevel.confMgr;
+        this.gameData.bhvMgr    = new BehaviourManager();
+        this.gameData.matMgr    = new MaterialManager();
+        this.gameData.objMgr    = new ObjectManager();
+        this.gameData.trlvl     = new TRLevel();
+        this.gameData.anmMgr    = new AnimationManager();
+        this.gameData.shdMgr    = Engine.getShaderMgr();
+        this.gameData.sysLight  = new SystemLight();
 
         this.gameData.bhvMgr.initialize(this.gameData);
         this.gameData.matMgr.initialize(this.gameData);

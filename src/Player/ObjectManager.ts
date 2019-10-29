@@ -378,12 +378,13 @@ export class ObjectManager {
                     material.uniforms.tintColor.value = this.gameData.globalTintColor;
                 }
 
+                material.uniforms.numSystemLight.value = this.gameData.sysLight.numLights;
                 material.uniforms.curTime.value = curTime;
                 material.uniforms.rnd.value = this.gameData.quantumRnd;
                 material.uniforms.flickerColor.value = room && room.flickering ? this.gameData.flickerColor : this.gameData.unitVec3;
                 material.uniforms.camPosition.value = camPos;
 
-                material.uniformsUpdated(["tintColor", "curTime", "rnd", "flickerColor", "camPosition"]);
+                material.uniformsUpdated(["tintColor", "numSystemLight", "curTime", "rnd", "flickerColor", "camPosition"]);
             }
         });
     }

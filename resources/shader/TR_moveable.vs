@@ -6,6 +6,7 @@ precision highp float;
 #define NUM_MAX_GLOBALLIGHTS 	6
 #define APPLY_GLOBAL_LIGHTS     ##global_lights_in_vertex##
 #define BLINK_GLOBAL_LIGHTS     1
+#define NUM_MAX_SYSTEMLIGHTS 	3
 
 #define NUM_MAX_POINTLIGHTS 	20
 
@@ -37,6 +38,11 @@ uniform float 	lighting; /* not used */
 uniform vec3    camPosition;
 uniform vec3 	ambientColor;
 uniform mat4    boneMatrices[64];
+
+uniform highp int numSystemLight;
+uniform vec3 systemLight_position[NUM_MAX_SYSTEMLIGHTS];
+uniform vec3 systemLight_color[NUM_MAX_SYSTEMLIGHTS];
+uniform float systemLight_distance[NUM_MAX_SYSTEMLIGHTS];
 
 in vec3 position;
 in vec2 uv;
@@ -77,6 +83,14 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
 	} else {
 	    return 1.0;
     }
+}
+
+void getSystemDirectLightIrradiance(in int systemLight, const in GeometricContext geometry, out IncidentLight directLight) {
+    vec3 lVector = (viewMatrix*vec4(systemLight_position[systemLight], 1.0)).xyz - geometry.position;
+    directLight.direction = normalize(lVector);
+    float lightDistance = length(lVector);
+    directLight.color = systemLight_color[systemLight];
+    directLight.color *= punctualLightIntensityToIrradianceFactor(lightDistance, systemLight_distance[systemLight], 1.0);
 }
 
 #if APPLY_GLOBAL_LIGHTS == 1
@@ -232,9 +246,16 @@ void main() {
     }
 #endif
 
-    vec3 vGlobalLightFront = vec3(0.0);
+    for (int i = 0; i < NUM_MAX_SYSTEMLIGHTS; i++) {
+        if (i >= numSystemLight) break;
+        getSystemDirectLightIrradiance(i, geometry, directLight);
+        float dotNL = dot(geometry.normal, directLight.direction);
+        vLightFront += saturate(dotNL) * directLight.color;
+    }
 
 #if APPLY_GLOBAL_LIGHTS == 1
+    vec3 vGlobalLightFront = vec3(0.0);
+
     for ( int i = 0; i < NUM_MAX_GLOBALLIGHTS; i ++ ) {
         if (i >= numGlobalLight) break;
         getGlobalDirectLightIrradiance(i, geometry, directLight);
@@ -252,7 +273,6 @@ void main() {
     if (numPointLight < 0) {
         float fcolor = max(0.0, 1.0 - 2.0 * max(0.0, ambientColor.r - _flags.w));
         vColor *= vec3(fcolor);
-        vColor += vGlobalLightFront;
     } else {
         vLightFront += ambientColor;
         vColor *= vLightFront;
