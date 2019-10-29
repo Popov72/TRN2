@@ -8,6 +8,7 @@ import "../../src/Behaviour/Light";
 import "../../src/Behaviour/MakeLayeredMesh";
 import "../../src/Behaviour/MuzzleFlash";
 import "../../src/Behaviour/Ponytail";
+import "../../src/Behaviour/PulsingLight";
 import "../../src/Behaviour/RemoveObject";
 import "../../src/Behaviour/ScrollTexture";
 import "../../src/Behaviour/SetAnimation";

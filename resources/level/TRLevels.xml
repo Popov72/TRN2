@@ -693,6 +693,12 @@
                 <behaviour name="Sky">
                     <hide>true</hide>
                 </behaviour>
+                <behaviour name="PulsingLight" objectid="394" cutsceneonly="true">
+                    <objindex>1</objindex>
+                    <color><r>215</r><g>215</g><b>255</b></color>
+                    <range><max>3000</max></range>
+                    <frequency>0.8</frequency>
+                </behaviour>
 				<behaviour name="RemoveObject" objectid="394" cutsceneonly="true"/>
 				<behaviour name="RemoveObject" objectid="422" cutsceneonly="true"/>
 			</level>
