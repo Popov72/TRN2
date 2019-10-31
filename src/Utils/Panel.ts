@@ -56,12 +56,15 @@ export class Panel {
     }
 
     public bindEvents(This: Panel) {
+        this._elem.on('click', function(e) { e.stopPropagation(); return false; });
 
-        this._elem.find('#singleroommode').on('click', function() {
+        this._elem.find('#singleroommode').on('click', function(e) {
+            e.stopPropagation();
             This._parent.singleRoomMode = this.checked;
         });
 
-        this._elem.find('#wireframemode').on('click', function() {
+        this._elem.find('#wireframemode').on('click', function(e) {
+            e.stopPropagation();
             var scene = This._parent.sceneRender;
             scene.traverse((obj) => {
                 const materials = obj.materials;
@@ -72,7 +75,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#usefog').on('click', function() {
+        this._elem.find('#usefog').on('click', function(e) {
+            e.stopPropagation();
             var scene = This._parent.sceneRender;
             scene.traverse((obj) => {
                 const materials = obj.materials;
@@ -86,7 +90,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#nolights').on('click', function() {
+        this._elem.find('#nolights').on('click', function(e) {
+            e.stopPropagation();
             const scene = This._parent.sceneRender,
                   white = [1, 1, 1];
             scene.traverse((obj) => {
@@ -106,7 +111,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#showboundingboxes').on('click', function() {
+        this._elem.find('#showboundingboxes').on('click', function(e) {
+            e.stopPropagation();
             const scene = This._parent.sceneRender;
 
             scene.traverse((obj) => {
@@ -116,7 +122,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#showportals').on('click', function() {
+        this._elem.find('#showportals').on('click', function(e) {
+            e.stopPropagation();
             const scene = This._parent.sceneRender,
                   sceneData = This._parent.sceneData;
             scene.traverse((obj) => {
@@ -134,7 +141,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#fullscreen').on('click', function() {
+        this._elem.find('#fullscreen').on('click', function(e) {
+            e.stopPropagation();
             if (document.fullscreenElement != null) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -144,7 +152,8 @@ export class Panel {
             }
         });
 
-        this._elem.find('#useqwerty').on('click', function() {
+        this._elem.find('#useqwerty').on('click', function(e) {
+            e.stopPropagation();
             const bc = This._parent.bhvMgr.getBehaviour("BasicControl");
             if (bc === undefined) { return; }
             const states = (bc[0] as any).states,
@@ -162,7 +171,8 @@ export class Panel {
             }
         });
 
-        this._elem.find('#noobjecttexture').on('click', function() {
+        this._elem.find('#noobjecttexture').on('click', function(e) {
+            e.stopPropagation();
             const shaderMgr = This._parent.shdMgr,
                   scene = This._parent.sceneRender,
                   shader = shaderMgr.getFragmentShader('TR_uniformcolor');
@@ -183,7 +193,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#lowlightsquality').on('click', async function() {
+        this._elem.find('#lowlightsquality').on('click', async function(e) {
+            e.stopPropagation();
             const shaderMgr = This._parent.shdMgr,
                   scene = This._parent.sceneRender;
 
@@ -217,7 +228,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#nobumpmapping').on('click', function() {
+        this._elem.find('#nobumpmapping').on('click', function(e) {
+            e.stopPropagation();
             const scene = This._parent.sceneRender;
             scene.traverse((obj) => {
                 const data = This._parent.sceneData.objects[obj.name];
@@ -237,7 +249,8 @@ export class Panel {
             });
         });
 
-        this._elem.find('#useaddlights').on('click', function() {
+        this._elem.find('#useaddlights').on('click', function(e) {
+            e.stopPropagation();
             This._parent.matMgr.useAdditionalLights = this.checked;
             This._parent.matMgr.setLightUniformsForObjects(This._parent.objMgr.objectList['moveable']);
         });
