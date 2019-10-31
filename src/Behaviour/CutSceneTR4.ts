@@ -49,8 +49,8 @@ export default class CutSceneTR4 {
                         if (ret.code < 0) {
                             console.log('Error decoding sound data for cutscene.');
                         } else {
-                            this.cutscene.gainNode = ret.gainNode;
                             this.cutscene.sound = ret.sound;
+                            this.cutscene.soundbuffer = ret.soundbuffer;
                         }
                     });
                 }

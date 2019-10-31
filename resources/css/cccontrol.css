@@ -1,0 +1,204 @@
+.control_area{
+	position:absolute;
+	bottom:44px;
+	left:0;
+    width:100%;
+    height: 44px;
+	z-index:4;
+    display: block;
+}
+
+/*** VIDEO CONTROLS CSS ***/
+/* control holder */
+.control{
+	background:#333;
+	color:#ccc;
+	position:absolute;
+	bottom:-45px;
+	left:0;
+	width:100%;
+	z-index:5;
+    display:none;
+    opacity: 0.8;
+}
+/* control top part */
+.topControl{
+	height:11px;
+	border-bottom:1px solid #404040;
+	padding:1px 5px;
+	background:#1F1F1F; /* fallback */
+	background:-moz-linear-gradient(top,#242424 50%,#1F1F1F 50%,#171717 100%);
+	background:-webkit-linear-gradient(top,#242424 50%,#1F1F1F 50%,#171717 100%);
+	background:-o-linear-gradient(top,#242424 50%,#1F1F1F 50%,#171717 100%);
+}
+/* control bottom part */
+.btmControl{
+	clear:both;
+	background: #1F1F1F; /* fallback */
+	background:-moz-linear-gradient(top,#242424 50%,#1F1F1F 50%,#171717 100%);
+	background:-webkit-linear-gradient(top,#242424 50%,#1F1F1F 50%,#171717 100%);
+	background:-o-linear-gradient(top,#242424 50%,#1F1F1F 50%,#171717 100%);
+}
+.control div.btn {
+	float:left;
+	width:34px;
+	height:30px;
+	padding:0 5px;
+	border-right:1px solid #404040;
+	cursor:pointer;
+}
+.control div.text{
+	font-size:12px;
+	font-weight:bold;
+	line-height:30px;
+	text-align:center;
+	font-family:verdana;
+	width:20px;
+	border:none;
+	color:#777;
+}
+.control div.btnPlay{
+	background:url(../picture/control.png) no-repeat 0 0;
+	border-left:1px solid #404040;
+}
+.control div.paused{
+	background:url(../picture/control.png) no-repeat 0 -30px;
+}
+.control div.btnStop{
+	background:url(../picture/control.png) no-repeat 0 -60px;
+}
+.control div.spdText{
+	border:none;
+	font-size:14px;
+	line-height:30px;
+	font-style:italic;
+}
+.control div.selected{
+	font-size:15px;
+	color:#ccc;
+}
+.control div.sound{
+	background:url(../picture/control.png) no-repeat -88px -30px;
+	border:none;
+	float:right;
+}
+.control div.sound2{
+	background:url(../picture/control.png) no-repeat -88px -60px !important;
+}
+.control div.muted{
+	background:url(../picture/control.png) no-repeat -88px 0 !important;
+}
+.control div.btnFS{
+	background:url(../picture/control.png) no-repeat -44px 0;
+	float:right;
+}
+.control div.btnLight{
+	background:url(../picture/control.png) no-repeat -44px -60px;
+	border-left:1px solid #404040;
+	float:right;
+}
+.control div.lighton{
+	background:url(../picture/control.png) no-repeat -44px -30px !important;
+}
+
+/* PROGRESS BAR CSS */
+/* Progress bar */
+.progress {
+	width:85%;
+	height:10px;
+	position:relative;
+	float:left;
+	cursor:pointer;
+	background: #444; /* fallback */
+	background:-moz-linear-gradient(top,#666,#333);
+	background:-webkit-linear-gradient(top,#666,#333);
+	background:-o-linear-gradient(top,#666,#333);
+	box-shadow:0 2px 3px #333 inset;
+	-moz-box-shadow:0 2px 3px #333 inset;
+	-webkit-box-shadow:0 2px 3px #333 inset;
+	border-radius:10px;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+}
+.progress span {
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	display:block;
+	border-radius:10px;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+}
+.timeBar{
+	z-index:10;
+	width:0;
+	background: #3FB7FC; /* fallback */
+	background:-moz-linear-gradient(top,#A0DCFF 50%,#3FB7FC 50%,#16A9FF 100%);
+	background:-webkit-linear-gradient(top,#A0DCFF 50%,#3FB7FC 50%,#16A9FF 100%);
+	background:-o-linear-gradient(top,#A0DCFF 50%,#3FB7FC 50%,#16A9FF 100%);
+	box-shadow:0 0 1px #fff;
+	-moz-box-shadow:0 0 1px #fff;
+	-webkit-box-shadow:0 0 1px #fff;
+}
+.bufferBar{
+	z-index:5;
+	width:0;
+	background: #777;
+	background:-moz-linear-gradient(top,#999,#666);
+	background:-webkit-linear-gradient(top,#999,#666);
+	background:-o-linear-gradient(top,#999,#666);
+	box-shadow:2px 0 5px #333;
+	-moz-box-shadow:2px 0 5px #333;
+	-webkit-box-shadow:2px 0 5px #333;
+}
+/* time and duration */
+.time{
+	width:15%;
+	float:right;
+	text-align:center;
+	font-size:11px;
+	line-height:12px;
+}
+
+/* VOLUME BAR CSS */
+/* volume bar */
+.volume{
+	position:relative;
+	cursor:pointer;
+	width:70px;
+	height:10px;
+	float:right;
+	margin-top:10px;
+	margin-right:10px;
+}
+.volumeBar{
+	display:block;
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	background-color:#eee;
+	z-index:10;
+}
+
+/* OTHERS CSS */
+/* video screen cover */
+.loading, #init{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:url(loading.gif) no-repeat 50% 50%;
+	z-index:2;
+	display:none;
+}
+#init{
+	background:url(../picture/bigplay.png) no-repeat 50% 50% !important;
+	cursor:pointer;
+}
+
+.control .time {
+    user-select: none;
+}

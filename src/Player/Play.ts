@@ -9,6 +9,8 @@ import IGameData from "./IGameData";
 import { baseFrameRate, ObjectID } from "../Constants";
 import { RawLevel } from "../Loading/LevelLoader";
 import { AnimationManager } from "../Animation/AnimationManager";
+import { BasicControl } from "../Behaviour/BasicControl";
+import { Behaviour } from "../Behaviour/Behaviour";
 import { BehaviourManager } from "../Behaviour/BehaviourManager";
 import { ObjectManager } from "./ObjectManager";
 import { MaterialManager } from "./MaterialManager";
@@ -30,6 +32,8 @@ export default class Play {
 
     constructor(container: Element) {
         this.gameData = {
+            "play": this,
+
             "curFrame": 0,
             "container": container,
 
@@ -64,6 +68,7 @@ export default class Play {
             "globalTintColor":  null,
 
             "singleFrame": false,
+            "update": true,
 
             "fps": 0
         };
@@ -183,6 +188,7 @@ export default class Play {
 
     public play(onceOnly: boolean = false, update: boolean = true): void {
         this.gameData.singleFrame = onceOnly;
+        this.gameData.update = update;
 
         if (!this.initsDone) {
             this.initsDone = true;
@@ -204,7 +210,7 @@ export default class Play {
                 this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
                 this.freezeTime = 0;
             }
-            this.render(update);
+            this.render();
             this.freezeTime = (new Date()).getTime() / 1000.0;
         } else {
             if (this.freezeTime > 0) {
@@ -274,7 +280,7 @@ export default class Play {
         this.render();
     }
 
-    private render(update: boolean = true): void {
+    private render(): void {
         let curTime = (new Date()).getTime() / 1000.0 - this.ofstTime,
             delta = curTime - this.gameData.lastTime;
 
@@ -291,13 +297,20 @@ export default class Play {
 
         this.gameData.fps = delta ? 1 / delta : 60;
 
-        if (update) {
+        if (this.gameData.update) {
             this.gameData.bhvMgr.onFrameStarted(curTime, delta);
 
             this.gameData.anmMgr.animateObjects(delta);
+        } else {
+            // we still want to be able to move the camera in the "no update" mode
+            const bhvCtrl = (this.gameData.bhvMgr.getBehaviour("BasicControl") as Array<Behaviour>)[0] as BasicControl;
 
-            this.gameData.camera.updateMatrixWorld();
+            bhvCtrl.onFrameStarted(curTime, delta);
+        }
 
+        this.gameData.camera.updateMatrixWorld();
+
+        if (this.gameData.update) {
             this.gameData.objMgr.updateObjects(curTime);
 
             this.gameData.bhvMgr.onFrameEnded(curTime, delta);
@@ -326,7 +339,7 @@ export default class Play {
         this.renderer.setSize(w, h);
 
         if (!noRendering) {
-            this.render(false);
+            this.render();
         }
     }
 

@@ -169,6 +169,7 @@ export default class Utils {
                             if (!buffer) {
                                 ret.code = -1;
                             } else {
+                                ret.soundbuffer = buffer;
                                 ret.sound = Browser.AudioContext.createBufferSource();
                                 ret.sound.buffer = buffer;
                             }

@@ -1,5 +1,3 @@
-const noSound = false;
-
 import { ICamera } from "../Proxy/ICamera";
 import { IMesh } from "../Proxy/IMesh";
 import { Position, Quaternion } from "../Proxy/INode";
@@ -9,17 +7,17 @@ import { BehaviourManager } from "./BehaviourManager";
 import { ObjectManager } from "../Player/ObjectManager";
 import { ConfigManager } from "../ConfigManager";
 import { AnimationManager } from "../Animation/AnimationManager";
-import { ObjectID } from "../Constants";
+import { ObjectID, baseFrameRate } from "../Constants";
 import { MaterialManager } from "../Player/MaterialManager";
 import { TRLevel } from "../Player/TRLevel";
 import Browser from "../Utils/Browser";
 import Misc from "../Utils/Misc";
 import TrackInstance from "../Animation/TrackInstance";
-import { baseFrameRate } from "../Constants";
 import { BasicControl } from "./BasicControl";
 import { Lara } from "./Lara";
 import CutSceneHelper from "./CutSceneHelper";
 import CutSceneTR4 from "./CutSceneTR4";
+import CutSceneControl from "./CutSceneControl";
 
 declare var glMatrix: any;
 
@@ -30,6 +28,7 @@ export interface CutSceneData {
     "position"      : Position;
     "quaternion"    : Quaternion;
     "sound"         : any;
+    "soundbuffer"   : any;
     "gainNode"      : any;
 }
 
@@ -51,6 +50,11 @@ export class CutScene extends Behaviour {
     private bhvCtrl: BasicControl;
     private helper: CutSceneHelper;
     private lara: IMesh;
+    private control: CutSceneControl;
+    private soundStarted: boolean;
+    private _volume: number;
+    private _volumeSaved: number;
+    private _muted: boolean;
 
     constructor(nbhv: any, gameData: IGameData, objectid?: number, objecttype?: string) {
         super(nbhv, gameData, objectid, objecttype);
@@ -70,16 +74,22 @@ export class CutScene extends Behaviour {
         this.bhvCtrl = <any>null;
         this.helper = <any>null;
         this.lara = <any>null;
+        this.soundStarted = false;
+        this._volume = this._volumeSaved = 0;
+        this._muted = false;
 
         this.cutscene = {
-            "index"     : 0,
-            "curFrame"  : 0,
-            "frames"    : null,
-            "position"  : [0, 0, 0],
-            "quaternion": [0, 0, 0, 0],
-            "sound"     : null,
-            "gainNode"  : null,
+            "index"         : 0,
+            "curFrame"      : 0,
+            "frames"        : null,
+            "position"      : [0, 0, 0],
+            "quaternion"    : [0, 0, 0, 0],
+            "sound"         : null,
+            "soundbuffer"   : null,
+            "gainNode"      : null,
         };
+
+        this.control = new CutSceneControl(this, gameData);
     }
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
@@ -141,6 +151,7 @@ export class CutScene extends Behaviour {
             promises.push(tr4Promise.then(() => {
                 this.makeObjectList();
                 this.registerAnimations();
+                this.control.init();
             }));
         } else {
             promises.push(...this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, 0, []));
@@ -150,13 +161,14 @@ export class CutScene extends Behaviour {
                         console.log('Error decoding sound data for cutscene.');
                     } else {
                         this.cutscene.sound = ret.sound;
-                        this.cutscene.gainNode = ret.gainNode;
+                        this.cutscene.soundbuffer = ret.soundbuffer;
                     }
                 })
             );
 
             this.makeObjectList();
             this.registerAnimations();
+            this.control.init();
         }
 
         return [BehaviourRetCode.keepBehaviour, promises];
@@ -219,25 +231,65 @@ export class CutScene extends Behaviour {
         }
     }
 
-    public setVolume(v: number): void {
+    get volume(): number {
+        return this._volume;
+    }
+
+    set volume(v: number) {
+        this._volume = v;
         if (this.cutscene.gainNode) {
             this.cutscene.gainNode.gain.value = v;
         }
     }
 
-    public onBeforeRenderLoop(): void {
-        if (this.cutscene.sound != null && !noSound) {
-            this.cutscene.gainNode = Browser.AudioContext.createGain();
+    get muted(): boolean {
+        return this._muted;
+    }
 
-            this.setVolume(this.gameData.panel.noSound ? 0 : 1);
-
-            this.cutscene.gainNode.connect(Browser.AudioContext.destination);
-
-            this.cutscene.sound.connect(this.cutscene.gainNode);
-
-            Misc.startSound(this.cutscene.sound);
+    set muted(m: boolean) {
+        if (m && this._muted || !m && !this._muted) {
+            return;
         }
 
+        if (m) {
+            this._muted = true;
+            this._volumeSaved = this._volume;
+            this.volume = 0;
+        } else {
+            this._muted = false;
+            this.volume = this._volumeSaved;
+        }
+    }
+
+    get duration(): number {
+        return this.cutscene.frames.length * 1 / baseFrameRate;
+    }
+
+    get currentTime(): number {
+        return this.cutscene.curFrame * 1 / baseFrameRate;
+    }
+
+    public showController(): void {
+        this.control.bindEvents();
+    }
+
+    public stopSound(): void {
+        if (this.cutscene.sound) {
+            this.cutscene.sound.stop();
+        }
+    }
+
+    public startSound(time: number): void {
+        if (this.cutscene.sound) {
+            this.cutscene.sound.stop();
+            this.cutscene.sound = Browser.AudioContext.createBufferSource();
+            this.cutscene.sound.buffer = this.cutscene.soundbuffer;
+            this.cutscene.sound.connect(this.cutscene.gainNode);
+            this.cutscene.sound.start(0, time);
+        }
+    }
+
+    public onBeforeRenderLoop(): void {
         this.gameData.panel.hide();
 
         this.bhvCtrl = (this.bhvMgr.getBehaviour("BasicControl") as Array<Behaviour>)[0] as BasicControl;
@@ -248,7 +300,18 @@ export class CutScene extends Behaviour {
             return;
         }
 
+        if (!this.soundStarted && this.cutscene.sound != null && !this.gameData.singleFrame) {
+            this.soundStarted = true;
+            this.cutscene.gainNode = Browser.AudioContext.createGain();
+            this.volume = this.volume;
+            this.cutscene.gainNode.connect(Browser.AudioContext.destination);
+            this.cutscene.sound.connect(this.cutscene.gainNode);
+            this.cutscene.sound.start();
+        }
+
         this.cutscene.curFrame += baseFrameRate * delta;
+
+        this.control.updateTime(this.cutscene.curFrame * 1 / baseFrameRate);
 
         // Update camera
         const t = this.cutscene.curFrame - Math.floor(this.cutscene.curFrame),
@@ -309,6 +372,7 @@ export class CutScene extends Behaviour {
         } else {
             this.cutSceneEnded = true;
             this.anmMgr.pause(true);
+            this.control.finished();
         }
     }
 

@@ -9,8 +9,11 @@ import { Panel } from "../Utils/Panel";
 import { ConfigManager } from "../ConfigManager";
 import { ShaderManager } from "../ShaderManager";
 import { SystemLight } from "./SystemLight";
+import Play from "./Play";
 
 export default interface IGameData {
+    "play":             Play;
+
     "curFrame":         number;
     "container":        Element;
 
@@ -33,6 +36,7 @@ export default interface IGameData {
     "panel":            Panel;
 
     "singleFrame":      boolean;
+    "update":           boolean;
 
     [name: string]: any;
 }

@@ -5,6 +5,7 @@ import jQuery from "jquery";
 import Browser from "./Utils/Browser";
 import { ProgressBar } from "./Utils/ProgressBar";
 
+import { CutScene } from "./Behaviour/CutScene";
 import MasterLoader from "./Loading/MasterLoader";
 import Play from "./Player/Play";
 import { ConfigManager } from "./ConfigManager";
@@ -70,13 +71,21 @@ function loadAndPlayLevel(level: string | any) {
                     } else {
                         play.initialize(res[0], res[1]).then(() => {
                             if (play.gameData.isCutscene) {
-                                play.play(true, true);
-                                window.setTimeout(() => play.play(true, false), 40); // because of Babylonjs
+                                const idTimer = setInterval(() => {
+                                    if (play.gameData.sceneRender.allMeshesReady) {
+                                        clearInterval(idTimer);
+                                        progressbar.hide();
+                                        play.play(true, true);
+                                        const bhvCutScene = (play.gameData.bhvMgr.getBehaviour("CutScene") as Array<CutScene>)[0] as CutScene;
+                                        bhvCutScene.showController();
+                                    }
+                                }, 10);
+                            } else {
+                                progressbar.showStart(function() {
+                                    progressbar.hide();
+                                    play.play();
+                                });
                             }
-                            progressbar.showStart(function() {
-                                progressbar.hide();
-                                play.play();
-                            });
                         });
                     }
                 } else {
