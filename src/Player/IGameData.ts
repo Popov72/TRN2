@@ -32,5 +32,7 @@ export default interface IGameData {
 
     "panel":            Panel;
 
+    "singleFrame":      boolean;
+
     [name: string]: any;
 }

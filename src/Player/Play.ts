@@ -20,9 +20,13 @@ declare var Stats: any;
 
 export default class Play {
 
-    private gameData: IGameData;
+    public  gameData: IGameData;
+
     private renderer: IRenderer;
     private stats: any;
+    private ofstTime: number;
+    private freezeTime: number;
+    private initsDone: boolean;
 
     constructor(container: Element) {
         this.gameData = {
@@ -59,6 +63,8 @@ export default class Play {
             "unitVec3" : [1.0, 1.0, 1.0],
             "globalTintColor":  null,
 
+            "singleFrame": false,
+
             "fps": 0
         };
 
@@ -73,6 +79,10 @@ export default class Play {
         this.stats.domElement.style.top = '0px';
         this.stats.domElement.style.right = '0px';
         this.stats.domElement.style.zIndex = 100;
+
+        this.ofstTime = 0;
+        this.freezeTime = 0;
+        this.initsDone = false;
 
         this.gameData.container.append(this.stats.domElement);
 
@@ -94,6 +104,11 @@ export default class Play {
         } else {
             console.log("Can't find camera!");
         }
+
+        /*camera.setPosition([26686, 472, -67788]);
+        camera.setQuaternion([0.00564, 0.99346, 0.05650, -0.09910]);
+        camera.updateMatrixWorld();
+        camera.updateProjectionMatrix();*/
 
         this.gameData.confMgr   = this.gameData.sceneData.trlevel.confMgr;
         this.gameData.bhvMgr    = new BehaviourManager();
@@ -166,19 +181,38 @@ export default class Play {
         return Promise.resolve();
     }
 
-    public play(): void {
-        this.gameData.panel.show();
-        this.gameData.panel.updateFromParent();
+    public play(onceOnly: boolean = false, update: boolean = true): void {
+        this.gameData.singleFrame = onceOnly;
 
-        window.addEventListener('resize', this.onWindowResize.bind(this), false);
+        if (!this.initsDone) {
+            this.initsDone = true;
 
-        this.gameData.startTime = this.gameData.quantumTime = (new Date()).getTime() / 1000.0;
+            this.gameData.panel.show();
+            this.gameData.panel.updateFromParent();
 
-        this.gameData.bhvMgr.onBeforeRenderLoop();
+            window.addEventListener('resize', this.onWindowResize.bind(this), false);
 
-        this.renderLoop();
+            this.gameData.bhvMgr.onBeforeRenderLoop();
 
-        this.onWindowResize();
+            this.gameData.startTime = this.gameData.lastTime = this.gameData.quantumTime = (new Date()).getTime() / 1000.0;
+        }
+
+        this.setSizes(true);
+
+        if (onceOnly) {
+            if (this.freezeTime > 0) {
+                this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
+                this.freezeTime = 0;
+            }
+            this.render(update);
+            this.freezeTime = (new Date()).getTime() / 1000.0;
+        } else {
+            if (this.freezeTime > 0) {
+                this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
+                this.freezeTime = 0;
+            }
+            this.renderLoop();
+        }
     }
 
     public goto(name: string, type?: string): void {
@@ -237,7 +271,11 @@ export default class Play {
     private renderLoop(): void {
         requestAnimationFrame(this.renderLoop.bind(this));
 
-        let curTime = (new Date()).getTime() / 1000.0,
+        this.render();
+    }
+
+    private render(update: boolean = true): void {
+        let curTime = (new Date()).getTime() / 1000.0 - this.ofstTime,
             delta = curTime - this.gameData.lastTime;
 
         this.gameData.lastTime = curTime;
@@ -253,22 +291,18 @@ export default class Play {
 
         this.gameData.fps = delta ? 1 / delta : 60;
 
-        this.gameData.bhvMgr.onFrameStarted(curTime, delta);
+        if (update) {
+            this.gameData.bhvMgr.onFrameStarted(curTime, delta);
 
-        this.gameData.anmMgr.animateObjects(delta);
+            this.gameData.anmMgr.animateObjects(delta);
 
-        this.gameData.camera.updateMatrixWorld();
+            this.gameData.camera.updateMatrixWorld();
 
-        this.gameData.objMgr.updateObjects(curTime);
+            this.gameData.objMgr.updateObjects(curTime);
 
-        this.gameData.bhvMgr.onFrameEnded(curTime, delta);
+            this.gameData.bhvMgr.onFrameEnded(curTime, delta);
+        }
 
-        this.render();
-
-        this.gameData.curFrame++;
-    }
-
-    private render(): void {
         this.renderer.clear();
 
         this.renderer.render(this.gameData.sceneBackground, this.gameData.camera);
@@ -278,17 +312,26 @@ export default class Play {
         this.stats.update();
 
         this.gameData.panel.showInfo();
+
+        this.gameData.curFrame++;
     }
 
-    private onWindowResize(): void {
+    private setSizes(noRendering: boolean): void {
         const w = jQuery(this.gameData.container).width() as number,
               h = jQuery(this.gameData.container).height() as number;
+
         this.gameData.camera.aspect = w / h;
         this.gameData.camera.updateProjectionMatrix();
 
         this.renderer.setSize(w, h);
 
-        this.render();
+        if (!noRendering) {
+            this.render(false);
+        }
+    }
+
+    private onWindowResize(): void {
+        this.setSizes(false);
     }
 
 }
