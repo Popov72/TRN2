@@ -69,6 +69,10 @@ function loadAndPlayLevel(level: string | any) {
                         });
                     } else {
                         play.initialize(res[0], res[1]).then(() => {
+                            if (play.gameData.isCutscene) {
+                                play.play(true, true);
+                                window.setTimeout(() => play.play(true, false), 40); // because of Babylonjs
+                            }
                             progressbar.showStart(function() {
                                 progressbar.hide();
                                 play.play();
