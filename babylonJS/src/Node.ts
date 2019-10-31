@@ -6,6 +6,7 @@ import {
 
 import { INode, Position, Quaternion } from "../../src/Proxy/INode";
 
+import Scene from "./Scene";
 //const  rotY180 = new BQuaternion(0, -1, 0, 0); // x <=> -x
 
 export default class Node implements INode {
@@ -54,7 +55,10 @@ export default class Node implements INode {
     }
 
     public updateMatrixWorld(): void {
-        this._node.computeWorldMatrix(true);
+        this._node.computeWorldMatrix();
+        for (let c = 0; c < this._children.length; ++c) {
+            this._children[c].updateMatrixWorld();
+        }
     }
 
     public matrixWorldToArray(arr: Float32Array, ofst: number): void {
