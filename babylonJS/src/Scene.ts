@@ -32,6 +32,16 @@ export default class Scene implements IScene {
         return this._scene;
     }
 
+    get allMeshesReady(): boolean {
+        for (let i = 0; i < this._scene.meshes.length; ++i) {
+            if (!this._scene.meshes[i].isReady()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public traverse(callback: (obj: Mesh) => void): void {
         for (let i = 0; i < this._children.length; i ++) {
             const child = this._children[i];

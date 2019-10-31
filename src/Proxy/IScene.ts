@@ -6,6 +6,7 @@ export type TextureList = Array<any>;
 export interface IScene {
 
     textures: TextureList | undefined;
+    allMeshesReady: boolean;
 
     traverse(callback: (obj: IMesh) => void): void;
 
@@ -18,4 +19,5 @@ export interface IScene {
     getCamera(): ICamera;
 
     getObjectByName(name: string): IMesh | undefined;
+
 }

@@ -21,6 +21,10 @@ export default class Scene extends Node implements IScene {
         this._camera = <any>null;
     }
 
+    get allMeshesReady(): boolean {
+        return true;
+    }
+
     public setCamera(camera: Camera): void {
         this._camera = camera;
     }
