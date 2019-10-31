@@ -4,6 +4,7 @@ import {
 
 import Engine from "../../src/Proxy/Engine";
 import { IMesh } from "../../src/Proxy/IMesh";
+import { IScene } from "../../src/Proxy/IScene";
 import { ShaderManager } from "./ShaderManager";
 import "../../src/Main";
 
@@ -12,6 +13,7 @@ import Mesh from "./Mesh";
 import MeshBuilder from "./MeshBuilder";
 import Node from "./Node";
 import Renderer from "./Renderer";
+import Scene from "./Scene";
 import SceneParser from "./SceneParser";
 
 declare var glMatrix: any;
@@ -23,7 +25,7 @@ const canvas = document.createElement("canvas"),
       shdMgr = new ShaderManager();
 
 Engine.registerFunctions({
-    "makeNode":         () => new Node(),
+    "makeNode":         (name?: string, scene?: IScene) => new Node(undefined, name, scene as Scene),
 
     "makeMeshBuilder":  (mesh?: IMesh) => new MeshBuilder(mesh as Mesh),
 

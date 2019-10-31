@@ -13,8 +13,8 @@ export default class Node implements INode {
     protected _node:        TransformNode;
     protected _children:    Array<Node>;
 
-    constructor(obj?: TransformNode) {
-        this._node = obj ? obj : new TransformNode("");
+    constructor(obj?: TransformNode, name?: string, scene?: Scene) {
+        this._node = obj ? obj : new TransformNode(name ? name : "unnamed Node", scene ? scene.object : null);
         this._children = [];
         this._node.rotationQuaternion = new BQuaternion();
     }

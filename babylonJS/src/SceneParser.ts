@@ -131,7 +131,7 @@ export default class SceneParser {
     }
 
     private createMesh(json: any): void {
-        const mesh = new BMesh(json.name, null),
+        const mesh = new BMesh(json.name, this.tscene.object),
               geometry = this.getGeometry(json.geometry),
               attr = geometry.data.attributes,
               groups = geometry.data.groups,

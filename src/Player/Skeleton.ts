@@ -71,7 +71,7 @@ export class Skeleton {
 
         for (let b = 0; b < bonesStartingPos.length; ++b) {
             const parent = bonesStartingPos[b].parent,
-                  bone = Engine.makeNode();
+                  bone = Engine.makeNode("Skeleton bone node", Engine.activeScene);
 
             this.bones.push(bone);
 
@@ -109,7 +109,7 @@ export class Skeleton {
     }
 
     public updateBoneMatrices(): void {
-        this._bones[0].updateMatrixWorld();
+        this._bones[0].updateMatrixWorld(); // will triger updateMatrixWorld for all descendants of bone #0
         this.setBoneMatrices();
     }
 

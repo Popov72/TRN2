@@ -70,7 +70,7 @@ export default class TrackInstance {
     private makeCache(): void {
         this.interpolatedData = [];
         for (let numData = 0; numData < this._track.numDataPerKey; ++numData) {
-            this.interpolatedData.push(Engine.makeNode());
+            this.interpolatedData.push(Engine.makeNode("TrackInstance cache node", Engine.activeScene));
         }
     }
 

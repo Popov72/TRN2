@@ -28,8 +28,6 @@ export class Skydome extends Behaviour {
             this.objSky.renderOrder = 0;
             this.objSky.matrixAutoUpdate = true;
 
-            this.gameData.sceneBackground.add(this.objSky);
-
             const skyColor = [this.nbhv.color.r / 255.0, this.nbhv.color.g / 255.0, this.nbhv.color.b / 255.0],
                   material = this.objSky.materials[0];
 
@@ -79,7 +77,7 @@ export class Skydome extends Behaviour {
         return Promise.all([this.gameData.shdMgr.getVertexShader('TR_skydome'), this.gameData.shdMgr.getFragmentShader('TR_skydome')]).then((shd) => {
             const meshb = Engine.makeMeshBuilder();
 
-            this.objSky = meshb.createMesh('skydome', shd[0], shd[1], uniforms, meshData.vertices, meshData.faces, meshData.textures, undefined);
+            this.objSky = meshb.createMesh('skydome', this.gameData.sceneBackground, shd[0], shd[1], uniforms, meshData.vertices, meshData.faces, meshData.textures, undefined);
 
             this.gameData.sceneData.objects['skydome'] = {
                 "type"					: 'skydome',

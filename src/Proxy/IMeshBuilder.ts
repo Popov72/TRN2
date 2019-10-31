@@ -1,4 +1,5 @@
 import { IMesh } from "./IMesh";
+import { IScene } from "./IScene";
 
 export type indexList = Array<number>;
 
@@ -23,6 +24,6 @@ export interface IMeshBuilder {
 
     copyFacesWithSkinIndex(skinidx: number, newskinidx: number): void;
 
-    createMesh(name: string, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh;
+    createMesh(name: string, scene:IScene, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh;
 
 }

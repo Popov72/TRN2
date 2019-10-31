@@ -9,6 +9,7 @@ import { IMesh } from "../../src/Proxy/IMesh";
 import { IMeshBuilder, indexList } from "../../src/Proxy/IMeshBuilder";
 
 import Mesh from "./Mesh";
+import Scene from "./Scene";
 
 export default class MeshBuilder implements IMeshBuilder {
 
@@ -262,7 +263,7 @@ export default class MeshBuilder implements IMeshBuilder {
         }
     }
 
-    public createMesh(name: string, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh {
+    public createMesh(name: string, scene: Scene, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh {
         const geom = new BufferGeometry();
 
         geom.setIndex(indices);
@@ -286,7 +287,11 @@ export default class MeshBuilder implements IMeshBuilder {
 
         this._mesh.name = name;
 
-        return new Mesh(this._mesh);
+        const mesh = new Mesh(this._mesh);
+
+        scene.add(mesh);
+
+        return mesh;
     }
 
 }

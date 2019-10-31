@@ -7,6 +7,8 @@ import {
 import { INode, Position, Quaternion } from "../../src/Proxy/INode";
 import { Behaviour } from "../../src/Behaviour/Behaviour";
 
+import Scene from "./Scene";
+
 export default class Node implements INode {
 
     public behaviours:      Array<Behaviour>;
@@ -18,10 +20,14 @@ export default class Node implements INode {
         return this._obj;
     }
 
-    constructor(obj?: Object3D) {
+    constructor(obj?: Object3D, name?: string, scene?: Scene) {
         this._obj = obj ? obj : new Object3D();
         this._children = [];
         this.behaviours = [];
+
+        if (!obj && name) {
+            this._obj.name = name;
+        }
     }
 
     public get position(): Position {

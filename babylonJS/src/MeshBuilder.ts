@@ -299,8 +299,10 @@ export default class MeshBuilder implements IMeshBuilder {
         return ar;
     }
 
-    public createMesh(name: string, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh {
-        const geom = new Geometry(`Geometry of ${name}`, (Engine.activeScene as Scene).object),
+    public createMesh(name: string, scene: Scene, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh {
+        const activeScene = scene.object;
+
+        const geom = new Geometry(`Geometry of ${name}`, activeScene),
               attributes = ['position'];
 
         geom.setVerticesData("position", new Float32Array(vertices), false, 3);
@@ -338,7 +340,7 @@ export default class MeshBuilder implements IMeshBuilder {
             }
         }
 
-        const shd = new ShaderMaterial(`Shader of ${name}`, (Engine.activeScene as Scene).object, {
+        const shd = new ShaderMaterial(`Shader of ${name}`, activeScene, {
             "vertex":   vshader,
             "fragment": fshader,
         }, {
@@ -352,11 +354,11 @@ export default class MeshBuilder implements IMeshBuilder {
             "userData": {}
         };
 
-        const multimat = new MultiMaterial(`Material of ${name}`, (Engine.activeScene as Scene).object);
+        const multimat = new MultiMaterial(`Material of ${name}`, activeScene);
 
         multimat.subMaterials.push(shd);
 
-        this._mesh = new BMesh(name, null);
+        this._mesh = new BMesh(name, activeScene);
         this._mesh.subMeshes = [];
         this._mesh.material = multimat;
 
