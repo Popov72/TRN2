@@ -35,10 +35,6 @@ export class Panel {
         this._setState();
     }
 
-    public get noSound(): boolean {
-        return this._elem.find('#nosound').prop('checked');
-    }
-
     public showInfo(): void {
         const sceneData = this._parent.sceneData, camera = this._parent.camera, perfData = this._renderer.getPerfData([this._parent.sceneRender, this._parent.sceneBackground]);
         const regularLights = this._parent.curRoom == -1 ? 0 : (this._parent.matMgr.useAdditionalLights ? sceneData.objects['room' + this._parent.curRoom].lightsExt.length : sceneData.objects['room' + this._parent.curRoom].lights.length);
@@ -252,14 +248,6 @@ export class Panel {
                 This._elem.find('#fullscreen').prop('checked', document.fullscreenElement != null);
             }, false);
         }
-
-        this._elem.find('#nosound').on('click', function() {
-            const cutscene = (This._parent.bhvMgr.getBehaviour("CutScene") as Array<CutScene>);
-            if (cutscene && cutscene.length > 0) {
-                cutscene[0].setVolume(this.checked ? 0 : 1);
-            }
-        });
-
     }
 
     protected _setState(): void {
