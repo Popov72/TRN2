@@ -206,17 +206,8 @@ export default class Play {
         this.setSizes(true);
 
         if (onceOnly) {
-            if (this.freezeTime > 0) {
-                this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
-                this.freezeTime = 0;
-            }
             this.render();
-            this.freezeTime = (new Date()).getTime() / 1000.0;
         } else {
-            if (this.freezeTime > 0) {
-                this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
-                this.freezeTime = 0;
-            }
             this.renderLoop();
         }
     }
@@ -277,10 +268,24 @@ export default class Play {
     private renderLoop(): void {
         requestAnimationFrame(this.renderLoop.bind(this));
 
+        if (!this.gameData.singleFrame) {
+            if (this.freezeTime > 0) {
+                this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
+                this.freezeTime = 0;
+            }
+        }
+
         this.render();
     }
 
-    private render(): void {
+    public render(forceUpdate: boolean = false): void {
+        if (this.gameData.singleFrame) {
+            if (this.freezeTime > 0) {
+                this.ofstTime += (new Date()).getTime() / 1000.0 - this.freezeTime;
+                this.freezeTime = 0;
+            }
+        }
+
         let curTime = (new Date()).getTime() / 1000.0 - this.ofstTime,
             delta = curTime - this.gameData.lastTime;
 
@@ -297,7 +302,7 @@ export default class Play {
 
         this.gameData.fps = delta ? 1 / delta : 60;
 
-        if (this.gameData.update) {
+        if (this.gameData.update || forceUpdate) {
             this.gameData.bhvMgr.onFrameStarted(curTime, delta);
 
             this.gameData.anmMgr.animateObjects(delta);
@@ -310,7 +315,7 @@ export default class Play {
 
         this.gameData.camera.updateMatrixWorld();
 
-        if (this.gameData.update) {
+        if (this.gameData.update || forceUpdate) {
             this.gameData.objMgr.updateObjects(curTime);
 
             this.gameData.bhvMgr.onFrameEnded(curTime, delta);
@@ -327,6 +332,10 @@ export default class Play {
         this.gameData.panel.showInfo();
 
         this.gameData.curFrame++;
+
+        if (this.gameData.singleFrame) {
+            this.freezeTime = (new Date()).getTime() / 1000.0;
+        }
     }
 
     private setSizes(noRendering: boolean): void {

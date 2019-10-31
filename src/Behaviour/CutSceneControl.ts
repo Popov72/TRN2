@@ -79,7 +79,10 @@ export default class CutSceneControl {
         jQuery('.btnStop').on('click', () => {
             jQuery('.btnPlay').removeClass('paused');
             this.updatebar((jQuery('.progress') as any).offset().left);
-            //! todo
+            if (!this._paused) {
+                this.playPause();
+            }
+            this._cutscene.reset();
             return false;
         });
 
@@ -127,7 +130,7 @@ export default class CutSceneControl {
             obj.toggleClass('muted');
             if (this._cutscene.muted) {
                 jQuery('.volumeBar').css('width', 0);
-            } else{
+            } else {
                 jQuery('.volumeBar').css('width', (this._cutscene.volume * 100) + '%');
             }
             return false;
@@ -169,7 +172,7 @@ export default class CutSceneControl {
         const maxduration = this._cutscene.duration,
               perc = 100 * currentTime / maxduration;
 
-        jQuery('.timeBar').css('width',perc + '%');
+        jQuery('.timeBar').css('width', perc + '%');
         jQuery('.current').text(this.timeFormat(currentTime));
     }
 
@@ -180,13 +183,16 @@ export default class CutSceneControl {
     }
 
     protected playPause() {
-        if (this._paused) {
+        if (this._paused || this._ended) {
+            if (this._ended) {
+                this.updatebar((jQuery('.progress') as any).offset().left);
+                this._cutscene.reset();
+                this._ended = false;
+            }
             jQuery('.btnPlay').addClass('paused');
             this._gameData.update = true;
             this._paused = false;
             this._cutscene.startSound(this._cutscene.currentTime);
-        } else if (this._ended) {
-            // todo
         } else {
             jQuery('.btnPlay').removeClass('paused');
             this._gameData.update = false;

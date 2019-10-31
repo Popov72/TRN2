@@ -231,6 +231,16 @@ export class CutScene extends Behaviour {
         }
     }
 
+    public reset(): void {
+        // Reset all animations
+        this.registerAnimations();
+
+        this.cutscene.curFrame = 0;
+        this.cutSceneEnded = false;
+
+        this.onFrameStarted(0, 0); // reset camera
+    }
+
     get volume(): number {
         return this._volume;
     }
@@ -371,7 +381,7 @@ export class CutScene extends Behaviour {
 
         } else {
             this.cutSceneEnded = true;
-            this.anmMgr.pause(true);
+            this.gameData.update = false;
             this.control.finished();
         }
     }
