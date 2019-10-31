@@ -1,4 +1,4 @@
-.progress {
+.progress_container {
 	color:red;
 	top:7em;
 	width: 100%;
@@ -12,7 +12,7 @@
 	display:none;
 }
 
-.progress .start {
+.progress_container .start {
 	color:#fff;
 	text-shadow: #000 0px 0px 2px;
 	padding:0.1em 0.3em;
@@ -21,16 +21,16 @@
 	display:none;
 }
 
-.progress .enabled {
+.progress_container .enabled {
 	color: lime!important;
 	cursor:pointer;
 }
 
-.progress .enabled:hover {
+.progress_container .enabled:hover {
 	text-shadow: #0f0 0px 0px 5px !important;
 }
 
-.progress .disabled {
+.progress_container .disabled {
 	background:gray;
 	cursor:default;
 }
