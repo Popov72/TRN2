@@ -34,7 +34,7 @@ export default class Scene implements IScene {
 
     get allMeshesReady(): boolean {
         for (let i = 0; i < this._scene.meshes.length; ++i) {
-            if (!this._scene.meshes[i].isReady()) {
+            if (!this._scene.meshes[i].isReady(true)) {
                 return false;
             }
         }
