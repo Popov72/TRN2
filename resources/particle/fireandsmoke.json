@@ -25,7 +25,7 @@
             204.8
         ]
     },
-    "textureName": "resources/picture/smoke.png",
+    "textureName": "/resources/picture/smoke.png",
     "invertY": false,
     "animations": [],
     "beginAnimationOnStart": false,

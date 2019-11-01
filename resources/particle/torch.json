@@ -11,7 +11,7 @@
         "heightRange": 0,
         "emitFromSpawnPointOnly": false    
     },
-    "textureName": "resources/picture/flare3.png",
+    "textureName": "/resources/picture/flare3.png",
     "invertY": false,
     "animations": [],
     "beginAnimationOnStart": false,

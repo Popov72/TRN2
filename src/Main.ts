@@ -33,14 +33,18 @@ jQuery(document).on('keydown', function(event) {
             jQuery("#stats").css('display', jQuery('#stats').css('display') == 'block' ? 'none' : 'block');
             break;
         case 36: // Home
-            let qgame = Browser.QueryString.trgame,
-                prm = '';
+            let qgame = Browser.QueryString.trgame, qengine =Browser.QueryString.engine,
+                prm = '?';
 
-            if (qgame) {
-                prm = '?trgame=' + qgame;
+            if (qengine) {
+                prm += 'engine=' + qengine;
             }
 
-            document.location.href = 'index.html' + prm;
+            if (qgame) {
+                prm += '&trgame=' + qgame;
+            }
+
+            document.location.href = '/index.html' + prm;
             break;
     }
 });

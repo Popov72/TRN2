@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <script src="babylonJS/public/lib/jquery-3.3.1.min.js"></script>
+
+	<style>
+		body {
+			margin: 0;
+			background-color: #8AB7FF;
+		}
+
+		#logo {
+			display: block;
+			text-align: center;
+		}
+
+		#logo img {
+			width: 320px;
+		}
+
+		#container {
+			text-align: center;
+		}
+
+		#levels {
+			margin-top: 30px;
+			text-align: center;
+		}
+
+		.thumbnail {
+			display: inline-block;
+			position: relative;
+			margin-right: 30px;
+			margin-bottom: 30px;
+		}
+
+		.hvr-pulse {
+			display: block;
+		}
+
+		.hvr-pulse:hover {
+			animation: pulse 2s infinite;
+			animation-name: hvr-pulse;
+			animation-timing-function: linear;
+			cursor: pointer;
+		}
+
+		@keyframes hvr-pulse {
+		  0% {
+		    transform: scale(1);
+		  }
+		  25% {
+		    transform: scale(1.08);
+		  }
+		  50% {
+		    transform: scale(1.0);
+		  }
+		  75% {
+		    transform: scale(0.9);
+		  }
+		  100% {
+		    transform: scale(1);
+		  }
+		}
+
+		.cutscene {
+			width: 26px;
+			display: inline;
+			position: absolute;
+			right: 2px;
+			bottom: 0px;
+		}
+
+		.gametitle .text {
+			display: inline-block;
+			margin-top: 8px;
+			text-shadow: -1px -1px 0px rgba(255,255,255,0.2), 1px 1px 0px rgba(0,0,0,1);
+			color: white;
+		}
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<span id="logo"><img src="resources/picture/logo.png"/></span>
+	<select id="engine">
+        <option value="babylonJS">Babylon.js</option>
+        <option value="threeJS">Threejs</option>
+    </select>
+    <select id="trgame">
+		<option value="TR1">Tomb Raider 1</option>
+		<option value="TR2">Tomb Raider 2</option>
+		<option value="TR3">Tomb Raider 3</option>
+		<option value="TR4">Tomb Raider 4</option>
+		<option value="TR4Cut">Tomb Raider 4 Cut Scenes</option>
+	</select>
+	<div id="levels"></div>
+</div>
+
+<script>
+	let game = 'TR1', qs = QueryString();
+
+    const CutsceneTR4 = [
+        { "file": "joby1a.tr4",     "description": "Lara pulling out shovel and starting to dig",                                       },
+        null,
+        { "file": "joby1a.tr4",     "description": "Lara kneeling, reading inscription then standing",                                  },
+        { "file": "joby3a.tr4",     "description": "Bad guy fighting scorpion, Lara killing scorpion, bad guy giving keys to Lara",     },
+        { "file": "angkor1.tr4",    "description": "Young Lara getting backpack",                                                       },
+        { "file": "angkor1.tr4",    "description": "Young Lara appearing from behind Von Croy at level start",                          },
+        { "file": "ang_race.tr4",   "description": "Young Lara winning race",                                                           },
+        { "file": "ang_race.tr4",   "description": "Von Croy winning race",                                                             },
+        { "file": "ang_race.tr4",   "description": "Revealing Iris, Von Croy getting trapped and Young Lara going for help",            },
+        { "file": "libend.tr4",     "description": "Lara reading scroll and running away when Von Croy and bad guys coming",            },
+        { "file": "highstrt.tr4",   "description": "Lara coming back to Aziz, destroying of the beast",                                 },
+        { "file": "karnak1.tr4",    "description": "Lara arriving in jeep",                                                             },
+        { "file": "hall.tr4",       "description": "Von Croy and bad guys coming in car / jeeps",                                       },
+        { "file": "settomb2.tr4",   "description": "Lara pulling Ankh off Seth's Tomb",                                                 },
+        { "file": "citnew.tr4",     "description": "Lara meeting Von Croy and 4 dogs",                                                  },
+        { "file": "citnew.tr4",     "description": "Lara freeing Jean-Yves bound to a pole",                                            },
+        { "file": "alexhub.tr4",    "description": "First meeting with Jean-Yves",                                                      },
+        { "file": "alexhub.tr4",    "description": "Second meeting with Jean-Yves",                                                     },
+        { "file": "alexhub.tr4",    "description": "Third meeting with Jean-Yves",                                                      },
+        { "file": "alexhub.tr4",    "description": "Fourth meeting with Jean-Yves",                                                     },
+        { "file": "alexhub2.tr4",   "description": "Lara using pole and hook to get keys",                                              },
+        { "file": "palaces2.tr4",   "description": "Lara approaching and sitting on throne",                                            },
+        { "file": "joby5b.tr4",     "description": "Lara activating Horus in light shaft",                                              },
+        { "file": "lowstrt.tr4",    "description": "Lara speaking with injured bad guy to get code",                                    },
+        { "file": "highstrt.tr4",   "description": "First dialog with Aziz",                                                            },
+        { "file": "highstrt.tr4",   "description": "Second dialog with Aziz",                                                           },
+        { "file": "joby5c.tr4",     "description": "Lara riding up from the light shaft and sealing it",                                },
+        { "file": "title.tr4",      "description": "Lara revealing hidden golden skull",                                                },
+        { "file": "title.tr4",      "description": "Lara crossing falling wooden bridge ",                                              },
+        { "file": "title.tr4",      "description": "Lara fighting Mummy",                                                               },
+    ];
+
+    function QueryString() {
+        const query_string = {},
+              query = window.location.search.substring(1),
+              vars = query.split("&");
+
+        for (let i = 0; i < vars.length; i++) {
+            const pair = vars[i].split("=");
+
+            // If first entry with this name
+            if (typeof query_string[decodeURIComponent(pair[0])] === "undefined") {
+                query_string[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            // If second entry with this name
+            } else if (typeof query_string[decodeURIComponent(pair[0])] === "string") {
+                var arr = [ query_string[decodeURIComponent(pair[0])], decodeURIComponent(pair[1]) ];
+                query_string[decodeURIComponent(pair[0])] = arr;
+            // If third or later entry with this name
+            } else {
+                query_string[decodeURIComponent(pair[0])].push(decodeURIComponent(pair[1]));
+            }
+        }
+
+        return query_string;
+    }
+
+	function showLevels() {
+        if (game == 'TR4Cut') {
+            const js = [];
+            for (let l = 0; l < CutsceneTR4.length; ++l) {
+                const cut = CutsceneTR4[l];
+                if (cut === null) {
+                    continue;
+                }
+                const id = cut.file, name = cut.description;
+                const picname = 'cutscene_' + (l + 1);
+                const img = '<img class="cutscene" src="resources/picture/movie.png"/>';
+                js.push(
+                    '<span class="thumbnail" level="' + id + '" type="cutscene" cindex="' + (l + 1) + '">' +
+                    '<span class="timage"><img class="hvr-pulse" src="resources/picture/TR4Cutscene/' + picname + '.jpg"/></span>' +
+                    '<span class="gametitle">' + img + '<span class="text">' + name + '</span></span>' +
+                    '</span>'
+                );
+            }
+            jQuery('#levels').html(js.join(''));
+        } else {
+            fetch('/resources/level/TRLevels.xml').then((response) => {
+                response.text().then((txt) => {
+                    const root = jQuery.parseXML(txt);
+                    var levels = jQuery(root).find('game[id="' + game + '"] > levels > level');
+                    var js = [];
+                    for (var l = 0; l < levels.length; ++l) {
+                        var level = levels[l], id = level.attributes['id'].nodeValue, tp = level.attributes['type'].nodeValue, name = level.attributes['name'].nodeValue, img = '';
+                        var picname = id.substr(0, id.indexOf('.'));
+                        if (tp == 'cutscene') {
+                            img = '<img class="cutscene" src="resources/picture/movie.png"/>';
+                        }
+                        js.push(
+                            '<span class="thumbnail" level="' + id + '" type="' + tp + '">' +
+                            '<span class="timage"><img class="hvr-pulse" src="resources/picture/' + game + '/' + picname + '.jpg"/></span>' +
+                            '<span class="gametitle">' + img + '<span class="text">' + name + '</span></span>' +
+                            '</span>'
+                        );
+                    }
+                    jQuery('#levels').html(js.join(''));
+                });
+            });
+        }
+	}
+
+	jQuery(window).on('load', function() {
+		var qgame = qs.trgame, qengine = qs.engine;
+		
+		if (qengine) {
+			jQuery('#engine').val(qengine);
+		}
+
+		if (qgame) {
+			jQuery('#trgame').val(qgame);
+			game = qgame;
+		}
+
+		jQuery('#trgame').on('change', function(event) {
+			game = this.options[this.selectedIndex].value;
+			showLevels();
+		});
+
+		jQuery('#levels').on('click', function(event) {
+			var ot = jQuery(event.target).closest('.thumbnail');
+			if (ot.length > 0) {
+                const level = ot.attr('level'), type = ot.attr('type'), engine = jQuery('#engine').val();
+                let gamepath = game;
+                if (gamepath == 'TR4Cut') {
+                    gamepath = 'TR4';
+                }
+                let url = engine + '/public/TRN.html?engine=' + engine + '&trgame=' + game + '&level=' + gamepath.toLowerCase() + '/' + level + '&autostart=' + (type == 'cutscene' ? '0' : '1');
+                if (game == 'TR4Cut') {
+                    url += '&cutscene=' + ot.attr('cindex');
+                }
+				document.location.href = url;
+			}
+		});
+
+		showLevels();
+	});
+</script>
+
+</body>
+</html>
