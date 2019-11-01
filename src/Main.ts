@@ -6,6 +6,7 @@ import Browser from "./Utils/Browser";
 import { ProgressBar } from "./Utils/ProgressBar";
 
 import { CutScene } from "./Behaviour/CutScene";
+import { Ponytail } from "./Behaviour/Ponytail";
 import MasterLoader from "./Loading/MasterLoader";
 import Play from "./Player/Play";
 import { ConfigManager } from "./ConfigManager";
@@ -80,6 +81,11 @@ function loadAndPlayLevel(level: string | any) {
                                         clearInterval(idTimer);
                                         progressbar.hide();
                                         play.play(true, true);
+                                        const ponytail = play.gameData.bhvMgr.getBehaviour("Ponytail") ? (play.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>)[0] as Ponytail : null;
+                                        if (ponytail) {
+                                            ponytail.preWarm();
+                                            play.play(true, true);
+                                        }
                                         const bhvCutScene = (play.gameData.bhvMgr.getBehaviour("CutScene") as Array<CutScene>)[0] as CutScene;
                                         bhvCutScene.showController();
                                     }

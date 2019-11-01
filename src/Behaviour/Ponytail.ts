@@ -36,6 +36,12 @@ export class Ponytail extends Behaviour {
         return [BehaviourRetCode.keepBehaviour, null];
     }
 
+    public preWarm(): void {
+        for (let n = 0; n < 30 * 3; ++n) {
+            this.onFrameEnded(0, 1. / 30.);
+        }
+    }
+
     public onFrameEnded(curTime: number, delta: number): void {
         this._braids.forEach((b) => b.update(delta));
     }
