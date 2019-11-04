@@ -555,6 +555,7 @@
                         <offset><x>32</x><y>54</y><z>32</z></offset>
                     </offsets>
                 </behaviour>
+                <behaviour name="RemoveObject" objectid="397" cutsceneonly="true"/>
 			</level>
 			<level id="ang_race.tr4"		type="normal"	name="Race For The Iris">
 				<behaviour name="Lara">
