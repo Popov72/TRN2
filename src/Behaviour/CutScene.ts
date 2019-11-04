@@ -31,6 +31,7 @@ export interface CutSceneData {
     "sound"         : any;
     "soundbuffer"   : any;
     "gainNode"      : any;
+    "objects"       : any;
 }
 
 export class CutScene extends Behaviour {
@@ -88,6 +89,7 @@ export class CutScene extends Behaviour {
             "sound"         : null,
             "soundbuffer"   : null,
             "gainNode"      : null,
+            "objects"       : null,
         };
 
         this.control = new CutSceneControl(this, gameData);
@@ -150,7 +152,8 @@ export class CutScene extends Behaviour {
         if (index > 0) {
             const tr4Promise = new CutSceneTR4(this.gameData, this.cutscene, this.helper, this.lara).makeTR4Cutscene(parseInt(index));
             promises.push(tr4Promise.then(() => {
-                this.makeObjectList();
+                //this.makeObjectList();
+                this.objects = this.cutscene.objects;
                 this.registerAnimations();
                 this.resetHair();
                 this.control.init();
@@ -230,7 +233,7 @@ export class CutScene extends Behaviour {
             const trackInstance = allTrackInstances[data.animationStartIndex];
 
             if (trackInstance.track.nextTrack != -1) {
-            trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
+                trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
             }
             trackInstance.setNoInterpolationToNextTrack = true;
 

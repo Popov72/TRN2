@@ -56,6 +56,7 @@ export default class CutSceneTR4 {
                 }
 
                 if (cutscene[0].index == 1) {
+                    // we play cutscene 1 followed by cutscene 2, so need to retrieve data for cutscene 2
                     return fetch('/resources/level/tr4/TR4_cutscenes/cut' + (icutscene + 1) + '.json').then((response) => {
                         return response.json().then((data) => {
                             cutscene.push(data);
@@ -100,7 +101,7 @@ export default class CutSceneTR4 {
         const laraRoomIndex = this.sceneData.objects[this.lara.name].roomIndex;
 
         // create moveable instances used in cutscene
-        const actorMoveables = [];
+        const actorMoveables: Array<IMesh> = [];
 
         for (let ac = 0; ac < cutscene.actors.length; ++ac) {
             const id = cutscene.actors[ac].slotNumber;
@@ -148,6 +149,9 @@ export default class CutSceneTR4 {
         ocs.frames = frames;
 
         this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, cutscene.index, actorMoveables);
+
+        this.cutscene.objects = {};
+        actorMoveables.forEach((obj) => this.cutscene.objects[obj.name] = obj);
     }
 
     protected makeAnimationForActor(cutscene: any, actor: any, animName: string) {
