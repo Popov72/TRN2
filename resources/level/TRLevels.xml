@@ -771,12 +771,25 @@
 			<level id="joby5b.tr4"			type="normal"	name="Temple Of Horus">
 				<behaviour name="RemoveObject" objectid="394" cutsceneonly="true"/>
 				<behaviour name="RemoveObject" objectid="408" cutsceneonly="true"/>
+				<behaviour name="UVRotate" objectid="102" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="112" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="117" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="122" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="127" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="131" objecttype="room"/>
             </level>
 
 			<level id="joby5c.tr4"			type="normal"	name="Temple Of Horus">
 				<behaviour name="RemoveObject" objectid="394" cutsceneonly="true"/>
 				<behaviour name="RemoveObject" objectid="422" cutsceneonly="true"/>
 				<behaviour name="RemoveObject" objectid="433" cutsceneonly="true"/>
+				<behaviour name="UVRotate" objectid="41" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="51" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="61" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="66" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="71" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="76" objecttype="room"/>
+				<behaviour name="UVRotate" objectid="80" objecttype="room"/>
             </level>
 			<level id="joby1b.tr4"			type="normal"	name="The Valley Temple">
                 <behaviour name="Skydome">

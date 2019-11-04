@@ -1188,7 +1188,8 @@ export default class LevelConverter {
 
         this.laraObjectID = this.confMgr.number('lara > id', true, 0);
 
-        if (this.sc.data.levelShortFileNameNoExt.toLowerCase() != 'angkor1') {
+        const hasUVRotate = this.confMgr.param('behaviour[name="UVRotate"]', true, true);
+        if (!hasUVRotate) {
             this.sc.data.trlevel.animatedTexturesUVCount = 0;
         }
 
