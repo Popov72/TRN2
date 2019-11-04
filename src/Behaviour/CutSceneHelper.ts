@@ -6,10 +6,9 @@ import IGameData from "../Player/IGameData";
 import { ObjectManager } from "../Player/ObjectManager";
 import { Ponytail } from "../Behaviour/Ponytail";
 import { ShaderManager } from "../ShaderManager";
-import { LAYER } from "../Player/Layer";
+import { Layer, LAYER } from "../Player/Layer";
 import { MASK } from "../Player/Skeleton";
 import { Commands } from "../Animation/Commands";
-import Track from "../Animation/Track";
 
 declare var glMatrix: any;
 
@@ -20,7 +19,6 @@ export default class CutSceneHelper {
     private objMgr:     ObjectManager;
     private shdMgr:     ShaderManager;
     private scene:      IScene;
-    private lara:       IMesh;
 
     constructor(gameData: IGameData, lara: IMesh) {
         this.gameData = gameData;
@@ -28,7 +26,6 @@ export default class CutSceneHelper {
         this.objMgr = gameData.objMgr;
         this.shdMgr = gameData.shdMgr;
         this.scene = gameData.sceneRender;
-        this.lara = lara;
     }
 
     public prepareLevel(trVersion: string, levelName: string, csIndex: number, actorMoveables: Array<any>): Array<Promise<void>> {
@@ -173,25 +170,6 @@ export default class CutSceneHelper {
                 break;
             }
 
-            case 15: {
-                /*const uniforms = [];
-                for (let a = 0; a < actorMoveables.length; ++a) {
-                    const obj = actorMoveables[a];
-                    for (let i = 0; i < obj.material.length; ++i) {
-                        const material = obj.material[i];
-                        uniforms.push({ a:material.uniforms.tintColor.value, i:0 });
-                    }
-                }
-                this.bhvMgr.addBehaviour('FadeUniformColor',
-                    {
-                        "colorStart":   [1,1,1],
-                        "colorEnd":     [3.5,3.5,3.5],
-                        "duration":     3.0,
-                        "uniforms":     uniforms
-                    });*/
-                break;
-            }
-
             case 21: {
                 // Handle the pole
                 const lara = actorMoveables[0],
@@ -205,6 +183,24 @@ export default class CutSceneHelper {
                 track1.setCommands([
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [560, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_R3)] }
+                ], 0);
+
+                break;
+            }
+
+            case 23: {
+                // Handle the visibility of the ankh
+                const lara = actorMoveables[0],
+                      track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                const seth = (this.objMgr.objectList['moveable'][345] as Array<IMesh>)[0],
+                      layer = this.sceneData.objects[seth.name].layer as Layer;
+
+                layer.updateMask(LAYER.MAIN, 1 << 11);
+
+                track1.setCommands([
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [555,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => layer.updateMask(LAYER.MAIN, 1 << 11)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [655, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => layer.updateMask(LAYER.MAIN, 1 << 11)] }
                 ], 0);
 
                 break;

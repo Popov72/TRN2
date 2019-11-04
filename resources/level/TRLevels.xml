@@ -778,6 +778,7 @@
 				<behaviour name="UVRotate" objectid="122" objecttype="room"/>
 				<behaviour name="UVRotate" objectid="127" objecttype="room"/>
 				<behaviour name="UVRotate" objectid="131" objecttype="room"/>
+                <behaviour name="MakeLayeredMesh" objectid="345" cutsceneonly="true"/>
             </level>
 
 			<level id="joby5c.tr4"			type="normal"	name="Temple Of Horus">
