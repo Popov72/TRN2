@@ -141,7 +141,7 @@ export default class CutSceneHelper {
                         material.uniforms.volFogRadius = { "type": "f",  "value": 6000 };
                         material.uniforms.volFogColor =  { "type": "f3", "value": [0.1, 0.75, 0.3] };
                     }
-                }
+                };
 
                 this.scene.traverse((obj) => {
                     const data = this.sceneData.objects[obj.name];
@@ -225,12 +225,6 @@ export default class CutSceneHelper {
                 break;
             }
         }
-
-        // Reset Lara braid to take into account Lara's current position/rotation
-        const lara = this.lara,
-              track: Track = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
-
-        track.commands.splice(0, 0, { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_RESETHAIR] });
 
         return promises;
     }

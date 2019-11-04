@@ -38,7 +38,7 @@ export class Ponytail extends Behaviour {
 
     public preWarm(): void {
         for (let n = 0; n < 30 * 3; ++n) {
-            this.onFrameEnded(0, 1. / 30.);
+            this._braids.forEach((b) => b.update(1 / 30, true));
         }
     }
 

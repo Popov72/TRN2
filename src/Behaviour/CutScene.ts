@@ -15,6 +15,7 @@ import Misc from "../Utils/Misc";
 import TrackInstance from "../Animation/TrackInstance";
 import { BasicControl } from "./BasicControl";
 import { Lara } from "./Lara";
+import { Ponytail } from "./Ponytail";
 import CutSceneHelper from "./CutSceneHelper";
 import CutSceneTR4 from "./CutSceneTR4";
 import CutSceneControl from "./CutSceneControl";
@@ -151,6 +152,7 @@ export class CutScene extends Behaviour {
             promises.push(tr4Promise.then(() => {
                 this.makeObjectList();
                 this.registerAnimations();
+                this.resetHair();
                 this.control.init();
             }));
         } else {
@@ -168,10 +170,19 @@ export class CutScene extends Behaviour {
 
             this.makeObjectList();
             this.registerAnimations();
+            this.resetHair();
             this.control.init();
         }
 
         return [BehaviourRetCode.keepBehaviour, promises];
+    }
+
+    protected resetHair(): void {
+        const ponytail = this.bhvMgr.getBehaviour("Ponytail") ? (this.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>)[0] as Ponytail : null;
+        if (ponytail) {
+            ponytail.reset();
+            ponytail.preWarm();
+        }
     }
 
     protected makeObjectList(): void {

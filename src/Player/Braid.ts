@@ -127,8 +127,8 @@ export class Braid {
         return this._headBasis;
     }
 
-    protected getPos(): Position {
-        return this.getBasis().mult(this._offset);
+    protected getPos(forceCalcBasis: boolean = false): Position {
+        return this.getBasis(forceCalcBasis).mult(this._offset);
     }
 
     protected integrate(deltaTime: number): void {
@@ -216,8 +216,8 @@ export class Braid {
         }
     }
 
-    public update(deltaTime: number): void {
-        this._joints[0].pos = this.getPos();
+    public update(deltaTime: number, forceCalcBasis: boolean = false): void {
+        this._joints[0].pos = this.getPos(forceCalcBasis);
 
         this.integrate(deltaTime); // Verlet integration step
 
