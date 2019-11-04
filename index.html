@@ -104,36 +104,35 @@
 	let game = 'TR1', qs = QueryString();
 
     const CutsceneTR4 = [
-        { "file": "joby1a.tr4",     "description": "Lara pulling out shovel and starting to dig",                                       },
-        null,
-        { "file": "joby1a.tr4",     "description": "Lara kneeling, reading inscription then standing",                                  },
-        { "file": "joby3a.tr4",     "description": "Bad guy fighting scorpion, Lara killing scorpion, bad guy giving keys to Lara",     },
-        { "file": "angkor1.tr4",    "description": "Young Lara getting backpack",                                                       },
-        { "file": "angkor1.tr4",    "description": "Young Lara appearing from behind Von Croy at level start",                          },
-        { "file": "ang_race.tr4",   "description": "Young Lara winning race",                                                           },
-        { "file": "ang_race.tr4",   "description": "Von Croy winning race",                                                             },
-        { "file": "ang_race.tr4",   "description": "Revealing Iris, Von Croy getting trapped and Young Lara going for help",            },
-        { "file": "libend.tr4",     "description": "Lara reading scroll and running away when Von Croy and bad guys coming",            },
-        { "file": "highstrt.tr4",   "description": "Lara coming back to Aziz, destroying of the beast",                                 },
-        { "file": "karnak1.tr4",    "description": "Lara arriving in jeep",                                                             },
-        { "file": "hall.tr4",       "description": "Von Croy and bad guys coming in car / jeeps",                                       },
-        { "file": "settomb2.tr4",   "description": "Lara pulling Ankh off Seth's Tomb",                                                 },
-        { "file": "citnew.tr4",     "description": "Lara meeting Von Croy and 4 dogs",                                                  },
-        { "file": "citnew.tr4",     "description": "Lara freeing Jean-Yves bound to a pole",                                            },
-        { "file": "alexhub.tr4",    "description": "First meeting with Jean-Yves",                                                      },
-        { "file": "alexhub.tr4",    "description": "Second meeting with Jean-Yves",                                                     },
-        { "file": "alexhub.tr4",    "description": "Third meeting with Jean-Yves",                                                      },
-        { "file": "alexhub.tr4",    "description": "Fourth meeting with Jean-Yves",                                                     },
-        { "file": "alexhub2.tr4",   "description": "Lara using pole and hook to get keys",                                              },
-        { "file": "palaces2.tr4",   "description": "Lara approaching and sitting on throne",                                            },
-        { "file": "joby5b.tr4",     "description": "Lara activating Horus in light shaft",                                              },
-        { "file": "lowstrt.tr4",    "description": "Lara speaking with injured bad guy to get code",                                    },
-        { "file": "highstrt.tr4",   "description": "First dialog with Aziz",                                                            },
-        { "file": "highstrt.tr4",   "description": "Second dialog with Aziz",                                                           },
-        { "file": "joby5c.tr4",     "description": "Lara riding up from the light shaft and sealing it",                                },
-        { "file": "title.tr4",      "description": "Lara revealing hidden golden skull",                                                },
-        { "file": "title.tr4",      "description": "Lara crossing falling wooden bridge ",                                              },
-        { "file": "title.tr4",      "description": "Lara fighting Mummy",                                                               },
+        { "file": "angkor1.tr4",    "description": "Young Lara appearing from behind Von Croy at level start",                      "index": 6  },
+        { "file": "angkor1.tr4",    "description": "Young Lara getting backpack",                                                   "index": 5  },
+        { "file": "ang_race.tr4",   "description": "Von Croy winning race",                                                         "index": 8  },
+        { "file": "ang_race.tr4",   "description": "Young Lara winning race",                                                       "index": 7  },
+        { "file": "ang_race.tr4",   "description": "Revealing Iris, Von Croy getting trapped and Young Lara going for help",        "index": 9  },
+        { "file": "settomb2.tr4",   "description": "Lara pulling Ankh off Seth's Tomb",                                             "index": 14 },
+        { "file": "karnak1.tr4",    "description": "Lara arriving in jeep",                                                         "index": 12 },
+        { "file": "hall.tr4",       "description": "Von Croy and bad guys coming in car / jeeps",                                   "index": 13 },
+        { "file": "alexhub.tr4",    "description": "First meeting with Jean-Yves",                                                  "index": 17 },
+        { "file": "alexhub2.tr4",   "description": "Lara using pole and hook to get keys",                                          "index": 21 },
+        { "file": "alexhub.tr4",    "description": "Second meeting with Jean-Yves",                                                 "index": 18 },
+        { "file": "alexhub.tr4",    "description": "Third meeting with Jean-Yves",                                                  "index": 19 },
+        { "file": "libend.tr4",     "description": "Lara reading scroll and running away when Von Croy coming",                     "index": 10 },
+        { "file": "alexhub.tr4",    "description": "Fourth meeting with Jean-Yves",                                                 "index": 20 },
+        { "file": "palaces2.tr4",   "description": "Lara approaching and sitting on throne",                                        "index": 22 },
+        { "file": "highstrt.tr4",   "description": "First dialog with Aziz",                                                        "index": 25 },
+        { "file": "highstrt.tr4",   "description": "Second dialog with Aziz",                                                       "index": 26 },
+        { "file": "lowstrt.tr4",    "description": "Lara speaking with injured guy to get code",                                    "index": 24 },
+        { "file": "highstrt.tr4",   "description": "Lara coming back to Aziz, destroying of the beast",                             "index": 11 },
+        { "file": "citnew.tr4",     "description": "Lara freeing Jean-Yves bound to a pole",                                        "index": 16 },
+        { "file": "citnew.tr4",     "description": "Lara meeting Von Croy and 4 dogs",                                              "index": 15 },
+        { "file": "joby1a.tr4",     "description": "Lara kneeling, reading inscription then standing",                              "index": 3  },
+        { "file": "joby1a.tr4",     "description": "Lara pulling out shovel and starting to dig",                                   "index": 1  },
+        { "file": "joby3a.tr4",     "description": "Lara fighting scorpion and getting keys",                                       "index": 4  },
+        { "file": "joby5b.tr4",     "description": "Lara activating Horus in light shaft",                                          "index": 23 },
+        { "file": "joby5c.tr4",     "description": "Lara riding up from the light shaft and sealing it",                            "index": 27 },
+        { "file": "title.tr4",      "description": "Lara revealing hidden golden skull",                                            "index": 28 },
+        { "file": "title.tr4",      "description": "Lara crossing falling wooden bridge ",                                          "index": 29 },
+        { "file": "title.tr4",      "description": "Lara fighting Mummy",                                                           "index": 30 },
     ];
 
     function QueryString() {
@@ -168,11 +167,11 @@
                 if (cut === null) {
                     continue;
                 }
-                const id = cut.file, name = cut.description;
-                const picname = 'cutscene_' + (l + 1);
+                const id = cut.file, name = cut.description, idx = cut.index;
+                const picname = 'cutscene_' + idx;
                 const img = '<img class="cutscene" src="resources/picture/movie.png"/>';
                 js.push(
-                    '<span class="thumbnail" level="' + id + '" type="cutscene" cindex="' + (l + 1) + '">' +
+                    '<span class="thumbnail" level="' + id + '" type="cutscene" cindex="' + idx + '">' +
                     '<span class="timage"><img class="hvr-pulse" src="resources/picture/TR4Cutscene/' + picname + '.jpg"/></span>' +
                     '<span class="gametitle">' + img + '<span class="text">' + name + '</span></span>' +
                     '</span>'
