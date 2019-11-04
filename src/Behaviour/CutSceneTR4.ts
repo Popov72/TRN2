@@ -132,7 +132,7 @@ export default class CutSceneTR4 {
                 const animationCont = this.makeAnimationForActor(cutscenes[1], cutscenes[1].actors[ac], "anim_cutscene2_actor" + ac);
 
                 oanimation.nextTrack = this.sceneData.animTracks.length;
-                animationCont.nextTrack = this.sceneData.animTracks.length - 1;
+                animationCont.nextTrack = -1;
 
                 this.sceneData.animTracks.push(Track.createTrack(animationCont));
             }
@@ -177,7 +177,7 @@ export default class CutSceneTR4 {
             "frameRate": 1,
             "keys": [],
             "name": animName,
-            "nextTrack": this.sceneData.animTracks.length,
+            "nextTrack": -1,
             "nextTrackFrame": 0,
             "numFrames": cutscene.numFrames,
             "numKeys": cutscene.numFrames,

@@ -89,6 +89,10 @@ export class AnimationManager {
 
                 if (data.has_anims && data.trackInstance && (obj.visible || this.gameData.isCutscene)) {
                     if (!data.trackInstance.runForward(delta)) {
+                        if (data.trackInstance.track.nextTrack == -1) {
+                            continue;
+                        }
+
                         // it's the end of the current track and we are in a cut scene => we link to the next track
                         let trackInstance = data.trackInstance;
 

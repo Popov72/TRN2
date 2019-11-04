@@ -213,7 +213,7 @@ export class CutScene extends Behaviour {
             let anmIndex = data.animationStartIndex;
 
             while (true) {
-                if (registered[anmIndex]) { break; }
+                if (anmIndex == -1 || registered[anmIndex]) { break; }
 
                 registered[anmIndex] = true;
 
@@ -229,7 +229,9 @@ export class CutScene extends Behaviour {
 
             const trackInstance = allTrackInstances[data.animationStartIndex];
 
+            if (trackInstance.track.nextTrack != -1) {
             trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
+            }
             trackInstance.setNoInterpolationToNextTrack = true;
 
             trackInstance.runForward(0);
@@ -339,7 +341,7 @@ export class CutScene extends Behaviour {
               cfrmA = Math.min(Math.floor(this.cutscene.curFrame), this.cutscene.frames.length - 2),
               cfrmB = Math.min(cfrmA + 1, this.cutscene.frames.length - 1);
 
-        if (cfrmA < this.cutscene.frames.length - 2) {
+        if (cfrmA < this.cutscene.frames.length - 3) {
             if (!this.bhvCtrl.captureMouse) {
                 const frm1 = this.cutscene.frames[cfrmA],
                       frm2 = this.cutscene.frames[cfrmB],

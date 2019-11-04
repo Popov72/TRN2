@@ -87,7 +87,7 @@ export default class TrackInstance {
         if (this.param.curFrame >= this._track.numFrames) {
 
             // Yes. Is the next animation not the current one ?
-            if (this.nextTrackInstance._track.id != this._track.id) {
+            if (!this.nextTrackInstance || this.nextTrackInstance._track.id != this._track.id) {
 
                 // Yes. The caller must handle this situation
                 const curKey = this.param.curFrame / this._track.frameRate;
