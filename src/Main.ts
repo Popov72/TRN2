@@ -34,7 +34,7 @@ jQuery(document).on('keydown', function(event) {
             jQuery("#stats").css('display', jQuery('#stats').css('display') == 'block' ? 'none' : 'block');
             break;
         case 36: // Home
-            let qgame = Browser.QueryString.trgame, qengine =Browser.QueryString.engine,
+            let qgame = Browser.QueryString.trgame, qengine = Browser.QueryString.engine,
                 prm = '?';
 
             if (qengine) {
@@ -81,6 +81,7 @@ function loadAndPlayLevel(level: string | any) {
                                         clearInterval(idTimer);
                                         progressbar.hide();
                                         play.play(true, true);
+                                        play.play(true, false); // we need a 2nd call to display the particle systems in Babylon...
                                         const bhvCutScene = (play.gameData.bhvMgr.getBehaviour("CutScene") as Array<CutScene>)[0] as CutScene;
                                         bhvCutScene.showController();
                                     }
