@@ -6,7 +6,17 @@ import Track from "./Track";
 
 declare var glMatrix: any;
 
+interface IParam {
+    curKey : number;
+    curFrame : number;
+    interpFactor : number;
+    nextKeyIsInCurrentTrack : boolean;
+}
+
 export default class TrackInstance {
+
+    public param: IParam;
+    public noInterpolationToNextTrack: boolean;
 
     private _track: Track;
     private skeleton: Skeleton;
@@ -14,11 +24,9 @@ export default class TrackInstance {
     private activateInterpolation: boolean;
     private nextTrackInstance: TrackInstance;
     private nextTrackInstanceFrame: number;
-    private noInterpolationToNextTrack: boolean;
     private noInterpolationToNextTrackValue: number;
     private interpolatedData: Array<INode>;
-    private param: any;
-    private paramSave: any;
+    private paramSave: IParam;
 
     constructor(track: Track, skeleton: Skeleton) {
 
@@ -36,7 +44,7 @@ export default class TrackInstance {
 
         this.interpolatedData = <any>null;
 
-        this.param = {
+        this.param = this.paramSave = {
             curKey : 0,
             curFrame : 0.0,
             interpFactor : 0.0,
