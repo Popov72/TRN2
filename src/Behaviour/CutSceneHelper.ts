@@ -7,7 +7,7 @@ import { ObjectManager } from "../Player/ObjectManager";
 import { Ponytail } from "../Behaviour/Ponytail";
 import { ShaderManager } from "../ShaderManager";
 import { Layer, LAYER } from "../Player/Layer";
-import { MASK } from "../Player/Skeleton";
+import { BONE, MASK } from "../Player/Skeleton";
 import { Commands } from "../Animation/Commands";
 import { CommandDispatchMode } from "../Animation/CommandDispatch";
 
@@ -121,6 +121,25 @@ export default class CutSceneHelper {
                 break;
             }
 
+            case 5: {
+                // Show bagpack
+                const lara = actorMoveables[0],
+                      data = this.sceneData.objects[lara.name],
+                      track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                const laraBagpack = this.objMgr.createMoveable(1, -1, undefined, true, data.skeleton) as IMesh,
+                      meshb = Engine.makeMeshBuilder(laraBagpack);
+
+                meshb.replaceSkinIndices({1: BONE.CHEST});
+                data.layer.setMeshBuilder(LAYER.MESHSWAP, meshb, 0);
+
+                track1.setCommands([
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [1350,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.CHEST)] }
+                ], 0);
+
+                break;
+            }
+
             case 7:
             case 8:
             case 9: {
@@ -228,7 +247,7 @@ export default class CutSceneHelper {
 
     public fadeOut(duration: number, mode: CommandDispatchMode): void {
         if (mode === CommandDispatchMode.NORMAL) {
-        jQuery(this.gameData.container).fadeOut(duration * 1000);
+            jQuery(this.gameData.container).fadeOut(duration * 1000);
         } else if (mode === CommandDispatchMode.UNDO) {
             jQuery(this.gameData.container).stop();
             jQuery(this.gameData.container).fadeIn(0);
@@ -237,8 +256,8 @@ export default class CutSceneHelper {
 
     public fadeIn(duration: number, mode: CommandDispatchMode): void {
         if (mode === CommandDispatchMode.NORMAL) {
-        jQuery(this.gameData.container).fadeIn(duration * 1000);
-    }
+            jQuery(this.gameData.container).fadeIn(duration * 1000);
+        }
     }
 
     // Between cutscene 1 and 2, a hole should appear in the ground to reveal hidden entrance to pyramid
