@@ -5,10 +5,7 @@ import Track from "../Animation/Track";
 import TrackInstance from "../Animation/TrackInstance";
 import { IMesh } from "../Proxy/IMesh";
 import { Commands } from "./Commands";
-import { ObjectID } from "../Constants";
-import { Ponytail } from "../Behaviour/Ponytail";
-import { LAYER } from "../Player/Layer";
-import { MASK, BONE } from "../Player/Skeleton";
+import CommandDispatch from "./CommandDispatch";
 
 export class AnimationManager {
 
@@ -17,14 +14,14 @@ export class AnimationManager {
     protected sceneData: any;
     protected matMgr: MaterialManager;
     protected objMgr: ObjectManager;
-    protected trversion: string;
+    protected commandDispatch: CommandDispatch;
 
     constructor() {
         this.paused = false;
         this.gameData = <any>null;
         this.matMgr = <any>null;
         this.objMgr = <any>null;
-        this.trversion = <any>null;
+        this.commandDispatch = <any>null;
     }
 
     public initialize(gameData: IGameData): void {
@@ -32,7 +29,8 @@ export class AnimationManager {
         this.sceneData = gameData.sceneData;
         this.matMgr = gameData.matMgr;
         this.objMgr = gameData.objMgr;
-        this.trversion = gameData.confMgr.trversion;
+
+        this.commandDispatch = new CommandDispatch(gameData, gameData.confMgr.trversion);
 
         this.makeTracks();
     }
@@ -153,112 +151,12 @@ export class AnimationManager {
 
                 case Commands.ANIMCMD_MISCACTIONONFRAME: {
 
-                    const frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1];
+                    const frame = command.params[0] - trackInstance.track.commandsFrameStart, action = command.params[1], customParam = command.params[2];
                     if (frame < prevFrame || frame >= curFrame) { continue; }
 
                     //console.log(action,'done for frame',frame,obj.name)
 
-                    switch (action) {
-
-                        case Commands.Misc.ANIMCMD_MISC_COLORFLASH: {
-                            this.gameData.globalTintColor[0] = this.gameData.globalTintColor[1] = this.gameData.globalTintColor[2] = (this.gameData.globalTintColor[0] < 0.5 ? 1.0 : 0.1);
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_GETLEFTGUN: {
-                            const layer = this.sceneData.objects[obj.name].layer;
-
-                            if (this.trversion == 'TR4') {
-                                layer.updateMask(LAYER.HOLSTER_EMPTY, MASK.LEG_L1);
-                                layer.updateMask(LAYER.HOLSTER_FULL,  MASK.LEG_L1);
-                                layer.updateMask(LAYER.WEAPON,        MASK.ARM_L3);
-
-                            } else {
-                                layer.updateMask(LAYER.WEAPON, MASK.LEG_L1 | MASK.ARM_L3);
-                                layer.updateMask(LAYER.MAIN,   MASK.LEG_L1 | MASK.ARM_L3);
-                            }
-
-                            layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
-
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN: {
-                            const layer = this.sceneData.objects[obj.name].layer;
-
-                            if (this.trversion == 'TR4') {
-                                layer.updateMask(LAYER.HOLSTER_EMPTY, MASK.LEG_R1);
-                                layer.updateMask(LAYER.HOLSTER_FULL,  MASK.LEG_R1);
-                                layer.updateMask(LAYER.WEAPON,        MASK.ARM_R3);
-                            } else {
-                                layer.updateMask(LAYER.WEAPON, MASK.LEG_R1 | MASK.ARM_R3);
-                                layer.updateMask(LAYER.MAIN,   MASK.LEG_R1 | MASK.ARM_R3);
-                            }
-
-                            layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
-
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN: {
-                            this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_L3 });
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN: {
-                            this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_R3 });
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_MESHSWAP1:
-                        case Commands.Misc.ANIMCMD_MISC_MESHSWAP2:
-                        case Commands.Misc.ANIMCMD_MISC_MESHSWAP3: {
-                            const idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
-
-                            const oswap = this.objMgr.objectList['moveable'][ObjectID['meshswap' + idx]];
-
-                            if (oswap && Array.isArray(oswap)) {
-                                const layer = this.sceneData.objects[obj.name].layer;
-
-                                if (layer.isEmpty(LAYER.MESHSWAP) || layer.getMesh(LAYER.MESHSWAP) != oswap[0]) {
-                                    layer.setMesh(LAYER.MESHSWAP, oswap[0], 0);
-                                }
-
-                                layer.updateMask(LAYER.MESHSWAP,  MASK.ALL);
-                                layer.updateMask(LAYER.MAIN,      MASK.ALL);
-
-                                layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
-                            } else {
-                                console.log('Could not apply anim command meshswap (' , action, '): object meshswap' + idx + ' not found.');
-                            }
-
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_HIDEOBJECT: {
-                            obj.visible = false;
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_SHOWOBJECT: {
-                            obj.visible = true;
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_RESETHAIR: {
-                            const ponytail = this.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>;
-
-                            if (ponytail && ponytail.length > 0) {
-                                ponytail[0].reset();
-                            }
-                            break;
-                        }
-
-                        case Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION: {
-                            command.params[2]();
-                            break;
-                        }
-                    }
+                    this.commandDispatch.dispatch(action, customParam, obj);
 
                     break;
                 }
