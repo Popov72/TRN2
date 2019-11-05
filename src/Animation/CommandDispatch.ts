@@ -80,16 +80,7 @@ export default class CommandDispatch {
 
     protected colorFlash(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
         switch (mode) {
-            /*case CommandDispatchMode.UNDO: {
-                this.undoMap[action].count++;
-                this.undoMap[action].obj = obj;
-                break;
-            }*/
-
             case CommandDispatchMode.UNDO_END: {
-                /*if ((this.undoMap[action].count & 1) === 1) {
-                    this.colorFlash(action, customParam, this.undoMap[action].obj, CommandDispatchMode.NORMAL);
-                }*/
                 break;
             }
 
@@ -105,16 +96,7 @@ export default class CommandDispatch {
 
     protected getLeftGun(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
         switch (mode) {
-            /*case CommandDispatchMode.UNDO: {
-                this.undoMap[action].count++;
-                this.undoMap[action].obj = obj;
-                break;
-            }*/
-
             case CommandDispatchMode.UNDO_END: {
-                /*if ((this.undoMap[action].count & 1) === 1) {
-                    this.getLeftGun(action, customParam, this.undoMap[action].obj, CommandDispatchMode.NORMAL);
-                }*/
                 break;
             }
 
@@ -127,16 +109,7 @@ export default class CommandDispatch {
 
     protected getRightGun(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
         switch (mode) {
-            /*case CommandDispatchMode.UNDO: {
-                this.undoMap[action].count++;
-                this.undoMap[action].obj = obj;
-                break;
-            }*/
-
             case CommandDispatchMode.UNDO_END: {
-                /*if ((this.undoMap[action].count & 1) === 1) {
-                    this.getRightGun(action, customParam, this.undoMap[action].obj, CommandDispatchMode.NORMAL);
-                }*/
                 break;
             }
 
@@ -176,30 +149,7 @@ export default class CommandDispatch {
 
     protected meshSwap(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
         switch (mode) {
-            /*case CommandDispatchMode.UNDO: {
-                let counters = this.undoMap[action].counters;
-                if (!counters) {
-                    counters = {};
-                    this.undoMap[action].counters = counters;
-                }
-                let counter = counters[obj.name];
-                if (!counter) {
-                    counters[obj.name] = {
-                        "obj": obj,
-                        "count": 0,
-                    };
-                }
-                counters[obj.name].count++;
-                break;
-            }*/
-
             case CommandDispatchMode.UNDO_END: {
-                /*for (const name in this.undoMap[action].counters) {
-                    const counter = this.undoMap[action].counters[name];
-                    if ((counter.count & 1) === 1) {
-                        this.meshSwap(action, customParam, counter.obj, CommandDispatchMode.NORMAL);
-                    }
-                }*/
                 break;
             }
 
