@@ -674,6 +674,8 @@ export default class LevelConverter {
             moveableIsExternallyLit = false, materials = null, meshJSON = null;
         const isDummy = numMeshes == 1 && this.sc.data.trlevel.meshes[meshIndex].dummy && !(moveableGeom.objectID == this.laraObjectID);
 
+        const trType = this.sc.data.trlevel.rversion;
+
         if (!isDummy) {
             meshJSON = this.helper.createNewGeometryData();
 
@@ -705,8 +707,18 @@ export default class LevelConverter {
 
                 const mesh = this.sc.data.trlevel.meshes[meshIndex];
 
-                if ((mesh.dummy && this.sc.data.trlevel.rversion == 'TR4') || (idx == 0 && this.sc.data.trlevel.rversion == 'TR4' && moveableGeom.objectID == ObjectID.LaraJoints)) {
-                    // hack to remove bad data from joint #0 of Lara joints in TR4
+                let isDummyMesh = true;
+
+                if (!mesh.dummy  ||  (mesh.dummy && (
+                    ((trType == 'TR3' || trType == 'TR4')  &&  objIDForVisu == 1  &&  idx == 1)  ||
+                    ((trType == 'TR1' || trType == 'TR2') &&  objIDForVisu == 0) ||
+                    (trType == 'TR1' && objIDForVisu == 77)
+                ))) {
+                    isDummyMesh = false;
+                }
+
+                if ((isDummyMesh && trType == 'TR4') || (idx == 0 && trType == 'TR4' && moveableGeom.objectID == ObjectID.LaraJoints)) {
+                    // dummy mesh + hack to remove bad data from joint #0 of Lara joints in TR4
                 } else {
                     const internalLit = this.helper.makeMeshGeometry(mesh, meshJSON, tiles2material, this.sc.data.trlevel.objectTextures, this.sc.data.trlevel.mapObjTexture2AnimTexture, idx);
 

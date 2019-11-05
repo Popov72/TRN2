@@ -108,7 +108,7 @@ export class LevelLoader {
 
                 out.meshes[m] = mesh;
                 out.meshes[m].dummy = out.meshPointers[m] == 0;
-                //if (out.meshPointers[m] == 0) console.log(mesh)
+                //if (out.meshPointers[m] == 0) { console.log(m, mesh); }
             }
 
             ds.position = savepos2;
