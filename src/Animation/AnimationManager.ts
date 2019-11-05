@@ -86,28 +86,31 @@ export class AnimationManager {
                       data = this.sceneData.objects[obj.name];
 
                 if (data.has_anims && data.trackInstance && (obj.visible || this.gameData.isCutscene)) {
+                    const nextTrackFrame = data.trackInstance.track.nextTrackFrame;
+
                     if (!data.trackInstance.runForward(delta)) {
                         if (data.trackInstance.track.nextTrack == -1) {
                             continue;
                         }
 
-                        // it's the end of the current track and we are in a cut scene => we link to the next track
-                        let trackInstance = data.trackInstance;
-
-                        const nextTrackFrame = trackInstance.track.nextTrackFrame + trackInstance.param.curFrame - trackInstance.track.numFrames; //trackInstance.param.interpFactor;
+                        // it's the end of the current track and we are in a cut scene (because animations that are not in a cutscene loop on themselves, and so .runFoward won't return false for them) => we link to the next track
+                        let trackInstance = data.trackInstance as TrackInstance,
+                            curTrackInstance = trackInstance;
 
                         trackInstance = data.allTrackInstances[trackInstance.track.nextTrack];
                         data.trackInstance = trackInstance;
 
+                        if (trackInstance.track.nextTrack != -1) {
                         trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
-                        trackInstance.setCurrentFrame(nextTrackFrame);
+                        }
+                        trackInstance.setCurrentFrame(nextTrackFrame + curTrackInstance.param.curFrame - curTrackInstance.track.numFrames);
 
-                        trackInstance.setNoInterpolationToNextTrack = this.gameData.isCutscene;
+                        trackInstance.noInterpolationToNextTrack = this.gameData.isCutscene;
                     }
 
                     if (data.trackInstance != data.prevTrackInstance) {
                         this.processAnimCommands(data.prevTrackInstance, data.prevTrackInstanceFrame, 1e10, obj);
-                        this.processAnimCommands(data.trackInstance, 0, data.trackInstance.param.curFrame, obj);
+                        this.processAnimCommands(data.trackInstance, nextTrackFrame, data.trackInstance.param.curFrame, obj);
                     } else {
                         const frm1 = data.prevTrackInstanceFrame,
                               frm2 = data.trackInstance.param.curFrame;
@@ -115,7 +118,7 @@ export class AnimationManager {
                         if (frm1 > frm2) {
                             // we have looped in the same animation
                             this.processAnimCommands(data.trackInstance, frm1, 1e10, obj);
-                            this.processAnimCommands(data.trackInstance, 0, frm2, obj);
+                            this.processAnimCommands(data.trackInstance, nextTrackFrame, frm2, obj);
                         } else {
                             this.processAnimCommands(data.trackInstance, frm1, frm2, obj);
                         }
