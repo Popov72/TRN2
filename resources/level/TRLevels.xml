@@ -38,6 +38,11 @@
 				<animminid>77</animminid>
 				<animmaxid>80</animmaxid>
 			</cutscene>
+            <gun>
+                <flashid>166</flashid>
+                <left_flashoffset><x>10</x><y>50</y><z>-150</z></left_flashoffset>
+                <right_flashoffset><x>-10</x><y>50</y><z>-150</z></right_flashoffset>
+            </gun>
 		</global>
 		<levels>
 			<!-- Standard levels -->
@@ -188,6 +193,11 @@
 				<animminid>123</animminid>
 				<animmaxid>132</animmaxid>
 			</cutscene>
+            <gun>
+                <flashid>240</flashid>
+                <left_flashoffset><x>10</x><y>50</y><z>-180</z></left_flashoffset>
+                <right_flashoffset><x>-10</x><y>50</y><z>-180</z></right_flashoffset>
+            </gun>
 		</global>
 		<levels>
 			<!-- Standard levels -->
@@ -366,6 +376,11 @@
 				<animminid>148</animminid>
 				<animmaxid>156</animmaxid>
 			</cutscene>
+            <gun>
+                <flashid>300</flashid>
+                <left_flashoffset><x>10</x><y>50</y><z>-180</z></left_flashoffset>
+                <right_flashoffset><x>-10</x><y>50</y><z>-180</z></right_flashoffset>
+            </gun>
 		</global>
 		<levels>
 			<!-- Standard levels -->
@@ -532,6 +547,11 @@
                 </behaviour>
                 <behaviour name="RemoveObject"/>
             </moveable>
+            <gun>
+                <flashid>388</flashid>
+                <left_flashoffset><x>10</x><y>50</y><z>-180</z></left_flashoffset>
+                <right_flashoffset><x>-10</x><y>50</y><z>-180</z></right_flashoffset>
+            </gun>
 		</global>
 		<levels>
 			<level id="angkor1.tr4"			type="normal"	name="Angkor Wat">

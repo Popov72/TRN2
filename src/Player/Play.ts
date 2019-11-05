@@ -181,7 +181,11 @@ export default class Play {
             this.gameData.matMgr.setUniformsFromRoom(obj, data.roomIndex);
         });
 
-        BehaviourManager.onEngineInitialized(this.gameData);
+        const otherPromises = BehaviourManager.onEngineInitialized(this.gameData);
+
+        if (Array.isArray(otherPromises) && otherPromises.length > 0) {
+            await Promise.all(otherPromises);
+        }
 
         return Promise.resolve();
     }

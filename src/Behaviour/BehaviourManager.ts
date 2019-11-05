@@ -70,16 +70,23 @@ export class BehaviourManager {
         }
     }
 
-    public static callStatic(funcname: string, params: Array<any>) {
+    public static callStatic(funcname: string, params: Array<any>): Array<any> {
+        const ret = [];
+
         for (const [name, clss] of BehaviourManager.factories) {
             if ((clss as any)[funcname]) {
-                (clss as any)[funcname].apply(null, params);
+                const r = (clss as any)[funcname].apply(null, params);
+                if (Array.isArray(r)) {
+                    ret.push(...r);
+                }
             }
         }
+
+        return ret;
     }
 
-    public static onEngineInitialized(gameData: IGameData): void {
-        BehaviourManager.callStatic("onEngineInitialized", [gameData]);
+    public static onEngineInitialized(gameData: IGameData): Array<Promise<any>> {
+        return BehaviourManager.callStatic("onEngineInitialized", [gameData]);
     }
 
     public onBeforeRenderLoop(): void {

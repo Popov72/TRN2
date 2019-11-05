@@ -47,6 +47,10 @@ export class TRLevel {
         }
     }
 
+    public getMoveableIndex(objectID: number): number | undefined {
+        return this.movObjID2Index.get(objectID);
+    }
+
     public getRoomByPos(pos: Position): number {
         const trlevel = this.trlevel,
               x = Math.floor(pos[0]),
