@@ -127,7 +127,7 @@ export default class TrackInstance {
         const nextFrame = Math.floor((this.param.curKey + 1) * this._track.frameRate);
         let speedFactor = 1.0;
 
-        if (nextFrame < this._track.numFrames) {
+        if (nextFrame < this._track.numFrames || (!this.nextTrackInstance && nextFrame >= this._track.numFrames)) {
             // The key to use for the interpolation is the next one in the current animation
             this.param.nextKeyIsInCurrentTrack = true;
         } else {
@@ -170,7 +170,7 @@ export default class TrackInstance {
         if (this.param.nextKeyIsInCurrentTrack || this._track.numKeys == 1 || detectRecursInfinite) {
             let nextKey = curKey + 1;
 
-            if (nextKey >= this._track.numKeys) { nextKey = 0; } // to handle animations with only one key
+            if (nextKey >= this._track.numKeys) { nextKey = this._track.numKeys - 1; }
 
             if (detectRecursInfinite && !this.param.nextKeyIsInCurrentTrack && this._track.numKeys != 1) {
                 nextKey = this._track.numKeys - 1;
