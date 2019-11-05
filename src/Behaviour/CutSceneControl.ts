@@ -14,6 +14,7 @@ export default class CutSceneControl {
     protected _volumeDrag: boolean;
     protected _timeDrag: boolean;
     protected _paused: boolean;
+    protected _pausedSave: boolean;
     protected _ended: boolean;
 
     constructor(cutscene: CutScene, gameData: IGameData) {
@@ -22,6 +23,7 @@ export default class CutSceneControl {
         this._volumeDrag = false;
         this._timeDrag = false;
         this._paused = false;
+        this._pausedSave = false;
         this._ended = false;
     }
 
@@ -79,7 +81,7 @@ export default class CutSceneControl {
         jQuery('.btnStop').on('click', () => {
             jQuery('.btnPlay').removeClass('paused');
             this.updatebar((jQuery('.progress') as any).offset().left);
-            if (!this._paused) {
+            if (!this._paused || this._ended) {
                 this.playPause();
             }
             this._cutscene.reset();
@@ -98,10 +100,16 @@ export default class CutSceneControl {
             return false;
         });
 
-        // When video timeebar is clicked
+        // When video timebar is clicked
         jQuery('.progress').on('mousedown', (function(ctrl: CutSceneControl) {
             return function(e: any) {
                 ctrl._timeDrag = true;
+                ctrl._cutscene.stopSound();
+                ctrl._pausedSave = ctrl._paused;
+                if (!ctrl._paused) {
+                    ctrl._gameData.update = false;
+                    ctrl._paused = true;
+                }
                 ctrl.updatebar(e.pageX);
                 return false;
             };
@@ -112,6 +120,14 @@ export default class CutSceneControl {
                 if (ctrl._timeDrag) {
                     ctrl._timeDrag = false;
                     ctrl.updatebar(e.pageX);
+                    if (ctrl._ended) {
+                        ctrl._ended = false;
+                    }
+                    ctrl._paused = ctrl._pausedSave;
+                    if (!ctrl._paused) {
+                        ctrl._cutscene.startSound();
+                        ctrl._gameData.update = true;
+                    }
                 }
             };
         })(this));
@@ -179,7 +195,7 @@ export default class CutSceneControl {
     public finished(): void {
         this.updateTime(this._cutscene.duration);
         jQuery('.btnPlay').removeClass('paused');
-        this._ended = true;
+        this._ended = this._paused = true;
     }
 
     protected playPause() {
@@ -192,7 +208,7 @@ export default class CutSceneControl {
             jQuery('.btnPlay').addClass('paused');
             this._gameData.update = true;
             this._paused = false;
-            this._cutscene.startSound(this._cutscene.currentTime);
+            this._cutscene.startSound();
         } else {
             jQuery('.btnPlay').removeClass('paused');
             this._gameData.update = false;
@@ -223,9 +239,9 @@ export default class CutSceneControl {
             percentage = 0;
         }
 
-        jQuery('.timeBar').css('width', percentage + '%');
+        const newTime = maxduration * percentage / 100;
 
-        //!video[0].currentTime = maxduration * percentage / 100;
+        this._cutscene.currentTime = newTime;
     }
 
     protected updateVolume(x: number, vol: number): void {

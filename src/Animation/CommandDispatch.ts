@@ -5,18 +5,35 @@ import { ObjectID } from "../Constants";
 import { Ponytail } from "../Behaviour/Ponytail";
 import { LAYER } from "../Player/Layer";
 import { MASK, BONE } from "../Player/Skeleton";
+import { DynamicLight } from "../Behaviour/DynamicLight";
+
+export enum CommandDispatchMode {
+    NORMAL = 0,
+    UNDO,
+    FAST,
+    UNDO_END,
+}
 
 export default class CommandDispatch {
 
     protected sceneData: any;
     protected objMgr: any;
-    protected dispatchMap: { [id: number]: (action: number, customParam: any, obj: IMesh) => void };
+    protected dispatchMap: { [id: number]: (action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode) => void };
+    protected undoMap: { [id: number]: any };
+    protected dynLight: DynamicLight;
 
     constructor(public gameData: IGameData, public trversion: string) {
         this.sceneData = gameData.sceneData;
         this.objMgr = gameData.objMgr;
 
+        gameData.bhvMgr.addBehaviour("DynamicLight");
+
+        this.dynLight = (gameData.bhvMgr.getBehaviour("DynamicLight") as Array<DynamicLight>)![0];
+        this.dynLight.color = [0, 0, 0];
+        this.dynLight.fadeout = 4096;
+
         this.dispatchMap = {};
+        this.undoMap = {};
 
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_COLORFLASH]     = this.colorFlash.bind(this);
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_GETLEFTGUN]     = this.getLeftGun.bind(this);
@@ -28,33 +45,106 @@ export default class CommandDispatch {
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_MESHSWAP3]      = this.meshSwap.bind(this);
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_HIDEOBJECT]     = this.hideObject.bind(this);
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_SHOWOBJECT]     = this.showObject.bind(this);
+        this.dispatchMap[Commands.Misc.ANIMCMD_MISC_DYN_ON]         = this.dynamicLightOn.bind(this);
+        this.dispatchMap[Commands.Misc.ANIMCMD_MISC_DYN_OFF]        = this.dynamicLightOff.bind(this);
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_RESETHAIR]      = this.resetHair.bind(this);
         this.dispatchMap[Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION] = this.customFunction.bind(this);
     }
 
-    public dispatch(action: number, customParam: any, obj: IMesh) {
+    public startUndoMode(): void {
+        this.undoMap = {};
+
+        for (const id in this.dispatchMap) {
+            this.undoMap[id] = {
+                "count": 0,
+                "firstAction": -1,
+            };
+        }
+    }
+
+    public endUndoMode(): void {
+        for (const id in this.dispatchMap) {
+            this.dispatchMap[id].call(this, parseInt(id), undefined, <any>undefined, CommandDispatchMode.UNDO_END);
+        }
+    }
+
+    public dispatch(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode) {
         const func = this.dispatchMap[action];
 
         if (!func) {
             console.log(`Can't handle command "${action}"!`, obj);
         } else {
-            func(action, customParam, obj);
+            func(action, customParam, obj, mode);
         }
     }
 
-    protected colorFlash(action: number, customParam: any, obj: IMesh): void {
-        this.gameData.globalTintColor[0] =
-        this.gameData.globalTintColor[1] =
-        this.gameData.globalTintColor[2] =
-        (this.gameData.globalTintColor[0] < 0.5 ? 1.0 : 0.1);
+    protected colorFlash(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            /*case CommandDispatchMode.UNDO: {
+                this.undoMap[action].count++;
+                this.undoMap[action].obj = obj;
+                break;
+            }*/
+
+            case CommandDispatchMode.UNDO_END: {
+                /*if ((this.undoMap[action].count & 1) === 1) {
+                    this.colorFlash(action, customParam, this.undoMap[action].obj, CommandDispatchMode.NORMAL);
+                }*/
+                break;
+            }
+
+            default: {
+                this.gameData.globalTintColor[0] =
+                this.gameData.globalTintColor[1] =
+                this.gameData.globalTintColor[2] =
+                (this.gameData.globalTintColor[0] < 0.5 ? 1.0 : 0.1);
+                break;
+            }
+        }
     }
 
-    protected getLeftGun(action: number, customParam: any, obj: IMesh): void {
-        this.getGun(MASK.LEG_L1, MASK.ARM_L3, obj);
+    protected getLeftGun(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            /*case CommandDispatchMode.UNDO: {
+                this.undoMap[action].count++;
+                this.undoMap[action].obj = obj;
+                break;
+            }*/
+
+            case CommandDispatchMode.UNDO_END: {
+                /*if ((this.undoMap[action].count & 1) === 1) {
+                    this.getLeftGun(action, customParam, this.undoMap[action].obj, CommandDispatchMode.NORMAL);
+                }*/
+                break;
+            }
+
+            default: {
+                this.getGun(MASK.LEG_L1, MASK.ARM_L3, obj);
+                break;
+            }
+        }
     }
 
-    protected getRightGun(action: number, customParam: any, obj: IMesh): void {
-        this.getGun(MASK.LEG_R1, MASK.ARM_R3, obj);
+    protected getRightGun(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            /*case CommandDispatchMode.UNDO: {
+                this.undoMap[action].count++;
+                this.undoMap[action].obj = obj;
+                break;
+            }*/
+
+            case CommandDispatchMode.UNDO_END: {
+                /*if ((this.undoMap[action].count & 1) === 1) {
+                    this.getRightGun(action, customParam, this.undoMap[action].obj, CommandDispatchMode.NORMAL);
+                }*/
+                break;
+            }
+
+            default: {
+                this.getGun(MASK.LEG_R1, MASK.ARM_R3, obj);
+                break;
+            }
+        }
     }
 
     protected getGun(maskLeg: number, maskArm: number, obj: IMesh): void {
@@ -72,52 +162,197 @@ export default class CommandDispatch {
         layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
     }
 
-    protected fireLeftGun(action: number, customParam: any, obj: IMesh): void {
-        this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_L3 });
-    }
-
-    protected fireRightGun(action: number, customParam: any, obj: IMesh): void {
-        this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_R3 });
-    }
-
-    protected meshSwap(action: number, customParam: any, obj: IMesh): void {
-        const idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
-
-        const oswap = this.objMgr.objectList['moveable'][ObjectID['meshswap' + idx]];
-
-        if (oswap && Array.isArray(oswap)) {
-            const layer = this.sceneData.objects[obj.name].layer;
-
-            if (layer.isEmpty(LAYER.MESHSWAP) || layer.getMesh(LAYER.MESHSWAP) != oswap[0]) {
-                layer.setMesh(LAYER.MESHSWAP, oswap[0], 0);
-            }
-
-            layer.updateMask(LAYER.MESHSWAP,  MASK.ALL);
-            layer.updateMask(LAYER.MAIN,      MASK.ALL);
-
-            layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
-        } else {
-            console.log('Could not apply anim command meshswap (' , action, '): object meshswap' + idx + ' not found.');
+    protected fireLeftGun(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        if (mode === CommandDispatchMode.NORMAL) {
+            this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_L3 });
         }
     }
 
-    protected hideObject(action: number, customParam: any, obj: IMesh): void {
-        obj.visible = false;
+    protected fireRightGun(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        if (mode === CommandDispatchMode.NORMAL) {
+            this.gameData.bhvMgr.addBehaviour('MuzzleFlash', { "bone": BONE.ARM_R3 });
+        }
     }
 
-    protected showObject(action: number, customParam: any, obj: IMesh): void {
-        obj.visible = true;
+    protected meshSwap(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            /*case CommandDispatchMode.UNDO: {
+                let counters = this.undoMap[action].counters;
+                if (!counters) {
+                    counters = {};
+                    this.undoMap[action].counters = counters;
+                }
+                let counter = counters[obj.name];
+                if (!counter) {
+                    counters[obj.name] = {
+                        "obj": obj,
+                        "count": 0,
+                    };
+                }
+                counters[obj.name].count++;
+                break;
+            }*/
+
+            case CommandDispatchMode.UNDO_END: {
+                /*for (const name in this.undoMap[action].counters) {
+                    const counter = this.undoMap[action].counters[name];
+                    if ((counter.count & 1) === 1) {
+                        this.meshSwap(action, customParam, counter.obj, CommandDispatchMode.NORMAL);
+                    }
+                }*/
+                break;
+            }
+
+            default: {
+                const idx = action - Commands.Misc.ANIMCMD_MISC_MESHSWAP1 + 1;
+
+                const oswap = this.objMgr.objectList['moveable'][ObjectID['meshswap' + idx]];
+
+                if (oswap && Array.isArray(oswap)) {
+                    const layer = this.sceneData.objects[obj.name].layer;
+
+                    if (layer.isEmpty(LAYER.MESHSWAP) || layer.getMesh(LAYER.MESHSWAP) != oswap[0]) {
+                        layer.setMesh(LAYER.MESHSWAP, oswap[0], 0);
+                    }
+
+                    layer.updateMask(LAYER.MESHSWAP,  MASK.ALL);
+                    layer.updateMask(LAYER.MAIN,      MASK.ALL);
+
+                    layer.setRoom(this.gameData.sceneData.objects[obj.name].roomIndex);
+                } else {
+                    console.log('Could not apply anim command meshswap (' , action, '): object meshswap' + idx + ' not found.');
+                }
+
+                break;
+            }
+        }
     }
 
-    protected resetHair(action: number, customParam: any, obj: IMesh): void {
+    protected hideObject(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            case CommandDispatchMode.UNDO: {
+                let counters = this.undoMap[action].counters;
+                if (!counters) {
+                    counters = {};
+                    this.undoMap[action].counters = counters;
+                }
+                let counter = counters[obj.name];
+                if (!counter) {
+                    counter = counters[obj.name] = {
+                        "obj": obj,
+                        "count": 0,
+                        "firstAction": -1,
+                    };
+                }
+                counter.count++;
+                if (counter.firstAction < 0) {
+                    counter.firstAction = 0;
+                }
+                break;
+            }
+
+            case CommandDispatchMode.UNDO_END: {
+                for (const name in this.undoMap[action].counters) {
+                    const counter = this.undoMap[action].counters[name];
+                    if (counter.count > 0) {
+                        counter.obj.visible = counter.firstAction === 0;
+                    }
+                }
+                break;
+            }
+
+            default: {
+                obj.visible = false;
+                break;
+            }
+        }
+    }
+
+    protected showObject(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            case CommandDispatchMode.UNDO: {
+                let counters = this.undoMap[action].counters;
+                if (!counters) {
+                    counters = {};
+                    this.undoMap[action].counters = counters;
+                }
+                let counter = counters[obj.name];
+                if (!counter) {
+                    counter = counters[obj.name] = {
+                        "obj": obj,
+                        "count": 0,
+                        "firstAction": -1,
+                    };
+                }
+                counter.count++;
+                if (counter.firstAction < 0) {
+                    counter.firstAction = 1;
+                }
+                break;
+            }
+
+            case CommandDispatchMode.NORMAL:
+            case CommandDispatchMode.FAST: {
+                obj.visible = true;
+                break;
+            }
+        }
+    }
+
+    protected resetHair(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
         const ponytail = this.gameData.bhvMgr.getBehaviour("Ponytail") as Array<Ponytail>;
 
-        if (ponytail && ponytail.length > 0) {
+        if (ponytail && ponytail.length > 0 && mode === CommandDispatchMode.NORMAL) {
             ponytail[0].reset();
         }
     }
 
-    protected customFunction(action: number, customParam: any, obj: IMesh): void {
-        customParam();
+    protected dynamicLightOn(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            case CommandDispatchMode.UNDO: {
+                this.undoMap[action].count++;
+                if (this.undoMap[action].firstAction < 0) {
+                    this.undoMap[action].firstAction = 0;
+                }
+                break;
+            }
+
+            case CommandDispatchMode.UNDO_END: {
+                if (this.undoMap[action].count > 0) {
+                    this.dynLight.color = this.undoMap[action].firstAction === 0 ? [0, 0, 0] : [2.8, 2.8, 2.8];
+                }
+                break;
+            }
+
+            default: {
+                this.dynLight.color = [2.8, 2.8, 2.8];
+                this.dynLight.position = obj.position;
+                break;
+            }
+        }
+    }
+
+    protected dynamicLightOff(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        switch (mode) {
+            case CommandDispatchMode.UNDO: {
+                this.undoMap[Commands.Misc.ANIMCMD_MISC_DYN_ON].count++;
+                if (this.undoMap[Commands.Misc.ANIMCMD_MISC_DYN_ON].firstAction < 0) {
+                    this.undoMap[Commands.Misc.ANIMCMD_MISC_DYN_ON].firstAction = 1;
+                }
+                break;
+            }
+
+            case CommandDispatchMode.NORMAL:
+            case CommandDispatchMode.FAST: {
+                this.dynLight.color = [0, 0, 0];
+                break;
+            }
+        }
+    }
+
+    protected customFunction(action: number, customParam: any, obj: IMesh, mode: CommandDispatchMode): void {
+        if (customParam) {
+            customParam(action, obj, mode);
+        }
     }
 }

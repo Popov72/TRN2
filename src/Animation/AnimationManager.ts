@@ -5,7 +5,7 @@ import Track from "../Animation/Track";
 import TrackInstance from "../Animation/TrackInstance";
 import { IMesh } from "../Proxy/IMesh";
 import { Commands } from "./Commands";
-import CommandDispatch from "./CommandDispatch";
+import CommandDispatch, { CommandDispatchMode } from "./CommandDispatch";
 
 export class AnimationManager {
 
@@ -14,14 +14,14 @@ export class AnimationManager {
     protected sceneData: any;
     protected matMgr: MaterialManager;
     protected objMgr: ObjectManager;
-    protected commandDispatch: CommandDispatch;
+    protected _commandDispatch: CommandDispatch;
 
     constructor() {
         this.paused = false;
         this.gameData = <any>null;
         this.matMgr = <any>null;
         this.objMgr = <any>null;
-        this.commandDispatch = <any>null;
+        this._commandDispatch = <any>null;
     }
 
     public initialize(gameData: IGameData): void {
@@ -30,7 +30,7 @@ export class AnimationManager {
         this.matMgr = gameData.matMgr;
         this.objMgr = gameData.objMgr;
 
-        this.commandDispatch = new CommandDispatch(gameData, gameData.confMgr.trversion);
+        this._commandDispatch = new CommandDispatch(gameData, gameData.confMgr.trversion);
 
         this.makeTracks();
     }
@@ -101,7 +101,7 @@ export class AnimationManager {
                         data.trackInstance = trackInstance;
 
                         if (trackInstance.track.nextTrack != -1) {
-                        trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
+                            trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
                         }
                         trackInstance.setCurrentFrame(nextTrackFrame + curTrackInstance.param.curFrame - curTrackInstance.track.numFrames);
 
@@ -144,7 +144,96 @@ export class AnimationManager {
         }
     }
 
-    public processAnimCommands(trackInstance: TrackInstance, prevFrame: number, curFrame: number, obj: IMesh): void {
+    // Undo animation commands that have been done up to the 'futureFrame' point in time
+    public undoAnimCommands(futureFrame: number, objects: { [name: string]: IMesh }): void {
+        this._commandDispatch.startUndoMode();
+
+        for (let objID in objects) {
+            const obj = objects[objID],
+                  data = this.sceneData.objects[obj.name],
+                  allTrackInstances = data.allTrackInstances as { [id: number] : TrackInstance };
+
+            let trackInstance = data.trackInstance as TrackInstance;
+            let frame = 0, nextTrackFrame = 0;
+
+            while (frame < futureFrame) {
+                if (frame - nextTrackFrame + trackInstance.track.numFrames >= futureFrame) {
+                    this.processAnimCommands(trackInstance, nextTrackFrame, futureFrame - frame + nextTrackFrame, obj, CommandDispatchMode.UNDO);
+                    break;
+                }
+
+                this.processAnimCommands(trackInstance, nextTrackFrame, trackInstance.track.numFrames, obj, CommandDispatchMode.UNDO);
+
+                frame += trackInstance.track.numFrames;
+
+                if (trackInstance.track.nextTrack == -1) {
+                    break;
+                }
+
+                nextTrackFrame = trackInstance.track.nextTrackFrame;
+
+                trackInstance = allTrackInstances[trackInstance.track.nextTrack];
+            }
+        }
+
+        this._commandDispatch.endUndoMode();
+    }
+
+    // replay animations up to 'futureFrame' point in time
+    public fastForward(futureFrame: number, objects: { [name: string]: IMesh }): void {
+        for (let objID in objects) {
+            const obj = objects[objID],
+                  data = this.sceneData.objects[obj.name],
+                  allTrackInstances = data.allTrackInstances as { [id: number] : TrackInstance };
+
+            let trackInstance = data.trackInstance as TrackInstance;
+            let frame = 0, nextTrackFrame = 0;
+
+            while (frame < futureFrame) {
+                if (frame - nextTrackFrame + trackInstance.track.numFrames >= futureFrame) {
+                    trackInstance.setCurrentFrame(futureFrame - frame + nextTrackFrame);
+                    this.processAnimCommands(trackInstance, nextTrackFrame, futureFrame - frame + nextTrackFrame, obj, CommandDispatchMode.FAST);
+                    break;
+                }
+
+                this.processAnimCommands(trackInstance, nextTrackFrame, trackInstance.track.numFrames, obj, CommandDispatchMode.FAST);
+
+                frame += trackInstance.track.numFrames;
+
+                if (trackInstance.track.nextTrack == -1) {
+                    break;
+                }
+
+                nextTrackFrame = trackInstance.track.nextTrackFrame;
+
+                trackInstance = allTrackInstances[trackInstance.track.nextTrack];
+                data.trackInstance = trackInstance;
+
+                trackInstance.setCurrentFrame(nextTrackFrame);
+                if (trackInstance.track.nextTrack != -1) {
+                    trackInstance.setNextTrackInstance(allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
+                }
+
+                trackInstance.noInterpolationToNextTrack = this.gameData.isCutscene;
+            }
+
+            data.prevTrackInstance = trackInstance;
+            data.prevTrackInstanceFrame = data.trackInstance.param.curFrame;
+
+            trackInstance.interpolate();
+
+            const boundingBox = trackInstance.track.keys[trackInstance.param.curKey].boundingBox;
+
+            obj.setBoundingBox(boundingBox);
+
+            if (data.layer) {
+                data.layer.update();
+                data.layer.setBoundingObjects();
+            }
+        }
+    }
+
+    public processAnimCommands(trackInstance: TrackInstance, prevFrame: number, curFrame: number, obj: IMesh, mode: CommandDispatchMode = CommandDispatchMode.NORMAL): void {
         const commands = trackInstance.track.commands;
 
         for (let i = 0; i < commands.length; ++i) {
@@ -159,7 +248,7 @@ export class AnimationManager {
 
                     //console.log(action,'done for frame',frame,obj.name)
 
-                    this.commandDispatch.dispatch(action, customParam, obj);
+                    this._commandDispatch.dispatch(action, customParam, obj, mode);
 
                     break;
                 }

@@ -9,6 +9,7 @@ import { ShaderManager } from "../ShaderManager";
 import { Layer, LAYER } from "../Player/Layer";
 import { MASK } from "../Player/Skeleton";
 import { Commands } from "../Animation/Commands";
+import { CommandDispatchMode } from "../Animation/CommandDispatch";
 
 declare var glMatrix: any;
 
@@ -58,15 +59,14 @@ export default class CutSceneHelper {
 
                 track1.setCommands([
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [24,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
-                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeOut(1.0)] }
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, (action: number, obj: IMesh, mode: CommandDispatchMode) => this.fadeOut(1.0, mode)] }
                 ], 0);
 
                 track2.setCommands([
-                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [27,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
-                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => this.fadeIn(1.0)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [27,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, (action: number, obj: IMesh, mode: CommandDispatchMode) => this.cs1MakeHole(mode)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, (action: number, obj: IMesh, mode: CommandDispatchMode) => this.fadeIn(1.0, mode)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
-
                 break;
             }
 
@@ -80,8 +80,9 @@ export default class CutSceneHelper {
 
                 data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
+                this.cs1MakeHole(CommandDispatchMode.NORMAL);
+
                 track1.setCommands([
-                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, this.cs1MakeHole.bind(this)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
@@ -199,7 +200,7 @@ export default class CutSceneHelper {
                 layer.updateMask(LAYER.MAIN, 1 << 11);
 
                 track1.setCommands([
-                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [555,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => layer.updateMask(LAYER.MAIN, 1 << 11)] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [555, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => layer.updateMask(LAYER.MAIN, 1 << 11)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [655, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => layer.updateMask(LAYER.MAIN, 1 << 11)] }
                 ], 0);
 
@@ -225,18 +226,23 @@ export default class CutSceneHelper {
         return promises;
     }
 
-    public fadeOut(duration: number): void {
-        //this.bhvMgr.addBehaviour('Fade', { "colorStart": [1, 1, 1], "colorEnd": [0, 0, 0], "duration": duration });
+    public fadeOut(duration: number, mode: CommandDispatchMode): void {
+        if (mode === CommandDispatchMode.NORMAL) {
         jQuery(this.gameData.container).fadeOut(duration * 1000);
+        } else if (mode === CommandDispatchMode.UNDO) {
+            jQuery(this.gameData.container).stop();
+            jQuery(this.gameData.container).fadeIn(0);
+        }
     }
 
-    public fadeIn(duration: number): void {
-        //this.bhvMgr.addBehaviour('Fade', { "colorStart": [0, 0, 0], "colorEnd": [1, 1, 1], "duration": duration });
+    public fadeIn(duration: number, mode: CommandDispatchMode): void {
+        if (mode === CommandDispatchMode.NORMAL) {
         jQuery(this.gameData.container).fadeIn(duration * 1000);
+    }
     }
 
     // Between cutscene 1 and 2, a hole should appear in the ground to reveal hidden entrance to pyramid
-    public cs1MakeHole(): void {
+    public cs1MakeHole(mode: CommandDispatchMode): void {
         // First room
         let oroom = this.objMgr.objectList['room'][81] as IMesh,
             data = this.sceneData.objects['room81'];

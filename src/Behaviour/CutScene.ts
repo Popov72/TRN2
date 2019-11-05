@@ -22,6 +22,8 @@ import CutSceneControl from "./CutSceneControl";
 
 declare var glMatrix: any;
 
+const FRAME_DURATION = 1 / baseFrameRate;
+
 export interface CutSceneData {
     "index"         : number;
     "curFrame"      : number;
@@ -247,14 +249,18 @@ export class CutScene extends Behaviour {
         }
     }
 
-    public reset(): void {
+    public reset(resetCamera: boolean = true): void {
         // Reset all animations
         this.registerAnimations();
+
+        this.anmMgr.undoAnimCommands(this.cutscene.curFrame, this.objects);
 
         this.cutscene.curFrame = 0;
         this.cutSceneEnded = false;
 
-        this.onFrameStarted(0, 0); // reset camera
+        if (resetCamera) {
+            this.onFrameStarted(0, 0);
+        }
     }
 
     get volume(): number {
@@ -288,11 +294,27 @@ export class CutScene extends Behaviour {
     }
 
     get duration(): number {
-        return this.cutscene.frames.length * 1 / baseFrameRate;
+        return this.cutscene.frames.length * FRAME_DURATION;
     }
 
     get currentTime(): number {
-        return this.cutscene.curFrame * 1 / baseFrameRate;
+        return this.cutscene.curFrame * FRAME_DURATION;
+    }
+
+    set currentTime(t: number) {
+        this.fastForward(t * baseFrameRate);
+    }
+
+    protected fastForward(futureFrame: number): void {
+        this.reset(false);
+
+        this.anmMgr.fastForward(futureFrame, this.objects);
+
+        this.cutscene.curFrame = futureFrame;
+
+        this.onFrameStarted(0, 0); // reset camera
+
+        this.resetHair();
     }
 
     public showController(): void {
@@ -305,8 +327,11 @@ export class CutScene extends Behaviour {
         }
     }
 
-    public startSound(time: number): void {
+    public startSound(time?: number): void {
         if (this.cutscene.sound) {
+            if (!time) {
+                time = this.currentTime;
+            }
             this.cutscene.sound.stop();
             this.cutscene.sound = Browser.AudioContext.createBufferSource();
             this.cutscene.sound.buffer = this.cutscene.soundbuffer;
@@ -337,7 +362,7 @@ export class CutScene extends Behaviour {
 
         this.cutscene.curFrame += baseFrameRate * delta;
 
-        this.control.updateTime(this.cutscene.curFrame * 1 / baseFrameRate);
+        this.control.updateTime(this.cutscene.curFrame * FRAME_DURATION);
 
         // Update camera
         const t = this.cutscene.curFrame - Math.floor(this.cutscene.curFrame),
