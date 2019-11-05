@@ -319,8 +319,9 @@ export default class Play {
 
         this.gameData.camera.updateMatrixWorld();
 
+        this.gameData.objMgr.updateObjects(curTime);
+
         if (this.gameData.update || forceUpdate) {
-            this.gameData.objMgr.updateObjects(curTime);
 
             this.gameData.bhvMgr.onFrameEnded(curTime, delta);
         }
