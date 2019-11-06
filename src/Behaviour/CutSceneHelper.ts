@@ -313,7 +313,7 @@ export default class CutSceneHelper {
 
             case 11: {
                 // Make speaking heads
-                const aziz = actorMoveables[1],
+                const aziz = actorMoveables[2],
                       azizHeadIds = [21, 22],
                       commandsA: Array<any> = [],
                       trackA = this.sceneData.animTracks[this.sceneData.objects[aziz.name].animationStartIndex];
