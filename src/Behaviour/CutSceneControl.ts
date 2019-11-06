@@ -51,6 +51,7 @@ export default class CutSceneControl {
                         return false;
                     };
                 })(this));
+                this.bindControlEvents();
                 this._gameData.play.play();
             })(jQuery(document.body)));
 
@@ -74,20 +75,6 @@ export default class CutSceneControl {
 
         this.updateVolume(0, 0.7);
 
-        // Play button clicked
-        jQuery('.btnPlay').on('click', this.playPause.bind(this));
-
-        // Stop button clicked
-        jQuery('.btnStop').on('click', () => {
-            jQuery('.btnPlay').removeClass('paused');
-            this.updatebar((jQuery('.progress') as any).offset().left);
-            if (!this._paused || this._ended) {
-                this.playPause();
-            }
-            this._cutscene.reset();
-            return false;
-        });
-
         // Fullscreen button clicked
         jQuery('.btnFS').on('click', function() {
             if (document.fullscreenElement != null) {
@@ -99,46 +86,6 @@ export default class CutSceneControl {
             }
             return false;
         });
-
-        // When video timebar is clicked
-        jQuery('.progress').on('mousedown', (function(ctrl: CutSceneControl) {
-            return function(e: any) {
-                ctrl._timeDrag = true;
-                ctrl._cutscene.stopSound();
-                ctrl._pausedSave = ctrl._paused;
-                if (!ctrl._paused) {
-                    ctrl._gameData.update = false;
-                    ctrl._paused = true;
-                }
-                ctrl.updatebar(e.pageX);
-                return false;
-            };
-        })(this));
-
-        jQuery(document).on('mouseup', (function(ctrl: CutSceneControl) {
-            return function(e: any) {
-                if (ctrl._timeDrag) {
-                    ctrl._timeDrag = false;
-                    ctrl.updatebar(e.pageX);
-                    if (ctrl._ended) {
-                        ctrl._ended = false;
-                    }
-                    ctrl._paused = ctrl._pausedSave;
-                    if (!ctrl._paused) {
-                        ctrl._cutscene.startSound();
-                        ctrl._gameData.update = true;
-                    }
-                }
-            };
-        })(this));
-
-        jQuery(document).on('mousemove', (function(ctrl: CutSceneControl) {
-            return function(e: any) {
-                if (ctrl._timeDrag) {
-                    ctrl.updatebar(e.pageX);
-                }
-            };
-        })(this));
 
         // Sound button clicked
         jQuery('.sound').click(((obj) => () => {
@@ -182,6 +129,62 @@ export default class CutSceneControl {
         })(this));
 
         jQuery('.control').css('display', 'block');
+    }
+
+    protected bindControlEvents(): void {
+        // Play button clicked
+        jQuery('.btnPlay').on('click', this.playPause.bind(this));
+
+        // Stop button clicked
+        jQuery('.btnStop').on('click', () => {
+            jQuery('.btnPlay').removeClass('paused');
+            this.updatebar((jQuery('.progress') as any).offset().left);
+            if (!this._paused || this._ended) {
+                this.playPause();
+            }
+            this._cutscene.reset();
+            return false;
+        });
+
+        // When video timebar is clicked
+        jQuery('.progress').on('mousedown', (function(ctrl: CutSceneControl) {
+            return function(e: any) {
+                ctrl._timeDrag = true;
+                ctrl._cutscene.stopSound();
+                ctrl._pausedSave = ctrl._paused;
+                if (!ctrl._paused) {
+                    ctrl._gameData.update = false;
+                    ctrl._paused = true;
+                }
+                ctrl.updatebar(e.pageX);
+                return false;
+            };
+        })(this));
+
+        jQuery(document).on('mouseup', (function(ctrl: CutSceneControl) {
+            return function(e: any) {
+                if (ctrl._timeDrag) {
+                    ctrl._timeDrag = false;
+                    ctrl.updatebar(e.pageX);
+                    if (ctrl._ended) {
+                        ctrl._ended = false;
+                    }
+                    ctrl._paused = ctrl._pausedSave;
+                    if (!ctrl._paused) {
+                        ctrl._cutscene.startSound();
+                        ctrl._gameData.update = true;
+                    }
+                }
+            };
+        })(this));
+
+        jQuery(document).on('mousemove', (function(ctrl: CutSceneControl) {
+            return function(e: any) {
+                if (ctrl._timeDrag) {
+                    ctrl.updatebar(e.pageX);
+                }
+            };
+        })(this));
     }
 
     public updateTime(currentTime: number): void {
