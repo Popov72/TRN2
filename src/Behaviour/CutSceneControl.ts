@@ -132,6 +132,27 @@ export default class CutSceneControl {
     }
 
     protected bindControlEvents(): void {
+        const DEMO = {
+            INI: {
+                MOUSE_IDLE: 3000
+            },
+            hideMouse: function() {
+                jQuery(document.body).css('cursor', 'none');
+                jQuery(document.body).on("mousemove", DEMO.waitThenHideMouse);
+            },
+            waitThenHideMouse: function() {
+                jQuery(document.body).css('cursor', 'default');
+                jQuery(document.body).off("mousemove", DEMO.waitThenHideMouse);
+                setTimeout(DEMO.hideMouse, DEMO.INI.MOUSE_IDLE);
+            },
+            showMouse: function() {
+                jQuery(document.body).off("mousemove", DEMO.waitThenHideMouse);
+                jQuery(document.body).css('cursor', 'default');
+            },
+        };
+
+        DEMO.waitThenHideMouse();
+
         // Play button clicked
         jQuery('.btnPlay').on('click', this.playPause.bind(this));
 
