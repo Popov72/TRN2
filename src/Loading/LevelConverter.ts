@@ -1249,7 +1249,7 @@ export default class LevelConverter {
 
         this.laraObjectID = this.confMgr.number('lara > id', true, 0);
 
-        const hasUVRotate = this.confMgr.param('behaviour[name="UVRotate"]', true, true);
+        const hasUVRotate = this.confMgr.param('behaviour[name="UVRotate"]', true, false);
         if (!hasUVRotate) {
             this.sc.data.trlevel.animatedTexturesUVCount = 0;
         }
