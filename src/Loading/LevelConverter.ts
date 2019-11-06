@@ -947,7 +947,7 @@ export default class LevelConverter {
         }
     }
 
-    private weldSkinJoints(mainSkinId: number, jointSkinId: number): void {
+    private weldSkinJoints(mainSkinId: number, jointSkinId: number, reverse: boolean = false, parentCheck: boolean = true): void {
         const joints = this.helper.getGeometryFromId('moveable' + jointSkinId).data,
               jointsVertices = joints.vertices,
               main = this.helper.getGeometryFromId('moveable' + mainSkinId).data,
@@ -968,16 +968,18 @@ export default class LevelConverter {
         }
 
         function findVertex(x: number, y: number, z: number, b1: number, b2: number): number {
-            for (let v = 0; v < mainVertices.length / 3; ++v) {
+            let v = reverse ? mainVertices.length / 3 - 1 : 0, vmax = reverse ? 0 : mainVertices.length / 3 - 1, step = reverse ? -1 : 1;
+            while (v != vmax) {
                 const bidx = main.skinIndices[v * 2 + 0];
-                if (bidx != b1 && bidx != b2) { continue; }
-                const boneTrans = posStack[bidx],
-                      dx = mainVertices[v * 3 + 0] + boneTrans[0] - x, dy = mainVertices[v * 3 + 1] + boneTrans[1] - y, dz = mainVertices[v * 3 + 2] + boneTrans[2] - z,
-                      dist = dx * dx + dy * dy + dz * dz;
-                if (dist < 24) {
-                //if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 && Math.abs(dz) <= 1) {
-                    return v;
+                if (!parentCheck || bidx == b1 || bidx == b2) {
+                    const boneTrans = posStack[bidx],
+                        dx = mainVertices[v * 3 + 0] + boneTrans[0] - x, dy = mainVertices[v * 3 + 1] + boneTrans[1] - y, dz = mainVertices[v * 3 + 2] + boneTrans[2] - z,
+                        dist = dx * dx + dy * dy + dz * dz;
+                    if (dist < 24) {
+                        return v;
+                    }
                 }
+                v += step;
             }
             return -1;
         }
@@ -1004,22 +1006,69 @@ export default class LevelConverter {
 
     private makeLaraBraid(): void {
         const braidId =  this.confMgr.number('behaviour[name="Ponytail"] > id', true, -1),
-              young = this.confMgr.boolean('behaviour[name="Ponytail"] > young', true, false);
+              young = this.confMgr.boolean('behaviour[name="Ponytail"] > young', true, false),
+              fixToHead = this.confMgr.boolean('behaviour[name="Ponytail"] > fixtohead', true, false);
 
         if (braidId < 0) { return; }
 
-        this.weldSkinJoints(braidId, braidId);
-
         const braid = this.helper.getGeometryFromId('moveable' + braidId).data,
-              vertices = braid.vertices;
+              vertices = braid.vertices,
+              normals = braid.normals;
+
+        function copyCoord(src: number, dst: number) {
+            vertices[dst * 3 + 0] = vertices[src * 3 + 0];
+            vertices[dst * 3 + 1] = vertices[src * 3 + 1];
+            vertices[dst * 3 + 2] = vertices[src * 3 + 2];
+            normals[dst * 3 + 0] = normals[src * 3 + 0];
+            normals[dst * 3 + 1] = normals[src * 3 + 1];
+            normals[dst * 3 + 2] = normals[src * 3 + 2];
+        }
 
         if (this.sc.data.trlevel.rversion == 'TR4') {
             if (!young) {
-                vertices[0 * 3 + 0] -= 5;
-                vertices[1 * 3 + 0] -= 5;
-                vertices[2 * 3 + 0] += 5;
-                vertices[3 * 3 + 0] += 5;
+                if (fixToHead) {
+                    this.weldSkinJoints(braidId, braidId, true, false);
+
+                    const perms = [
+                        [0,1,2,3], [0,1,3,2], [0,2,1,3], [0,2,3,1], [0,3,1,2], [0,3,2,1],
+                        [1,0,2,3], [1,0,3,2], [1,2,0,3], [1,2,3,0], [1,3,0,2], [1,3,2,0],
+                        [2,0,1,3], [2,0,3,1], [2,1,0,3], [2,1,3,0], [2,3,0,1], [2,3,1,0],
+                        [3,0,1,2], [3,0,2,1], [3,1,0,2], [3,1,2,0], [3,2,0,1], [3,2,1,0],
+                    ]
+
+                    for (let j = 0; j < 4; ++j) {
+                        const perm = perms[9];
+                        copyCoord(8 + perm[j], 4 + j);
+                    }
+
+                    vertices[0 * 3 + 0] -= 6;
+                    vertices[0 * 3 + 1] -= 13;
+                    vertices[0 * 3 + 2] -= 40;
+
+                    vertices[1 * 3 + 0] -= 6;
+                    vertices[1 * 3 + 1] -= 13;
+                    vertices[1 * 3 + 2] -= 17;
+
+                    vertices[2 * 3 + 0] -= 1;
+                    vertices[2 * 3 + 1] -= 10;
+                    vertices[2 * 3 + 2] -= 18;
+
+                    vertices[3 * 3 + 0] += 2;
+                    vertices[3 * 3 + 1] -= 8;
+                    vertices[3 * 3 + 2] -= 42;
+                } else {
+                    this.weldSkinJoints(braidId, braidId);
+
+                    vertices[0 * 3 + 0] -= 5;
+                    vertices[1 * 3 + 0] -= 5;
+                    vertices[2 * 3 + 0] += 5;
+                    vertices[3 * 3 + 0] += 5;
+                }
+            } else {
+                this.weldSkinJoints(braidId, braidId);
             }
+        } else {
+            this.weldSkinJoints(braidId, braidId);
         }
     }
 

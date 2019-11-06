@@ -21,7 +21,7 @@ export class Ponytail extends Behaviour {
     }
 
     public init(lstObjs: Array<IMesh | ICamera> | null): [BehaviourRetCode, Array<Promise<void>> | null] {
-        const id = this.nbhv.id, offsets_ = this.nbhv.offsets.offset, offsets: Array<any> = Array.isArray(offsets_) ? offsets_ : [offsets_];
+        const id = this.nbhv.id, offsets_ = this.nbhv.offsets.offset, offsets: Array<any> = Array.isArray(offsets_) ? offsets_ : [offsets_], fixToHead = this.nbhv.fixtohead === 'true';
 
         ObjectID.LaraBraid = parseInt(id);
 
@@ -30,7 +30,7 @@ export class Ponytail extends Behaviour {
         for (let i = 0; i < offsets.length; ++i) {
             const offset = { "x": "0", "y": "0", "z": "0", ...offsets[i] };
 
-            this._braids.push(new Braid(lara, [parseFloat(offset.x), parseFloat(offset.y), parseFloat(offset.z)], this.gameData));
+            this._braids.push(new Braid(lara, [parseFloat(offset.x), parseFloat(offset.y), parseFloat(offset.z)], this.gameData, fixToHead));
         }
 
         return [BehaviourRetCode.keepBehaviour, null];

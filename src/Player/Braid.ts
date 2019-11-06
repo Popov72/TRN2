@@ -40,8 +40,9 @@ export class Braid {
     protected _basis: Array<Basis>;
     protected _headBasis: Basis;
     protected _curFrame: number;
+    protected _fixToHead: boolean;
 
-    constructor(lara: IMesh, offset: Position, gameData: IGameData) {
+    constructor(lara: IMesh, offset: Position, gameData: IGameData, fixToHead: boolean = false) {
         (window as any).braid = this;
 
         this._lara = lara;
@@ -50,6 +51,7 @@ export class Braid {
         this._gameData = gameData;
         this._headBasis = <any>null;
         this._curFrame = -1;
+        this._fixToHead = fixToHead;
 
         this._laraSkeleton = this._gameData.sceneData.objects[this._lara.name].skeleton;
         this._laraSkeleton.updateBoneMatrices();
@@ -263,6 +265,19 @@ export class Braid {
             this._modelSkeleton.bones[i].setPosition(this._basis[i].pos);
             this._modelSkeleton.bones[i].setQuaternion([this._basis[i].rot[0], -this._basis[i].rot[1], -this._basis[i].rot[2], this._basis[i].rot[3]]);
             this._modelSkeleton.bones[i].updateMatrixWorld();
+        }
+
+        if (this._fixToHead) {
+            const headBasis = this.getBasis();
+            const q = glMatrix.quat.create();
+
+            glMatrix.quat.setAxisAngle(q, [1, 0, 0], Math.PI);
+
+            headBasis.rotate(q);
+
+            this._modelSkeleton.bones[0].setPosition(headBasis.pos);
+            this._modelSkeleton.bones[0].setQuaternion(headBasis.rot);
+            this._modelSkeleton.bones[0].updateMatrixWorld();
         }
 
         this._modelSkeleton.setBoneMatrices();
