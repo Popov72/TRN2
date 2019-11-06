@@ -1,5 +1,6 @@
 import Engine from "../Proxy/Engine";
 import { IMesh } from "../Proxy/IMesh";
+import { IMeshBuilder } from "../Proxy/IMeshBuilder";
 import { IScene } from "../Proxy/IScene";
 
 import IGameData from "../Player/IGameData";
@@ -10,6 +11,7 @@ import { Layer, LAYER } from "../Player/Layer";
 import { BONE, MASK } from "../Player/Skeleton";
 import { Commands } from "../Animation/Commands";
 import { CommandDispatchMode } from "../Animation/CommandDispatch";
+import TrackInstance from "../Animation/TrackInstance";
 
 declare var glMatrix: any;
 
@@ -106,9 +108,12 @@ export default class CutSceneHelper {
             case 4: {
                 // Handle the pistols visibility + fire during the fight with the scorpion
                 const lara = actorMoveables[0],
-                      track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex],
+                      commandsL: Array<any> = [];
 
-                track1.setCommands([
+                trackL.setCommands(commandsL, 0);
+
+                commandsL.push(
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [12,  Commands.Misc.ANIMCMD_MISC_FIRERIGHTGUN] },
@@ -129,7 +134,19 @@ export default class CutSceneHelper {
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [230,  Commands.Misc.ANIMCMD_MISC_FIRELEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [320, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
-                ], 0);
+                );
+
+                // Make speaking heads
+                const aziz = actorMoveables[1],
+                      azizHeadIds = [21, 22],
+                      commandsA: Array<any> = [],
+                      trackA = this.sceneData.animTracks[this.sceneData.objects[aziz.name].animationStartIndex];
+
+                this.makeLayeredMesh(aziz);
+
+                trackA.setCommands(commandsA, 0);
+
+                this.setHeads(aziz, commandsA, azizHeadIds, 16 * 30, 28 * 30, 3, 1 << 8);
 
                 break;
             }
@@ -149,6 +166,31 @@ export default class CutSceneHelper {
                 track1.setCommands([
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [1350,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.CHEST)] }
                 ], 0);
+
+                break;
+            }
+
+            case 6: {
+                // Make speaking heads
+                const vonCroy = actorMoveables[1],
+                      vonCroyHeadIds = [21, 22],
+                      commandsVC: Array<any> = [],
+                      trackVC = this.sceneData.animTracks[this.sceneData.objects[vonCroy.name].animationStartIndex];
+
+                this.makeLayeredMesh(vonCroy);
+
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 0 * 30, 6 * 30 + 15, 3, 1 << 21);
+
+                trackVC.setCommands(commandsVC, 0);
+
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                this.setHeads(lara, commandsL, laraHeadIds, 9 * 30 - 10, 12 * 30, 3);
+
+                trackL.setCommands(commandsL, 0);
 
                 break;
             }
@@ -186,6 +228,47 @@ export default class CutSceneHelper {
                     ponytail[0].braids.forEach((braid) => setShader(braid.model));
                 }
 
+                // Make speaking heads
+                const vonCroy = actorMoveables[1],
+                      vonCroyHeadIds = [21, 22],
+                      commandsVC: Array<any> = [],
+                      trackVC = this.sceneData.animTracks[this.sceneData.objects[vonCroy.name].animationStartIndex];
+
+                this.makeLayeredMesh(vonCroy);
+
+                trackVC.setCommands(commandsVC, 0);
+
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                trackL.setCommands(commandsL, 0);
+
+                switch (csIndex) {
+                    case 7: {
+                        this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 13 * 30, 21 * 30, 3, 1 << 21, setShader);
+                        this.setHeads(lara, commandsL, laraHeadIds, 22 * 30 + 10, 29 * 30, 3, MASK.HEAD, setShader);
+                        break;
+                    }
+
+                    case 8: {
+                        this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 10 * 30 + 10, 13 * 30, 3, 1 << 21, setShader);
+                        break;
+                    }
+
+                    case 9: {
+                        this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 0 * 30, 5 * 30, 3, 1 << 21, setShader);
+                        this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 12 * 30, 28 * 30, 3, 1 << 21, setShader);
+                        this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 32 * 30 + 24, 38 * 30, 3, 1 << 21, setShader);
+                        this.setHeads(lara, commandsL, laraHeadIds, 39 * 30 + 10, 42 * 30, 3, MASK.HEAD, setShader);
+                        this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 65 * 30, 69 * 30, 3, 1 << 21, setShader);
+                        this.setHeads(lara, commandsL, laraHeadIds, 90 * 30, 92 * 30 + 10, 3, MASK.HEAD, setShader);
+                        this.setHeads(lara, commandsL, laraHeadIds, 100 * 30 + 18, 101 * 30, 3, MASK.HEAD, setShader);
+                        break;
+                    }
+                }
+
                 break;
             }
 
@@ -200,6 +283,203 @@ export default class CutSceneHelper {
                 oscroll.setPosition([oscroll.position[0] + 850, oscroll.position[1], oscroll.position[2]]);
 
                 oscroll.matrixAutoUpdate = false;
+
+                // Make speaking heads
+                const vonCroy = actorMoveables[1],
+                      vonCroyHeadIds = [21, 22],
+                      commandsVC: Array<any> = [],
+                      trackVC = this.sceneData.animTracks[this.sceneData.objects[vonCroy.name].animationStartIndex];
+
+                this.makeLayeredMesh(vonCroy);
+
+                trackVC.setCommands(commandsVC, 0);
+
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                trackL.setCommands(commandsL, 0);
+
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 32 * 30, 40 * 30 + 15, 3, 1 << 21);
+                this.setHeads(lara, commandsL, laraHeadIds, 41 * 30 + 10, 43 * 30 + 15, 3);
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 44 * 30 + 10, 57 * 30 + 24, 3, 1 << 21);
+                this.setHeads(lara, commandsL, laraHeadIds, 58 * 30 + 10, 62 * 30 - 10, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 62 * 30 + 10, 67 * 30, 3);
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 67 * 30 + 10, 77 * 30, 3, 1 << 21);
+
+                break;
+            }
+
+            case 11: {
+                // Make speaking heads
+                const aziz = actorMoveables[1],
+                      azizHeadIds = [21, 22],
+                      commandsA: Array<any> = [],
+                      trackA = this.sceneData.animTracks[this.sceneData.objects[aziz.name].animationStartIndex];
+
+                this.makeLayeredMesh(aziz);
+
+                trackA.setCommands(commandsA, 0);
+
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                trackL.setCommands(commandsL, 0);
+
+                this.setHeads(aziz, commandsA, azizHeadIds, 38 * 30, 39 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 40 * 30 + 10, 46 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 50 * 30, 55 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 55 * 30 + 20, 56 * 30 + 10, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 58 * 30 + 15, 63 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 64 * 30, 64 * 30 + 15, 3);
+
+                break;
+            }
+
+            case 15: {
+                // Make speaking heads
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                trackL.setCommands(commandsL, 0);
+
+                const vonCroy = actorMoveables[1],
+                      vonCroyHeadIds = [21, 22],
+                      commandsVC: Array<any> = [],
+                      trackVC = this.sceneData.animTracks[this.sceneData.objects[vonCroy.name].animationStartIndex];
+
+                this.makeLayeredMesh(vonCroy);
+
+                trackVC.setCommands(commandsVC, 0);
+
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 10 * 30, 22 * 30, 3, 1 << 21);
+                this.setHeads(lara, commandsL, laraHeadIds, 22 * 30 + 15, 23 * 30 + 15, 3);
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 24 * 30, 43 * 30 + 15, 3, 1 << 21);
+                this.setHeads(lara, commandsL, laraHeadIds, 44 * 30 - 8, 46 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 60 * 30 - 10, 61 * 30, 3);
+
+                break;
+            }
+
+            case 16: {
+                // Make speaking heads
+                const jeanYves = actorMoveables[3],
+                      jeanYvesHeadIds = [23, 24],
+                      commandsJY: Array<any> = [],
+                      trackJY = this.sceneData.animTracks[this.sceneData.objects[jeanYves.name].animationStartIndex];
+
+                this.makeLayeredMesh(jeanYves);
+
+                trackJY.setCommands(commandsJY, 0);
+
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                trackL.setCommands(commandsL, 0);
+
+                const vonCroy = actorMoveables[1],
+                      vonCroyHeadIds = [21, 22],
+                      commandsVC: Array<any> = [],
+                      trackVC = this.sceneData.animTracks[this.sceneData.objects[vonCroy.name].animationStartIndex];
+
+                this.makeLayeredMesh(vonCroy);
+
+                trackVC.setCommands(commandsVC, 0);
+
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 3 * 30, 4 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 6 * 30 - 10, 10 * 30, 3, 1 << 18);
+                this.setHeads(lara, commandsL, laraHeadIds, 13 * 30 - 10, 16 * 30, 3);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 17 * 30, 26 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 27 * 30, 33 * 30, 3, 1 << 18);
+                this.setHeads(lara, commandsL, laraHeadIds, 34 * 30, 35 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 35 * 30 + 15, 39 * 30, 3);
+                this.setHeads(vonCroy, commandsVC, vonCroyHeadIds, 53 * 30, 66 * 30, 3, 1 << 21);
+
+                break;
+            }
+
+            case 17: {
+                // Make speaking heads
+                const jeanYves = actorMoveables[1],
+                      jeanYvesHeadIds = [23, 24],
+                      commandsJY: Array<any> = [],
+                      trackJY = this.sceneData.animTracks[this.sceneData.objects[jeanYves.name].animationStartIndex];
+
+                this.makeLayeredMesh(jeanYves);
+
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 1 * 30, 2 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 8 * 30 + 20, 9 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 13 * 30, 16 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 23 * 30, 26 * 30, 3, 1 << 18);
+
+                trackJY.setCommands(commandsJY, 0);
+
+                break;
+            }
+
+            case 18: {
+                // Make speaking heads
+                const jeanYves = actorMoveables[1],
+                      jeanYvesHeadIds = [23, 24],
+                      commandsJY: Array<any> = [],
+                      trackJY = this.sceneData.animTracks[this.sceneData.objects[jeanYves.name].animationStartIndex];
+
+                this.makeLayeredMesh(jeanYves);
+
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 2 * 30 + 24, 8 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 11 * 30, 19 * 30, 3, 1 << 18);
+
+                trackJY.setCommands(commandsJY, 0);
+
+                break;
+            }
+
+            case 19: {
+                // Make speaking heads
+                const jeanYves = actorMoveables[1],
+                      jeanYvesHeadIds = [23, 24],
+                      commandsJY: Array<any> = [],
+                      trackJY = this.sceneData.animTracks[this.sceneData.objects[jeanYves.name].animationStartIndex];
+
+                this.makeLayeredMesh(jeanYves);
+
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 9 * 30 + 24, 15 * 30 + 20, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 17 * 30, 26 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 27 * 30 + 15, 29 * 30 - 10, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 30 * 30 - 10, 33 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 34 * 30, 43 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 44 * 30 + 10, 48 * 30, 3, 1 << 18);
+
+                trackJY.setCommands(commandsJY, 0);
+
+                break;
+            }
+
+            case 20: {
+                // Make speaking heads
+                const jeanYves = actorMoveables[1],
+                      jeanYvesHeadIds = [23, 24],
+                      commandsJY: Array<any> = [],
+                      trackJY = this.sceneData.animTracks[this.sceneData.objects[jeanYves.name].animationStartIndex];
+
+                this.makeLayeredMesh(jeanYves);
+
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 5 * 30, 10 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 11 * 30 - 10, 14 * 30 - 10, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 14 * 30 + 10, 17 * 30, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 24 * 30, 27 * 30 - 6, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 27 * 30 + 6, 28 * 30 - 8, 3, 1 << 18);
+                this.setHeads(jeanYves, commandsJY, jeanYvesHeadIds, 29 * 30, 31 * 30, 3, 1 << 18);
+
+                trackJY.setCommands(commandsJY, 0);
+
                 break;
             }
 
@@ -242,20 +522,180 @@ export default class CutSceneHelper {
             case 24: {
                 // Handle the pistols visibility during the dialog with the wounded guy
                 const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
                       track1 = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
 
-                track1.setCommands([
+                track1.setCommands(commandsL, 0);
+
+                commandsL.push(
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
-                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] },
+                    { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
+                );
+
+                this.setHeads(lara, commandsL, laraHeadIds, 3 * 30 - 10, 5 * 30 + 15, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 17 * 30 - 10, 551, 3);
+
+                commandsL.push(
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETLEFTGUN] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [552, Commands.Misc.ANIMCMD_MISC_GETRIGHTGUN] }
-                ], 0);
+                );
+
+                this.setHeads(lara, commandsL, laraHeadIds, 553, 22 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 53 * 30, 53 * 30 + 22, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 59 * 30, 60 * 30 + 4, 3);
+
+                // Make speaking heads
+                const aziz = actorMoveables[1],
+                      azizHeadIds = [21, 22],
+                      commandsA: Array<any> = [],
+                      trackA = this.sceneData.animTracks[this.sceneData.objects[aziz.name].animationStartIndex];
+
+                this.makeLayeredMesh(aziz);
+
+                trackA.setCommands(commandsA, 0);
+
+                this.setHeads(aziz, commandsA, azizHeadIds, 23 * 30, 32 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 38 * 30, 52 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 56 * 30, 59 * 30 - 10, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 61 * 30, 70 * 30, 3);
+
+                break;
+            }
+
+            case 25: {
+                // Make speaking heads
+                const aziz = actorMoveables[1],
+                      azizHeadIds = [21, 22],
+                      commandsA: Array<any> = [],
+                      trackA = this.sceneData.animTracks[this.sceneData.objects[aziz.name].animationStartIndex];
+
+                this.makeLayeredMesh(aziz);
+
+                trackA.setCommands(commandsA, 0);
+
+                const lara = actorMoveables[0],
+                      laraHeadIds = [17, 18, 19, 20],
+                      commandsL: Array<any> = [],
+                      trackL = this.sceneData.animTracks[this.sceneData.objects[lara.name].animationStartIndex];
+
+                trackL.setCommands(commandsL, 0);
+
+                this.setHeads(aziz, commandsA, azizHeadIds, 9 * 30 + 20, 15 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 19 * 30 + 20, 20 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 20 * 30, 32 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 32 * 30, 35 * 30 + 10, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 36 * 30 + 15, 38 * 30 + 15, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 40 * 30, 43 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 43 * 30 + 18, 44 * 30 + 10, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 49 * 30, 68 * 30, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 68 * 30 + 15, 72 * 30 + 10, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 74 * 30 - 10, 76 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 77 * 30 + 15, 93 * 30 + 15, 3);
+                this.setHeads(lara, commandsL, laraHeadIds, 94 * 30, 95 * 30, 3);
+                this.setHeads(aziz, commandsA, azizHeadIds, 98 * 30, 111 * 30, 3);
+
+                break;
+            }
+
+            case 26: {
+                // Make speaking heads
+                const aziz = actorMoveables[1],
+                      azizHeadIds = [21, 22],
+                      commandsA: Array<any> = [],
+                      trackA = this.sceneData.animTracks[this.sceneData.objects[aziz.name].animationStartIndex];
+
+                this.makeLayeredMesh(aziz);
+
+                trackA.setCommands(commandsA, 0);
+
+                this.setHeads(aziz, commandsA, azizHeadIds, 3 * 30 + 10, 14 * 30 + 10, 3);
 
                 break;
             }
         }
 
         return promises;
+    }
+
+    protected makeLayeredMesh(mesh: IMesh): void {
+        const data = this.sceneData.objects[mesh.name];
+
+        if (!data.layer) {
+            data.layer = new Layer(mesh, this.gameData);
+        }
+    }
+
+    public setHeads(mesh: IMesh, commands: Array<any>, ids: Array<number>, startFrame: number, endFrame: number, frameStep: number = 6, headMask: number = MASK.HEAD, shaderFunc?: (obj: IMesh) => void): void {
+        const data = this.sceneData.objects[mesh.name];
+
+        const heads: Array<IMeshBuilder> = [];
+
+        ids.forEach((id) => {
+            const head = this.objMgr.createMoveable(id, -1, undefined, true, data.skeleton) as IMesh,
+                  meshb = Engine.makeMeshBuilder(head);
+
+            if (shaderFunc) {
+                shaderFunc(head);
+            }
+
+            meshb.makeSkinIndicesList();
+            heads.push(meshb);
+        });
+
+        let frame = startFrame,
+            frameEnd = endFrame;
+
+        let i = 0;
+        while (frame <= frameEnd) {
+            let func = (head: IMeshBuilder) => ((action: number, obj: IMesh, mode: CommandDispatchMode) => this.setHead(mode, data.layer, head, headMask));
+
+            commands.push(
+                { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [frame, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, func(heads[i])] }
+            );
+
+            frame += frameStep;
+            i = (i + 1) % heads.length;
+        }
+
+        commands.push(
+            { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [frameEnd +  1, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, (action: number, obj: IMesh, mode: CommandDispatchMode) => this.resetHead(mode, data.layer)] }
+        );
+    }
+
+    protected setHead(mode: CommandDispatchMode, layer: Layer, head: IMeshBuilder, headMask: number): void {
+        switch (mode) {
+            case CommandDispatchMode.UNDO_END: {
+                if (layer.getMeshBuilder(LAYER.MESHSWAP)) {
+                    layer.setMask(layer.getMeshBuilder(LAYER.MESHSWAP) as IMeshBuilder, 0);
+                }
+                layer.setMask(layer.getMeshBuilder(LAYER.MAIN) as IMeshBuilder, MASK.ALL);
+                break;
+            }
+
+            case CommandDispatchMode.NORMAL: {
+                if (layer.getMeshBuilder(LAYER.MESHSWAP)) {
+                    layer.setMask(layer.getMeshBuilder(LAYER.MESHSWAP) as IMeshBuilder, 0);
+                }
+                layer.setMeshBuilder(LAYER.MESHSWAP, head, 0);
+                layer.setMask(head, headMask);
+                //layer.setMask(layer.getMeshBuilder(LAYER.MAIN) as IMeshBuilder, MASK.ALL & ~headMask);
+                layer.setRoom(this.gameData.sceneData.objects[(layer.getMeshBuilder(LAYER.MAIN) as IMeshBuilder).mesh.name].roomIndex);
+                break;
+            }
+        }
+    }
+
+    protected resetHead(mode: CommandDispatchMode, layer: Layer): void {
+        switch (mode) {
+            case CommandDispatchMode.NORMAL: {
+                if (layer.getMeshBuilder(LAYER.MESHSWAP)) {
+                    layer.setMask(layer.getMeshBuilder(LAYER.MESHSWAP) as IMeshBuilder, 0);
+                }
+                layer.setMask(layer.getMeshBuilder(LAYER.MAIN) as IMeshBuilder,     MASK.ALL);
+                break;
+            }
+        }
     }
 
     public fadeOut(duration: number, mode: CommandDispatchMode): void {

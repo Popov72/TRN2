@@ -55,11 +55,19 @@ export default class MeshBuilder implements IMeshBuilder {
 
         if (!dontUpdateSubMeshes) {
             if (subMeshes.length != 1) {
-                throw "Works only for meshes with a single sub mesh!";
+                //throw "Works only for meshes with a single sub mesh!";
+                // we should stop, but the case arises only in ang_race cutscenes for Von Croy character, and it's safe to set indexStart / indexCount to 0 / 0 for subMeshes >= 1
             }
+
             const subm = this._mesh.subMeshes[0];
+
             subm.indexStart = 0;
             subm.indexCount = index.length;
+
+            for (let m = 1; m < this._mesh.subMeshes.length; ++m) {
+                this._mesh.subMeshes[m].indexStart = 0;
+                this._mesh.subMeshes[m].indexCount = 0;
+            }
         }
     }
 
