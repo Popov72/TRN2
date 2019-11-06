@@ -204,7 +204,7 @@ export class ObjectManager {
         return obj;
     }
 
-    public createMoveable(moveableID: number, roomIndex: number, extrnColor?: Array<number>, addToScene: boolean = true, setAnimation: boolean = true): IMesh | null {
+    public createMoveable(moveableID: number, roomIndex: number, extrnColor?: Array<number>, addToScene: boolean = true, setAnimation: boolean | Skeleton = true): IMesh | null {
         const data = this.sceneData.objects['moveable' + moveableID];
 
         if (!data || !data.liveObj) {
