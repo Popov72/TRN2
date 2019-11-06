@@ -72,7 +72,7 @@ export default class CommandDispatch {
         const func = this.dispatchMap[action];
 
         if (!func) {
-            console.log(`Can't handle command "${action}"!`, obj);
+            //console.log(`Misc anim command "${action}" not implemented`, obj);
         } else {
             func(action, customParam, obj, mode);
         }
