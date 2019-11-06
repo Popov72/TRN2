@@ -535,6 +535,7 @@
                 <offsets>
                     <offset><x>-3</x><y>23</y><z>32</z></offset>
                 </offsets>
+                <fixtohead>true</fixtohead>
             </behaviour>
             <moveable id="144">
                 <behaviour name="ParticleSystem">
@@ -574,6 +575,7 @@
                         <offset><x>-32</x><y>54</y><z>32</z></offset>
                         <offset><x>32</x><y>54</y><z>32</z></offset>
                     </offsets>
+                    <fixtohead>false</fixtohead>
                 </behaviour>
                 <behaviour name="RemoveObject" objectid="397" cutsceneonly="true"/>
 			</level>
