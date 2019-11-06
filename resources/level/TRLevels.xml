@@ -595,6 +595,7 @@
                         <offset><x>-32</x><y>54</y><z>32</z></offset>
                         <offset><x>32</x><y>54</y><z>32</z></offset>
                     </offsets>
+                    <fixtohead>false</fixtohead>
                 </behaviour>
                 <behaviour name="RemoveObject" objectid="431" cutsceneonly="true"/>
             </level>
