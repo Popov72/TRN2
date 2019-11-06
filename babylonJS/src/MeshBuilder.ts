@@ -372,4 +372,31 @@ export default class MeshBuilder implements IMeshBuilder {
         return tmesh;
     }
 
+    public getIndexAndGroupState(): any {
+        let geom = this._mesh.geometry as Geometry,
+            index = Array.from(geom.getIndices(false) as IndicesArray);
+
+        const groups = [];
+
+        for (let g = 0; g < this._mesh.subMeshes.length; ++g) {
+            groups.push({
+                "indexStart": this._mesh.subMeshes[g].indexStart,
+                "indexCount": this._mesh.subMeshes[g].indexCount,
+            });
+        }
+
+        return {
+            "indices": index,
+            "groups": groups,
+        };
+    }
+
+    public setIndexAndGroupsState(state: any): void {
+        this.setIndex(state.indices, true);
+
+        for (let g = 0; g < this._mesh.subMeshes.length; ++g) {
+            this._mesh.subMeshes[g].indexCount = state.groups[g].indexCount;
+            this._mesh.subMeshes[g].indexStart = state.groups[g].indexStart;
+        }
+    }
 }

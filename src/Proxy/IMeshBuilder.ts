@@ -26,4 +26,8 @@ export interface IMeshBuilder {
 
     createMesh(name: string, scene:IScene, vshader: string, fshader: string, uniforms: any, vertices: Array<number>, indices: Array<number>, uvs?: Array<number>, colors?: Array<number>): IMesh;
 
+    getIndexAndGroupState(): any;
+
+    setIndexAndGroupsState(state: any): void;
+
 }

@@ -15,11 +15,17 @@ declare var glMatrix: any;
 
 export default class CutSceneHelper {
 
-    private sceneData:  any;
-    private gameData:   IGameData;
-    private objMgr:     ObjectManager;
-    private shdMgr:     ShaderManager;
-    private scene:      IScene;
+    private sceneData:      any;
+    private gameData:       IGameData;
+    private objMgr:         ObjectManager;
+    private shdMgr:         ShaderManager;
+    private scene:          IScene;
+
+    private _holeDoneR1:    any;
+    private _holeDoneR2:    any;
+    private _holeNotDoneR1: any;
+    private _holeNotDoneR2: any;
+    private _holeDone:      boolean;
 
     constructor(gameData: IGameData, lara: IMesh) {
         this.gameData = gameData;
@@ -27,6 +33,8 @@ export default class CutSceneHelper {
         this.objMgr = gameData.objMgr;
         this.shdMgr = gameData.shdMgr;
         this.scene = gameData.sceneRender;
+
+        this._holeDone = false;
     }
 
     public prepareLevel(trVersion: string, levelName: string, csIndex: number, actorMoveables: Array<any>): Array<Promise<void>> {
@@ -57,6 +65,10 @@ export default class CutSceneHelper {
 
                 data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
+                this.prepareHole();
+                this._holeDone = true;
+                this.cs1MakeHole(CommandDispatchMode.NORMAL);
+
                 track1.setCommands([
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [24,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [230, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, (action: number, obj: IMesh, mode: CommandDispatchMode) => this.fadeOut(1.0, mode)] }
@@ -67,6 +79,7 @@ export default class CutSceneHelper {
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [30,  Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, (action: number, obj: IMesh, mode: CommandDispatchMode) => this.fadeIn(1.0, mode)] },
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [147, Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] }
                 ], 0);
+
                 break;
             }
 
@@ -80,7 +93,7 @@ export default class CutSceneHelper {
 
                 data.layer.setMesh(LAYER.MESHSWAP, meshShovel, 0);
 
-                this.cs1MakeHole(CommandDispatchMode.NORMAL);
+                this.prepareHole();
 
                 track1.setCommands([
                     { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [0,   Commands.Misc.ANIMCMD_MISC_CUSTOMFUNCTION, () => data.layer.updateMask(LAYER.MESHSWAP, MASK.ARM_L3)] },
@@ -262,17 +275,29 @@ export default class CutSceneHelper {
 
     // Between cutscene 1 and 2, a hole should appear in the ground to reveal hidden entrance to pyramid
     public cs1MakeHole(mode: CommandDispatchMode): void {
+        let stateR1 = this._holeDone ? this._holeNotDoneR1 : this._holeDoneR1,
+            stateR2 = this._holeDone ? this._holeNotDoneR2 : this._holeDoneR2;
+
+        let oroom = this.objMgr.objectList['room'][81] as IMesh;
+        let mshBld = Engine.makeMeshBuilder(oroom);
+
+        mshBld.setIndexAndGroupsState(stateR1);
+
+        oroom = this.objMgr.objectList['room'][80] as IMesh;
+        mshBld = Engine.makeMeshBuilder(oroom);
+
+        mshBld.setIndexAndGroupsState(stateR2);
+
+        this._holeDone = !this._holeDone;
+    }
+
+    protected prepareHole(): void {
         // First room
-        let oroom = this.objMgr.objectList['room'][81] as IMesh,
-            data = this.sceneData.objects['room81'];
-
-        if (data.__done) {
-            return;
-        }
-
-        data.__done = true;
+        let oroom = this.objMgr.objectList['room'][81] as IMesh;
 
         let mshBld = Engine.makeMeshBuilder(oroom);
+
+        this._holeNotDoneR1 = mshBld.getIndexAndGroupState();
 
         let newFaces = [
             mshBld.copyFace(118),
@@ -307,10 +332,14 @@ export default class CutSceneHelper {
 
         mshBld.createFaces(newFaces, 1);
 
+        this._holeDoneR1 = mshBld.getIndexAndGroupState();
+
         // Second room
         oroom = this.objMgr.objectList['room'][80] as IMesh;
 
         mshBld = Engine.makeMeshBuilder(oroom);
+
+        this._holeNotDoneR2 = mshBld.getIndexAndGroupState();
 
         newFaces = [
             mshBld.copyFace(126),
@@ -344,6 +373,8 @@ export default class CutSceneHelper {
         newFaces[3].uv3 = [newFaces[5].uv1[0], newFaces[5].uv1[1]];
 
         mshBld.createFaces(newFaces, 2);
+
+        this._holeDoneR2 = mshBld.getIndexAndGroupState();
     }
 
 }

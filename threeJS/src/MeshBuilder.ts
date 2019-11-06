@@ -294,4 +294,33 @@ export default class MeshBuilder implements IMeshBuilder {
         return mesh;
     }
 
+    public getIndexAndGroupState(): any {
+        let geom = this._mesh.geometry as BufferGeometry,
+            index = Array.from(geom.index.array);
+
+        const groups = [];
+
+        for (let g = 0; g < geom.groups.length; ++g) {
+            groups.push({
+                "indexStart": geom.groups[g].start,
+                "indexCount": geom.groups[g].count,
+            });
+        }
+
+        return {
+            "indices": index,
+            "groups": groups,
+        };
+    }
+
+    public setIndexAndGroupsState(state: any): void {
+        let geom = this._mesh.geometry as BufferGeometry;
+
+        this.setIndex(state.indices);
+
+        for (let g = 0; g < geom.groups.length; ++g) {
+            geom.groups[g].count = state.groups[g].indexCount;
+            geom.groups[g].start = state.groups[g].indexStart;
+        }
+    }
 }
