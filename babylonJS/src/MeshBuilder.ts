@@ -377,6 +377,8 @@ export default class MeshBuilder implements IMeshBuilder {
 
         materials.forEach((m) => m.uniformsUpdated());
 
+        scene.add(tmesh);
+
         return tmesh;
     }
 
