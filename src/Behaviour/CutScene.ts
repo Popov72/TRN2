@@ -259,7 +259,7 @@ export class CutScene extends Behaviour {
         this.cutSceneEnded = false;
 
         if (resetCamera) {
-            this.onFrameStarted(0, 0);
+            this.update(0, 0);
         }
     }
 
@@ -312,7 +312,7 @@ export class CutScene extends Behaviour {
 
         this.cutscene.curFrame = futureFrame;
 
-        this.onFrameStarted(0, 0); // reset camera
+        this.update(0, 0); // reset camera
 
         this.resetHair();
     }
@@ -347,7 +347,7 @@ export class CutScene extends Behaviour {
     }
 
     public onFrameStarted(curTime: number, delta: number): void {
-        if (this.cutSceneEnded) {
+        if (this.cutSceneEnded || this.control.paused) {
             return;
         }
 
@@ -360,6 +360,10 @@ export class CutScene extends Behaviour {
             this.cutscene.sound.start();
         }
 
+        this.update(curTime, delta);
+    }
+
+    protected update(curTime: number, delta: number): void {
         this.cutscene.curFrame += baseFrameRate * delta;
 
         this.control.updateTime(this.cutscene.curFrame * FRAME_DURATION);
@@ -422,14 +426,14 @@ export class CutScene extends Behaviour {
 
         } else {
             this.cutSceneEnded = true;
-            this.gameData.update = false;
+            this.anmMgr.pause(true);
             this.control.finished();
         }
     }
 
     public onFrameEnded(curTime: number, delta: number): void {
         // Update object lights (only in TR4 cutscenes)
-        if (this.cutscene.index <= 0) {
+        if (this.cutscene.index <= 0 || this.control.paused) {
             return;
         }
 

@@ -35,6 +35,10 @@ export default class CutSceneControl {
         });
     }
 
+    get paused(): boolean {
+        return this._paused;
+    }
+
     public bindEvents(): void {
         // Handle showing/clicking on big button to start replay
         jQuery(document.body)
@@ -174,7 +178,7 @@ export default class CutSceneControl {
                 ctrl._cutscene.stopSound();
                 ctrl._pausedSave = ctrl._paused;
                 if (!ctrl._paused) {
-                    ctrl._gameData.update = false;
+                    ctrl._gameData.anmMgr.pause(true);
                     ctrl._paused = true;
                 }
                 ctrl.updatebar(e.pageX);
@@ -193,7 +197,7 @@ export default class CutSceneControl {
                     ctrl._paused = ctrl._pausedSave;
                     if (!ctrl._paused) {
                         ctrl._cutscene.startSound();
-                        ctrl._gameData.update = true;
+                        ctrl._gameData.anmMgr.pause(false);
                     }
                 }
             };
@@ -230,12 +234,12 @@ export default class CutSceneControl {
                 this._ended = false;
             }
             jQuery('.btnPlay').addClass('paused');
-            this._gameData.update = true;
+            this._gameData.anmMgr.pause(false);
             this._paused = false;
             this._cutscene.startSound();
         } else {
             jQuery('.btnPlay').removeClass('paused');
-            this._gameData.update = false;
+            this._gameData.anmMgr.pause(true);
             this._paused = true;
             this._cutscene.stopSound();
         }
