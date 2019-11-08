@@ -67,6 +67,7 @@ export default class Play {
             "unitVec3" : [1.0, 1.0, 1.0],
             "globalTintColor":  null,
 
+            "isCutscene": false,
             "singleFrame": false,
             "update": true,
 

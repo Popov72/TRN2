@@ -35,6 +35,7 @@ export default interface IGameData {
 
     "panel":            Panel;
 
+    "isCutscene":       boolean;
     "singleFrame":      boolean;
     "update":           boolean;
 
