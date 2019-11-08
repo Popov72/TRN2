@@ -246,7 +246,7 @@ export class AnimationManager {
 
                     //console.log(action,'done for frame',frame,obj.name)
 
-                    this._commandDispatch.dispatch(action, customParam, obj, mode);
+                    this._commandDispatch.dispatch(action, customParam, obj, mode, trackInstance);
 
                     break;
                 }

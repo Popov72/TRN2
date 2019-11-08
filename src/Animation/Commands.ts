@@ -47,4 +47,5 @@ Commands.Misc = {
     ANIMCMD_MISC_ADDITIONALSOUND2:                  16416,
 
     ANIMCMD_MISC_CUSTOMFUNCTION:                    -1,
+    ANIMCMD_MISC_SETINTERPOLATION:                  -2,
 };

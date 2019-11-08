@@ -43,15 +43,34 @@ export default class CutSceneHelper {
         const promises: Array<Promise<any>> = [];
 
         if (trVersion == 'TR2') {
-            if (levelName == 'cut3.tr2') {
-                // bad guys are not at the right location
-                const black = (this.objMgr.objectList['moveable'][98] as Array<IMesh>)[0],
-                      red = (this.objMgr.objectList['moveable'][97] as Array<IMesh>)[0];
+            switch (levelName) {
+                case 'cut1.tr2': {
+                    // disable interpolation for laptop animation
+                    const laptop = (this.objMgr.objectList['moveable'][128] as Array<IMesh>)[0],
+                          data = this.sceneData.objects[laptop.name],
+                          anmIndex = data.animationStartIndex;
 
-                black.setQuaternion([0, 1, 0, 0]); // 180 deg rotation
-                black.setPosition([16900, -5632, -7680]);
+                    let track = this.sceneData.animTracks[anmIndex];
 
-                red.setPosition([20000, -5632, -10700]);
+                    track = this.sceneData.animTracks[track.nextTrack];
+
+                    track.setCommands([
+                        { cmd: Commands.ANIMCMD_MISCACTIONONFRAME , params: [track.commandsFrameStart + 0, Commands.Misc.ANIMCMD_MISC_SETINTERPOLATION, false] },
+                    ], track.commandsFrameStart);
+                    break;
+                }
+
+                case 'cut3.tr2': {
+                    // bad guys are not at the right location
+                    const black = (this.objMgr.objectList['moveable'][98] as Array<IMesh>)[0],
+                          red = (this.objMgr.objectList['moveable'][97] as Array<IMesh>)[0];
+
+                    black.setQuaternion([0, 1, 0, 0]); // 180 deg rotation
+                    black.setPosition([16900, -5632, -7680]);
+
+                    red.setPosition([20000, -5632, -10700]);
+                    break;
+                }
             }
         }
 

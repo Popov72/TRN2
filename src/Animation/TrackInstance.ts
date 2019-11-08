@@ -17,11 +17,11 @@ export default class TrackInstance {
 
     public param: IParam;
     public noInterpolationToNextTrack: boolean;
+    public activateInterpolation: boolean;
 
     private _track: Track;
     private skeleton: Skeleton;
     private overallSpeed: number;
-    private activateInterpolation: boolean;
     private nextTrackInstance: TrackInstance;
     private nextTrackInstanceFrame: number;
     private noInterpolationToNextTrackValue: number;
@@ -145,7 +145,7 @@ export default class TrackInstance {
 
         if (!this.param.nextKeyIsInCurrentTrack && this.noInterpolationToNextTrack) {
             if (this.param.curFrame + this.param.interpFactor >= this._track.numFrames) {
-                // the interpolation would be done for a frame outside of the current animation, 
+                // the interpolation would be done for a frame outside of the current animation,
                 // so return false to notify caller to link to the next animation
                 this.param.curFrame += this.param.interpFactor;
                 return false;
