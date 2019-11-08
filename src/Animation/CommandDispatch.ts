@@ -254,6 +254,7 @@ export default class CommandDispatch {
 
         if (ponytail && ponytail.length > 0 && mode === CommandDispatchMode.NORMAL) {
             ponytail[0].reset();
+            ponytail[0].preWarm();
         }
     }
 
