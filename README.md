@@ -15,12 +15,17 @@ Hit the **H** key to display an help panel that lists all the keys you can use.
 
 Cutscenes are the levels with a <img src="http://www.evpopov.com/resources/movie.png" width="24px"/> icon after the level name.
 
-You can browse local levels on your hard drive by browsing the [**TRN.html** page](http://www.evpopov.com/TRN.html). In this page, click on the **Select files** button and select an original TR level on your hard drive.
+You can browse local levels on your hard drive by browsing the [**TRN.html** page](http://www.evpopov.com/babylonJS/public/TRN.html). In this page, click on the **Select files** button and select an original TR level on your hard drive.
+
+## 3D Engines
+You can use either [BabylonJS](https://babylonjs.com) or [Threejs](https://threejs.org/) to browse a level: select the engine you want in the corresponding dropdown box.
+
+Note that if you choose Threejs you won't have some particle effects, as Threejs don't feature such a particle system module. That's why BabylonJS is the default selected engine.
 
 ## Install
 You can install the project locally (on your own computer) by doing these steps:
 * Click on the **Clone or download** button in this page (see above) and download a zip archive of the project
-* Uncompress this zip file on your computer (say in *c:\Projects\TRN*)
+* Uncompress this zip file on your computer (say in *c:\Projects\TRN2*)
 * Install Python on your computer if you not already have it. To check if you already have Python installed:
   * Start a command line (type **cmd** in the search input of Windows and hit ENTER)
   * Type **python** then ENTER: if you get an error message, you don't have Python installed. To install it:
@@ -29,7 +34,7 @@ You can install the project locally (on your own computer) by doing these steps:
     * **__Important__**: check the **Add Python 3.7 to PATH** (3.7 or whatever the current version of Python is) checkbox that you can see at the bottom of the first screen! If you don't do it, you will have to put the Python path to the global **PATH** variable yourself
 * Start Python has a simple HTTP server:
   * Start a command line (type **cmd** in the search input of Windows and hit ENTER)
-  * Go to the directory where you installed TRN (for eg: **cd c:\Projects\TRN** + ENTER)
+  * Go to the directory where you installed TRN (for eg: **cd c:\Projects\TRN2** + ENTER)
   * If your version of Python is 3.x or more, type:
     * **python -m http.server** + ENTER
   * else type:
@@ -72,3 +77,6 @@ Click on the picture to view the corresponding level.<br>
 
 <a href="http://www.evpopov.com/TRN.html?trgame=TR4&level=tr4/palaces2.tr4&autostart=1"><img title="Cleopatra´s Palaces" src="resources/picture/TR4_big/palaces2.jpg"/></a>
 
+<a href="http://www.evpopov.com/babylonJS/public/TRN.html?engine=babylonJS&trgame=TR4Cut&level=tr4/ang_race.tr4&autostart=0&cutscene=9"><img title="Revealing Iris, Von Croy getting trapped and Young Lara going for help" src="resources/picture/TR4Cutscene_big/cutscene_9.jpg"/></a>
+
+<a href="http://www.evpopov.com/babylonJS/public/TRN.html?engine=babylonJS&trgame=TR4Cut&level=tr4/settomb2.tr4&autostart=0&cutscene=14"><img title="Lara pulling Ankh off Seth's Tomb" src="resources/picture/TR4Cutscene_big/cutscene_14.jpg"/></a>
