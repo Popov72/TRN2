@@ -154,8 +154,8 @@ export class CutScene extends Behaviour {
         if (index > 0) {
             const tr4Promise = new CutSceneTR4(this.gameData, this.cutscene, this.helper, this.lara).makeTR4Cutscene(parseInt(index));
             promises.push(tr4Promise.then(() => {
-                //this.makeObjectList();
                 this.objects = this.cutscene.objects;
+                this.anmMgr.setAnimatedObjects(this.objects);
                 this.registerAnimations();
                 this.resetHair();
                 this.control.init();
@@ -174,6 +174,7 @@ export class CutScene extends Behaviour {
             );
 
             this.makeObjectList();
+            this.anmMgr.setAnimatedObjects(this.objects);
             this.registerAnimations();
             this.resetHair();
             this.control.init();

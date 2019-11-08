@@ -1,5 +1,5 @@
 import IGameData from "../Player/IGameData";
-import { ObjectManager } from "../Player/ObjectManager";
+import { ObjectManager, MeshList } from "../Player/ObjectManager";
 import { MaterialManager } from "../Player/MaterialManager";
 import Track from "../Animation/Track";
 import TrackInstance from "../Animation/TrackInstance";
@@ -15,6 +15,7 @@ export class AnimationManager {
     protected matMgr: MaterialManager;
     protected objMgr: ObjectManager;
     protected _commandDispatch: CommandDispatch;
+    protected _animatedObjects: MeshList | null;
 
     constructor() {
         this.paused = false;
@@ -22,6 +23,7 @@ export class AnimationManager {
         this.matMgr = <any>null;
         this.objMgr = <any>null;
         this._commandDispatch = <any>null;
+        this._animatedObjects = null;
     }
 
     public initialize(gameData: IGameData): void {
@@ -71,12 +73,21 @@ export class AnimationManager {
         return trackInstance;
     }
 
+    public setAnimatedObjects(objs: { [name: string]: IMesh }): void {
+        const meshes: Array<IMesh> = [];
+        this._animatedObjects = { 0: meshes };
+        for (const name in objs) {
+            meshes.push(objs[name]);
+        }
+    }
+
     public animateObjects(delta: number): void {
         if (this.paused) {
             return;
         }
 
-        const animatables = this.objMgr.objectList['moveable'];
+        const animatables = this._animatedObjects || this.objMgr.objectList['moveable'];
+        let numAnimatedObjects = 0;
 
         for (const objID in animatables) {
             const lstObj = animatables[objID] as Array<IMesh>;
@@ -86,6 +97,8 @@ export class AnimationManager {
                       data = this.sceneData.objects[obj.name];
 
                 if (data.has_anims && data.trackInstance && (obj.visible || this.gameData.isCutscene)) {
+                    numAnimatedObjects++;
+
                     const nextTrackFrame = data.trackInstance.track.nextTrackFrame;
 
                     if (!data.trackInstance.runForward(delta)) {
@@ -140,6 +153,8 @@ export class AnimationManager {
                 }
             }
         }
+
+        this.gameData.numAnimatedObjects = numAnimatedObjects;
     }
 
     // Undo animation commands that have been done up to the 'futureFrame' point in time
