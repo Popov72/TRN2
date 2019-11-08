@@ -12,7 +12,8 @@
 
 .helphdr {
 	font-weight: bold;
-	width: 300px;
+    width: 300px;
+    vertical-align: top;
 }
 
 .helpvalue {
