@@ -225,6 +225,8 @@ export class CutScene extends Behaviour {
                 const track = this.sceneData.animTracks[anmIndex],
                       trackInstance = new TrackInstance(track, data.skeleton);
 
+                trackInstance.noInterpolationToNextTrack = true;
+
                 allTrackInstances[anmIndex] = trackInstance;
 
                 anmIndex = track.nextTrack;

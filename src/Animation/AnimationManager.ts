@@ -104,8 +104,6 @@ export class AnimationManager {
                             trackInstance.setNextTrackInstance(data.allTrackInstances[trackInstance.track.nextTrack], trackInstance.track.nextTrackFrame);
                         }
                         trackInstance.setCurrentFrame(nextTrackFrame + curTrackInstance.param.curFrame - curTrackInstance.track.numFrames);
-
-                        trackInstance.noInterpolationToNextTrack = this.gameData.isCutscene;
                     }
 
                     if (data.trackInstance != data.prevTrackInstance) {

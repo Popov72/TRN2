@@ -144,6 +144,13 @@ export default class TrackInstance {
         this.param.interpFactor = this.activateInterpolation ? (curKey - this.param.curKey) * speedFactor : 0.0;
 
         if (!this.param.nextKeyIsInCurrentTrack && this.noInterpolationToNextTrack) {
+            if (this.param.curFrame + this.param.interpFactor >= this._track.numFrames) {
+                // the interpolation would be done for a frame outside of the current animation, 
+                // so return false to notify caller to link to the next animation
+                this.param.curFrame += this.param.interpFactor;
+                return false;
+            }
+
             this.param.interpFactor = this.noInterpolationToNextTrackValue;
         }
 
