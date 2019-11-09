@@ -155,7 +155,7 @@ export class CutScene extends Behaviour {
             const tr4Promise = new CutSceneTR4(this.gameData, this.cutscene, this.helper, this.lara).makeTR4Cutscene(parseInt(index));
             promises.push(tr4Promise.then(() => {
                 this.objects = this.cutscene.objects;
-                this.anmMgr.setAnimatedObjects(this.objects);
+                //this.anmMgr.setAnimatedObjects(this.objects); // have the animation manager animates all objects and not only the ones from the cutscene, to get correct bounding boxes
                 this.registerAnimations();
                 this.resetHair();
                 this.control.init();
@@ -174,7 +174,6 @@ export class CutScene extends Behaviour {
             );
 
             this.makeObjectList();
-            this.anmMgr.setAnimatedObjects(this.objects);
             this.registerAnimations();
             this.resetHair();
             this.control.init();
