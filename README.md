@@ -13,7 +13,7 @@ Main keys are:
 
 Hit the **H** key to display an help panel that lists all the keys you can use.
 
-Cutscenes are the levels with a <img src="http://www.evpopov.com/resources/movie.png" width="24px"/> icon after the level name.
+Cutscenes are the levels with a <img src="http://www.evpopov.com/resources/picture/movie.png" width="24px"/> icon after the level name.
 
 You can browse local levels on your hard drive by browsing the [**TRN.html** page](http://www.evpopov.com/babylonJS/public/TRN.html). In this page, click on the **Select files** button and select an original TR level on your hard drive.
 
