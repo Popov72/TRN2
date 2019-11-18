@@ -43,7 +43,7 @@ jQuery(document).on('keydown', function(event) {
                 prm += '&trgame=' + qgame;
             }
 
-            document.location.href = '/index.html' + prm;
+            document.location.href = relPath + 'index.html' + prm;
             break;
     }
 });

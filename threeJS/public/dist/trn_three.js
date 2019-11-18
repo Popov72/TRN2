@@ -8055,7 +8055,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('keydown', function (
             if (qgame) {
                 prm += '&trgame=' + qgame;
             }
-            document.location.href = '/index.html' + prm;
+            document.location.href = relPath + 'index.html' + prm;
             break;
     }
 });
@@ -10911,7 +10911,7 @@ __webpack_require__.r(__webpack_exports__);
 var ProgressBar = /** @class */ (function () {
     function ProgressBar(domElement, relpath) {
         var _this = this;
-        if (relpath === void 0) { relpath = "/"; }
+        if (relpath === void 0) { relpath = ""; }
         this._elem = jQuery('');
         this._show = false;
         this._showStart = false;

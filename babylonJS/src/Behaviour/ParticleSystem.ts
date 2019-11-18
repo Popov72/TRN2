@@ -59,6 +59,7 @@ export class ParticleSystem extends Behaviour {
         const promise = fetch(`${this.gameData.relpath}resources/particle/${pname}.json`).then((response) => {
             if (response.ok) {
                 response.json().then((json) => {
+                    json = JSON.parse(JSON.stringify(json).replace(/\/resources/g, this.gameData.relpath + 'resources'));
                     positions.forEach((obj, idx) => {
                         const psys = BParticleSystem.Parse(json, (this.gameData.sceneRender as Scene).object, ""),
                               id: number = this.objectid ? this.objectid : parseInt(itemID),
