@@ -1,12 +1,9 @@
-import TR4CutSceneDecoder from "./Loading/TR4CutScene/TR4CutSceneDecoder";
-
 import jQuery from "jquery";
 
 import Browser from "./Utils/Browser";
 import { ProgressBar } from "./Utils/ProgressBar";
 
 import { CutScene } from "./Behaviour/CutScene";
-import { Ponytail } from "./Behaviour/Ponytail";
 import MasterLoader from "./Loading/MasterLoader";
 import Play from "./Player/Play";
 import { ConfigManager } from "./ConfigManager";
@@ -134,14 +131,3 @@ if (Browser.QueryString.level) {
     jQuery('#files').css('display', 'block');
     jQuery('#files').on('change', handleFileSelect);
 }
-
-/*
-let parser = new TR4CutSceneDecoder("/resources/level/tr4/cutseq.pak");
-
-(async () => {
-    await parser.parse();
-    console.log(parser.layout);
-    for (let i = 0; i < parser.layout.cutscenes.length; ++i)
-        console.log('#' + (i+1) + '\n', JSON.stringify(parser.layout.cutscenes[i]));
-})();
-*/
