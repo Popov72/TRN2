@@ -56,7 +56,7 @@ export class ParticleSystem extends Behaviour {
             }
         }
 
-        const promise = fetch(`/resources/particle/${pname}.json`).then((response) => {
+        const promise = fetch(`${this.gameData.relpath}resources/particle/${pname}.json`).then((response) => {
             if (response.ok) {
                 response.json().then((json) => {
                     positions.forEach((obj, idx) => {

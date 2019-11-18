@@ -9,6 +9,7 @@ import Play from "./Player/Play";
 import { ConfigManager } from "./ConfigManager";
 
 const showTiles = false;
+const relPath = Browser.QueryString.relpath || "";
 
 function setContainerDimensions() {
     if (!showTiles) {
@@ -48,11 +49,11 @@ jQuery(document).on('keydown', function(event) {
 });
 
 function loadAndPlayLevel(level: string | any) {
-    const progressbar = new ProgressBar(document.getElementById('container') as Element);
+    const progressbar = new ProgressBar(document.getElementById('container') as Element, relPath);
 
     progressbar.show();
 
-    fetch('/resources/level/TRLevels.xml').then((response) => {
+    fetch(relPath + 'resources/level/TRLevels.xml').then((response) => {
         response.text().then((txt) => {
             const confMgr = new ConfigManager(jQuery.parseXML(txt));
 
@@ -60,7 +61,8 @@ function loadAndPlayLevel(level: string | any) {
                 if (!showTiles) {
                     const play = new Play(document.getElementById('container') as Element);
                     (window as any).play = play;
-                    fetch('/resources/template/help.html').then((response) => {
+                    jQuery(`<style type="text/css" media="all">@import "${relPath}resources/css/help.css";</style>`).appendTo(jQuery(document.body));
+                    fetch(relPath + 'resources/template/help.html').then((response) => {
                         response.text().then((html) => {
                             jQuery(html).appendTo(document.body);
                         });
@@ -124,7 +126,7 @@ function handleFileSelect(evt: Event) {
 }
 
 if (Browser.QueryString.level) {
-    loadAndPlayLevel('/resources/level/' + Browser.QueryString.level);
+    loadAndPlayLevel(relPath + 'resources/level/' + Browser.QueryString.level);
 } else {
     jQuery('body').prepend('<input type="file" id="files" multiple="multiple" _style="display: none" />');
 

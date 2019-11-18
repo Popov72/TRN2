@@ -179,7 +179,7 @@
             }
             jQuery('#levels').html(js.join(''));
         } else {
-            fetch('/resources/level/TRLevels.xml').then((response) => {
+            fetch('resources/level/TRLevels.xml').then((response) => {
                 response.text().then((txt) => {
                     const root = jQuery.parseXML(txt);
                     var levels = jQuery(root).find('game[id="' + game + '"] > levels > level');
@@ -228,7 +228,7 @@
                 if (gamepath == 'TR4Cut') {
                     gamepath = 'TR4';
                 }
-                let url = engine + '/public/TRN.html?engine=' + engine + '&trgame=' + game + '&level=' + gamepath.toLowerCase() + '/' + level + '&autostart=' + (type == 'cutscene' ? '0' : '1');
+                let url = engine + '/public/TRN.html?relpath=../../&engine=' + engine + '&trgame=' + game + '&level=' + gamepath.toLowerCase() + '/' + level + '&autostart=' + (type == 'cutscene' ? '0' : '1');
                 if (game == 'TR4Cut') {
                     url += '&cutscene=' + ot.attr('cindex');
                 }

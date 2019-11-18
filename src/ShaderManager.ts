@@ -16,8 +16,8 @@ export class ShaderManager {
     protected _level: RawLevel;
     protected _globalLightsInFragment: boolean;
 
-    constructor() {
-        this._fpath = '/resources/shader/';
+    constructor(dirPath?: string) {
+        this._fpath = dirPath || 'resources/shader/';
         this._fileCache = {};
         this._level = <any>null;
         this._globalLightsInFragment = true;

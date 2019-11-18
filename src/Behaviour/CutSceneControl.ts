@@ -28,7 +28,8 @@ export default class CutSceneControl {
     }
 
     public init() {
-        return fetch('/resources/template/cccontrol.html').then((response) => {
+        jQuery(`<style type="text/css" media="all">@import "${this._gameData.relpath}resources/css/cccontrol.css";</style>`).appendTo(jQuery(document.body));
+        return fetch(this._gameData.relpath + 'resources/template/cccontrol.html').then((response) => {
             return response.text().then((html) => {
                 jQuery(document.body).append(html);
             });

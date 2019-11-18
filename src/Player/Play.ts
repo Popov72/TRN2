@@ -32,6 +32,7 @@ export default class Play {
 
     constructor(container: Element) {
         this.gameData = {
+            "relpath": Browser.QueryString.relpath || "/",
             "play": this,
 
             "curFrame": 0,

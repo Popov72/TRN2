@@ -15,6 +15,7 @@ declare var glMatrix: any;
 
 export default class CutSceneTR4 {
 
+    private gameData:   IGameData;
     private sceneData:  any;
     private objMgr:     ObjectManager;
     private scene:      IScene;
@@ -24,6 +25,7 @@ export default class CutSceneTR4 {
     private lara:       IMesh;
 
     constructor(gameData: IGameData, cutscene: CutSceneData, helper: CutSceneHelper, lara: IMesh) {
+        this.gameData = gameData;
         this.sceneData = gameData.sceneData;
         this.objMgr = gameData.objMgr;
         this.confMgr = gameData.confMgr;
@@ -34,7 +36,7 @@ export default class CutSceneTR4 {
     }
 
     public makeTR4Cutscene(icutscene: number): Promise<any> {
-        return fetch('/resources/level/tr4/TR4_cutscenes/cut' + icutscene + '.json').then((response) => {
+        return fetch(this.gameData.relpath + 'resources/level/tr4/TR4_cutscenes/cut' + icutscene + '.json').then((response) => {
             return response.json().then((data) => {
                 const cutscene: Array<any> = [];
 
@@ -45,9 +47,9 @@ export default class CutSceneTR4 {
 
                 // get the sound for this cut scene
                 if (cutscene[0].info.audio) {
-                    soundPromise = Misc.loadSoundAsync(this.sceneData.soundPath + cutscene[0].info.audio + '.aac').then((ret: any) => {
-                        if (ret.code < 0) {
-                            console.log('Error decoding sound data for cutscene.');
+                    soundPromise = Misc.loadSoundAsync(this.gameData.relpath + this.sceneData.soundPath + cutscene[0].info.audio + '.aac').then((ret: any) => {
+                        if (!ret || ret.code < 0) {
+                            console.log('Error decoding sound data for cutscene.', ret);
                         } else {
                             this.cutscene.sound = ret.sound;
                             this.cutscene.soundbuffer = ret.soundbuffer;
@@ -57,7 +59,7 @@ export default class CutSceneTR4 {
 
                 if (cutscene[0].index == 1) {
                     // we play cutscene 1 followed by cutscene 2, so need to retrieve data for cutscene 2
-                    return fetch('/resources/level/tr4/TR4_cutscenes/cut' + (icutscene + 1) + '.json').then((response) => {
+                    return fetch(this.gameData.relpath + 'resources/level/tr4/TR4_cutscenes/cut' + (icutscene + 1) + '.json').then((response) => {
                         return response.json().then((data) => {
                             cutscene.push(data);
                             cutscene[1].index = icutscene + 1;

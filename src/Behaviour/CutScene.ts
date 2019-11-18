@@ -163,7 +163,7 @@ export class CutScene extends Behaviour {
         } else {
             promises.push(...this.helper.prepareLevel(this.confMgr.trversion, this.confMgr.levelName as string, 0, []));
             promises.push(
-                Misc.loadSoundAsync(this.sceneData.soundPath + this.sceneData.levelShortFileNameNoExt.toUpperCase()).then((ret: any) => {
+                Misc.loadSoundAsync(this.gameData.relpath + this.sceneData.soundPath + this.sceneData.levelShortFileNameNoExt.toUpperCase()).then((ret: any) => {
                     if (!ret || ret.code < 0) {
                         console.log('Error decoding sound data for cutscene.');
                     } else {

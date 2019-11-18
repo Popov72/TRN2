@@ -9,8 +9,8 @@ export class ShaderManager extends ShaderManagerBase {
 
     protected _uniforms: Map<string, Set<string>>;
 
-    constructor() {
-        super();
+    constructor(dirPath?: string) {
+        super(dirPath);
 
         this._uniforms = new Map();
     }

@@ -2,6 +2,7 @@ import {
     Engine as BEngine
 } from "babylonjs";
 
+import Browser from "../../src/Utils/Browser";
 import Engine from "../../src/Proxy/Engine";
 import { IMesh } from "../../src/Proxy/IMesh";
 import { IScene } from "../../src/Proxy/IScene";
@@ -18,11 +19,13 @@ import SceneParser from "./SceneParser";
 
 declare var glMatrix: any;
 
+const relPath = Browser.QueryString.relpath || "";
+
 glMatrix.glMatrix.setMatrixArrayType(Array);
 
 const canvas = document.createElement("canvas"),
       engine = new BEngine(canvas, true),
-      shdMgr = new ShaderManager();
+      shdMgr = new ShaderManager(relPath + "resources/shader/");
 
 Engine.registerFunctions({
     "makeNode":         (name?: string, scene?: IScene) => new Node(undefined, name, scene as Scene),

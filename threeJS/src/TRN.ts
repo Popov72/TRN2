@@ -1,3 +1,4 @@
+import Browser from "../../src/Utils/Browser";
 import Engine from "../../src/Proxy/Engine";
 import { IMesh } from "../../src/Proxy/IMesh";
 import { ShaderManager } from "../../src/ShaderManager";
@@ -12,9 +13,11 @@ import SceneParser from "./SceneParser";
 
 declare var glMatrix: any;
 
+const relPath = Browser.QueryString.relpath || "";
+
 glMatrix.glMatrix.setMatrixArrayType(Array);
 
-const shdMgr = new ShaderManager();
+const shdMgr = new ShaderManager(relPath + "resources/shader/");
 
 Engine.registerFunctions({
     "makeNode":         () => new Node(),

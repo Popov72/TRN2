@@ -5,12 +5,13 @@ export class ProgressBar {
     protected _showStart:   boolean;
     protected _callback:    any;
 
-    constructor(domElement: Element) {
+    constructor(domElement: Element, relpath: string = "") {
         this._elem = jQuery('');
         this._show = false;
         this._showStart = false;
 
-        fetch('/resources/template/progressbar.html').then((response) => {
+        jQuery(`<style type="text/css" media="all">@import "${relpath}resources/css/progressbar.css";</style>`).appendTo(domElement);
+        fetch(relpath + 'resources/template/progressbar.html').then((response) => {
             response.text().then((html) => {
                 this._elem = jQuery(html);
                 this._elem.appendTo(domElement);

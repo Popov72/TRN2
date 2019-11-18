@@ -15,7 +15,8 @@ export class Panel {
         this._renderer = renderer;
         this._show = false;
 
-        fetch('/resources/template/panel.html').then((response) => {
+        jQuery(`<style type="text/css" media="all">@import "${gameData.relpath}resources/css/panel.css?ver=3";</style>`).appendTo(domElement);
+        fetch(gameData.relpath + 'resources/template/panel.html').then((response) => {
             response.text().then((html) => {
                 this._elem = jQuery(html);
                 this._elem.appendTo(domElement);

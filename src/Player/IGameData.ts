@@ -12,6 +12,7 @@ import { SystemLight } from "./SystemLight";
 import Play from "./Play";
 
 export default interface IGameData {
+    "relpath":          string;
     "play":             Play;
 
     "curFrame":         number;
