@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Tomb Raider Nostalgia - Threejs</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                overflow: hidden;
+                margin: 0;
+                /*background-color: #000000;*/
+            }
+        </style>
+        <style>
+            body {
+                font: 14px "Century Gothic", Futura, sans-serif;
+                margin: 20px;
+            }
+
+            ol, ul {
+                padding-left: 30px;
+            }
+
+            .board-row:after {
+                clear: both;
+                content: "";
+                display: table;
+            }
+
+            .status {
+                margin-bottom: 10px;
+            }
+
+            .square {
+                background: #fff;
+                border: 1px solid #999;
+                float: left;
+                font-size: 24px;
+                font-weight: bold;
+                line-height: 34px;
+                height: 34px;
+                margin-right: -1px;
+                margin-top: -1px;
+                padding: 0;
+                text-align: center;
+                width: 34px;
+            }
+
+            .square-select {
+                border: 1px solid red;
+                z-index: 110;
+            }
+
+            .square:focus {
+                outline: none;
+            }
+
+            .kbd-navigation .square:focus {
+                background: #ddd;
+            }
+
+            .game {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .game-info {
+                margin-left: 20px;
+            }
+        </style>
+
+        <script src="lib/gl-matrix.js"></script>
+        <script src="lib/jquery-3.3.1.min.js"></script>
+        <script src="lib/three.js"></script>
+        <script src="lib/stats.js"></script>
+
+        <script src="lib/DataStream/encoding-indexes.js"></script>
+        <script src="lib/DataStream/encoding.js"></script>
+        <script src="lib/DataStream/DataStream.js"></script>
+    
+        <script src="lib/pako/pako.js"></script>
+        <script src="lib/pako/pako_deflate.js"></script>
+        <script src="lib/pako/pako_inflate.js"></script>
+
+        <script src="lib/React/react.development.js"></script>
+        <script src="lib/React/react-dom.development.js"></script>
+
+        <script src='dist/trn_three.js' defer></script>
+
+    </head>
+
+	<body>
+        <div id="root"></div>
+        <div id="container"></div>
+	</body>
+</html>

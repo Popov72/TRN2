@@ -15,8 +15,13 @@
   "author": "E. Popov",
   "license": "MIT",
   "dependencies": {
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
+    "awesome-typescript-loader": "^5.2.1",
     "babylonjs": "^4.0.3",
     "babylonjs-loaders": "^4.0.3",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
     "three": "^0.109.0",
     "ts-loader": "^6.1.0",
     "tslint": "^5.20.0",
