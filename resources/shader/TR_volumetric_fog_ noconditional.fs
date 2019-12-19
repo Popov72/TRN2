@@ -40,22 +40,19 @@ void main() {
     vec3 L = volFogCenter - vwCamPos;
     float tca = dot(L, dir);
     float d2 = dot(L, L) - tca * tca;
-    if (d2 < volFogRadius2) {
-        float thc = sqrt(volFogRadius2 - d2);
-        float t0 = tca - thc;
-        float t1 = tca + thc;
-        float dist = 0.0;
-        if (t0 < 0.0 && t1 > 0.0) {
-            dist = min(distCamToPos, t1);
-        } else if (t0 > 0.0 && t1 > 0.0 && t0 < distCamToPos) {
-            dist = min(t1, distCamToPos) - t0;
-        }
-        float distToCenter = length(cross(volFogCenter - vwCamPos, dir));
-        float fr = distToCenter < volFogRadius ? smoothstep(0.0, 1.0, cos(distToCenter/volFogRadius*3.141592/2.0)) : 0.0;
-        float e = dist/(volFogRadius*2.0);
-        e = 1.0 - exp(-e * 4.0);
-        glFragColor = mix(glFragColor, vec4(volFogColor, glFragColor.a), clamp(e*fr, 0.0, 1.0));
-    }
+
+    float thc = sqrt(max(volFogRadius2 - d2, 0.0));
+    float t0 = tca - thc;
+    float t1 = tca + thc;
+    float dist =  mix(0.0, min(distCamToPos, t1), max(sign(-t0), 0.0)*max(sign(t1), 0.0))
+                + mix(0.0, min(distCamToPos, t1) - t0, max(sign(t0), 0.0)*max(sign(t1), 0.0)*max(sign(distCamToPos - t0), 0.0));
+    float distToCenter = length(cross(volFogCenter - vwCamPos, dir));
+    float fr = smoothstep(0.0, 1.0, cos(distToCenter/volFogRadius*3.141592/2.0));
+    float e = dist/(volFogRadius*2.0);
+    e = 1.0 - exp(-e * 4.0);
+    vec4 glFragColorWithFog = mix(glFragColor, vec4(volFogColor, glFragColor.a), e*fr, 0.0, 1.0));
+
+    glFragColor = mix(glFragColor, glFragColorWithFog, max(sign(volFogRadius2 - d2), 0.0));
 
     if (useFog == 1) {
         float depth = gl_FragCoord.z / gl_FragCoord.w;
