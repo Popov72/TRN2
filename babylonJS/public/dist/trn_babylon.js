@@ -12520,8 +12520,9 @@ var SceneParser = /** @class */ (function () {
         this.tscene.setCamera(new _Camera__WEBPACK_IMPORTED_MODULE_1__["default"](camera));
     };
     SceneParser.prototype.createTextures = function () {
+        var noInterpolation = document.location.href ? document.location.href.indexOf("nobilinear") !== -1 : false;
         for (var t = 0; t < this.json.textures.length; ++t) {
-            var texture = this.json.textures[t], image = this.getImage(texture.image), tex = new babylonjs__WEBPACK_IMPORTED_MODULE_0__["Texture"]("data:" + texture.uuid, this.scene, true, false, babylonjs__WEBPACK_IMPORTED_MODULE_0__["Texture"].BILINEAR_SAMPLINGMODE, null, null, image.url);
+            var texture = this.json.textures[t], image = this.getImage(texture.image), tex = new babylonjs__WEBPACK_IMPORTED_MODULE_0__["Texture"]("data:" + texture.uuid, this.scene, noInterpolation, false, noInterpolation ? babylonjs__WEBPACK_IMPORTED_MODULE_0__["Texture"].NEAREST_SAMPLINGMODE : babylonjs__WEBPACK_IMPORTED_MODULE_0__["Texture"].TRILINEAR_SAMPLINGMODE, null, null, image.url);
             tex.wrapU = tex.wrapV = babylonjs__WEBPACK_IMPORTED_MODULE_0__["Texture"].CLAMP_ADDRESSMODE;
             tex.hasAlpha = true;
             this.textures.push(tex);

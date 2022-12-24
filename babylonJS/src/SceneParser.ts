@@ -109,15 +109,16 @@ export default class SceneParser {
     }
 
     private createTextures(): void {
+        const noInterpolation = document.location.href ? document.location.href.indexOf("nobilinear") !== -1 : false;
         for (let t = 0; t < this.json.textures.length; ++t) {
             const texture = this.json.textures[t],
                   image = this.getImage(texture.image),
                   tex = new Texture(
                     "data:" + texture.uuid,
                     this.scene,
-                    true,
+                    noInterpolation,
                     false,
-                    Texture.BILINEAR_SAMPLINGMODE,
+                    noInterpolation ? Texture.NEAREST_SAMPLINGMODE : Texture.TRILINEAR_SAMPLINGMODE,
                     null, null,
                     image.url
                   );
